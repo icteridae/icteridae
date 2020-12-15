@@ -2,6 +2,26 @@
   "name": "icteridae",
   "version": "0.1.0",
   "private": true,
+  "author": {
+    "name": "Bachelorpraktikum Team 62",
+    "url": "https://github.com/icteridae"
+  },
+  "description": "An App for interactive research exploration",
+  "contributors": [
+    {
+      "name": "Lennart Mischnaewski",
+      "email": "lenmisch@gmail.com"
+    }, {
+      "name": "Hoebelt Hoebelt",
+      "email": "de-hoebelt@t-online.de"
+    }, {
+      "name": "Alexander Sinkovic"
+    }, {
+      "name": "Nico Kunz"
+    }, {
+      "name": "Leonidas Petri"
+    }
+  ],
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
@@ -35,7 +55,8 @@
       "./static/**/*"
     ],
     "linux": {
-      "icon": "../static/icon.png"
+      "icon": "../static/icon.png",
+      "category": "Science"
     },
     "win": {
       "icon": "..\\static\\icon.png"
