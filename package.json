@@ -48,7 +48,7 @@
     "react-eject": "react-scripts eject",
     "electron-build": "electron-builder",
     "build": "yarn react-build && tsc -p public && yarn electron-build",
-    "start": "concurrently \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\"",
+    "start": "tsc -p public && concurrently \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\"",
     "ts": "tsc -p public"
   },
   "build": {
