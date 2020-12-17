@@ -47,11 +47,8 @@
   },
   "build": {
     "files": [
-      "./build/**/*",
-      "./dist/**/*",
       "./node_modules/**/*",
       "./public/**/*",
-      "*.js",
       "./static/**/*"
     ],
     "linux": {
