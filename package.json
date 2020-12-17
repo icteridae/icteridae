@@ -40,16 +40,15 @@
     "web-vitals": "^0.2.4"
   },
   "homepage": "./",
-  "main": "build/public/electron.js",
+  "main": "build/electron/main.js",
   "scripts": {
     "react-start": "react-scripts start",
     "react-build": "react-scripts build",
     "react-test": "react-scripts test",
     "react-eject": "react-scripts eject",
     "electron-build": "electron-builder",
-    "build": "yarn react-build && tsc -p public && yarn electron-build",
-    "start": "tsc -p public && concurrently \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\"",
-    "ts": "tsc -p public"
+    "build": "yarn react-build && tsc -p electron && yarn electron-build",
+    "start": "tsc -p electron && concurrently \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\""
   },
   "build": {
     "extends": null,
