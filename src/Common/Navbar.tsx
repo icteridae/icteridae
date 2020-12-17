@@ -1,20 +1,23 @@
 
 import * as React from "react";
-import { Navbar, Nav, Icon, Dropdown, Button } from 'rsuite';
+import { Navbar, Nav, Icon, Dropdown, Button, NavbarProps } from 'rsuite';
 
 import './styles/Navbar.css'
 
-class NavBarInstance extends React.Component {
-    constructor(...props) {
-        super(...props);
+interface State {
+    activeKey: String | null
+}
+
+class NavBarInstance extends React.Component<NavbarProps, State> {
+    constructor(props: NavbarProps) {
+        super(props);
         this.handleSelect = this.handleSelect.bind(this);
         this.state = {
             activeKey: null,
-            props: props
         };
     }
 
-    handleSelect(eventKey) {
+    handleSelect(eventKey: String | null) {
         this.setState({
             activeKey: eventKey
         });
@@ -23,7 +26,7 @@ class NavBarInstance extends React.Component {
 
     render() {
         return (
-            <Navbar {...this.state.props}>
+            <Navbar {...this.props}>
                 <Navbar.Header>
                     <div className="navbar-brand">Icteridae</div>
                 </Navbar.Header>

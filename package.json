@@ -26,6 +26,11 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
+    "@types/jest": "^26.0.15",
+    "@types/node": "^12.0.0",
+    "@types/react": "^16.9.53",
+    "@types/react-dom": "^16.9.8",
+    "typescript": "^4.0.3",
     "cross-env": "^7.0.3",
     "electron-is-dev": "^1.2.0",
     "react": "^17.0.1",
@@ -35,21 +40,21 @@
     "web-vitals": "^0.2.4"
   },
   "homepage": "./",
-  "main": "public/electron.js",
+  "main": "build/public/electron.js",
   "scripts": {
     "react-start": "react-scripts start",
     "react-build": "react-scripts build",
     "react-test": "react-scripts test",
     "react-eject": "react-scripts eject",
     "electron-build": "electron-builder",
-    "build": "yarn react-build && yarn electron-build",
-    "start": "concurrently \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\""
+    "build": "yarn react-build && tsc -p public && yarn electron-build",
+    "start": "concurrently \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\"",
+    "ts": "tsc -p public"
   },
   "build": {
+    "extends": null,
     "files": [
-      "./node_modules/**/*",
-      "./public/**/*",
-      "./static/**/*"
+      "./build/**/*"
     ],
     "linux": {
       "icon": "../static/icon.png",

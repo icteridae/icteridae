@@ -1,6 +1,6 @@
-const { app, BrowserWindow, shell } = require('electron')
-const path = require('path')
-const isDev = require('electron-is-dev')
+import { app, BrowserWindow, shell} from 'electron';
+import * as path from 'path';
+import * as isDev from 'electron-is-dev';
 
 function createWindow () {
   const win = new BrowserWindow({
@@ -15,7 +15,7 @@ function createWindow () {
   win.removeMenu()
 
   win.loadURL(
-    isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, "../build/index.html")}`
+    isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, "../index.html")}`
   )
 
   win.webContents.on('new-window', function(event, url) {
