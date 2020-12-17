@@ -56,11 +56,11 @@
       "./build/**/*"
     ],
     "linux": {
-      "icon": "../static/icon.png",
+      "icon": "../public/icon.png",
       "category": "Science"
     },
     "win": {
-      "icon": "..\\static\\icon.png"
+      "icon": "..\\public\\icon.png"
     }
   },
   "eslintConfig": {
