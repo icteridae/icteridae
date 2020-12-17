@@ -1,13 +1,9 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import NavBarInstance from './Common/Navbar';
 
 function App() {
-  return (
-    <div>
-      <NavBarInstance appearance="subtle"/>
-    
+  return (    
     <div className="App">
       <header className="App-header">
         
@@ -24,7 +20,6 @@ function App() {
           Learn React
         </a>
       </header>
-    </div>
     </div>
   );
 }

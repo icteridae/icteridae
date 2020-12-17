@@ -6,7 +6,7 @@
     "name": "Bachelorpraktikum Team 62",
     "url": "https://github.com/icteridae"
   },
-  "description": "An App for interactive research exploration",
+  "description": "Boilerplate for a React/Typescript/Electron application",
   "contributors": [
     {
       "name": "Lennart Mischnaewski",
@@ -36,7 +36,6 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.1",
-    "rsuite": "^4.8.6",
     "web-vitals": "^0.2.4"
   },
   "homepage": "./",
@@ -56,11 +55,11 @@
       "./build/**/*"
     ],
     "linux": {
-      "icon": "../public/icon.png",
+      "icon": "../public/logo512.png",
       "category": "Science"
     },
     "win": {
-      "icon": "..\\public\\icon.png"
+      "icon": "..\\public\\logo512.png"
     }
   },
   "eslintConfig": {
