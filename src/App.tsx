@@ -2,11 +2,13 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 import {NavBarInstance} from './Common/Navbar';
+import { Settings } from './Settings/Settings';
 
 function App() {
   return (
     <div>
       <NavBarInstance appearance="subtle"/>
+      <Settings/>
     
     <div className="App">
       <header className="App-header">
