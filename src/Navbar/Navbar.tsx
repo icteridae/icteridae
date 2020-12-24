@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Link } from "react-router-dom";
 import { Navbar, Nav, Icon, Dropdown, Button, NavbarProps } from 'rsuite';
 import { Settings } from "./Settings";
 import './styles/Navbar.css'
@@ -15,14 +16,12 @@ export const NavBarInstance: React.FC<NavbarProps> = (props) => {
                 </Navbar.Header>
                 <Navbar.Body>
                     <Nav onSelect={handleSelect} activeKey={activeKey}>
-                        <Nav.Item eventKey="search" icon={<Icon icon="search" />}>
-                            Search
-                        </Nav.Item>
-                        <Nav.Item eventKey="mypapers" icon={<Icon icon="bookmark" /> }>My Papers</Nav.Item>
-                        <Nav.Item eventKey="graph" icon={<Icon icon="circle-thin" /> }>Graph</Nav.Item>
+                        <Nav.Item componentClass={Link} to='/' eventKey="search" icon={<Icon icon="search" />}>Search</Nav.Item>
+                        <Nav.Item componentClass={Link} to='/papers/' eventKey="mypapers" icon={<Icon icon="bookmark" /> }>My Papers</Nav.Item>
+                        <Nav.Item componentClass={Link} to='/graph/' eventKey="graph" icon={<Icon icon="circle-thin" /> }>Graph</Nav.Item>
                         <Dropdown eventKey="dropdown" title="About" icon={<Icon icon="info" />} toggleComponentClass={Button} appearance="default">
-                            <Dropdown.Item eventKey="description" icon={<Icon icon="file-text" />} >Description</Dropdown.Item>
-                            <Dropdown.Item eventKey="contact" icon={<Icon icon="group" />} >Contact</Dropdown.Item>
+                            <Dropdown.Item componentClass={Link} to='/description/' eventKey="description" icon={<Icon icon="file-text" />} >Description</Dropdown.Item>
+                            <Dropdown.Item componentClass={Link} to='/contact/' eventKey="contact" icon={<Icon icon="group" />} >Contact</Dropdown.Item>
                         </Dropdown>
                     </Nav>
                     <Nav pullRight>
