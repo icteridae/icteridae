@@ -1,11 +1,11 @@
 import * as React from "react";
 import { Navbar, Nav, Icon, Dropdown, Button, NavbarProps } from 'rsuite';
-import { Settings } from "./Settings/Settings";
+import { Settings } from "./Settings";
 import './styles/Navbar.css'
 
 export const NavBarInstance: React.FC<NavbarProps> = (props) => {
     const [activeKey, handleSelect] = React.useState<string | null>(null);
-    const [showSettings, setShowSettings] = React.useState<boolean>(true);
+    const [showSettings, setShowSettings] = React.useState<boolean>(false);
 
     return (
         <div>
