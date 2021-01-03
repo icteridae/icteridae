@@ -1,5 +1,10 @@
 .searchResultCard {
-    background-color: darkslategray;
+    background-color: darkslategrey;
+    transition: 0.5s;
+}
+
+.searchResultCard:hover {
+    background-color: #4f6f6f;
 }
 
 .content {
