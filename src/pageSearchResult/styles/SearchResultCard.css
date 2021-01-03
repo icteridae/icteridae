@@ -5,9 +5,14 @@
 .content {
     display: flex;
     flex-direction: column;
+
 }
 
 .author {
     margin-bottom: 10px;
 }
 
+.title {
+    font-family: "Segoe UI",Arial,sans-serif;
+    font-weight: unset;
+}
