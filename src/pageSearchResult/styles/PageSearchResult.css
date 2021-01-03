@@ -1,0 +1,11 @@
+.resultList {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    text-align: left;
+    margin: 0 auto;
+}
+
+.resultList > div {
+    margin-bottom: 20px;
+}
