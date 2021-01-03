@@ -3,9 +3,14 @@
     flex-direction: column;
     width: 50%;
     text-align: left;
-    margin: 0 auto;
+    margin: 10px auto 0 auto;
 }
 
 .resultList > div {
     margin-bottom: 20px;
+}
+
+h2 {
+    font-weight: unset;
+    margin-bottom: 40px;
 }

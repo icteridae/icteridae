@@ -3,6 +3,8 @@ import {PanelGroup, Panel, Placeholder, Grid, Row, Col} from 'rsuite';
 import SearchResultCard from './SearchResultCard';
 import './styles/PageSearchResult.css'
 
+
+const query:string = "Dies ist eins query";
 const data = [
     {
         title: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr",
@@ -51,6 +53,7 @@ const data = [
 function PageSearchResult () {
     return (
         <div className="resultList">
+            <h2>Showing search results for <b>"{query}"</b>:</h2>
             {data.map((entry) => {
                     return <SearchResultCard data={entry}/>
             })
