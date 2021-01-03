@@ -1,0 +1,12 @@
+.card {
+    display: flex;
+    flex-direction: column;
+}
+
+.author {
+    margin-bottom: 10px;
+}
+
+.searchResultCard {
+    background-color: darkslategray;
+}
