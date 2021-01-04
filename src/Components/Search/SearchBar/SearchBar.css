@@ -1,0 +1,15 @@
+.SearchBar {
+    padding: 40px 20px;
+    display: inline-block;
+    text-align: center;
+    width: 50%;
+    min-width: 300px;
+    vertical-align: middle;
+    marginBottom: 10;
+    background-color: #282c34;
+}
+
+.text{
+    font-size:25px;
+    font-weight: bold;
+}
