@@ -1,0 +1,17 @@
+.Privacy {
+  text-align: center;
+  background-color: #282c34;
+}
+
+.Privacy-header {
+  min-height: 15vh;
+}
+
+.Privacy-body{
+  background-color: #282c34;
+  min-height: 100vh;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
