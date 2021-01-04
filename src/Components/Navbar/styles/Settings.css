@@ -1,0 +1,5 @@
+@import '../../../../node_modules/rsuite/dist/styles/rsuite-dark.css';
+
+.settingElement {
+    margin-top: 1em;
+}
