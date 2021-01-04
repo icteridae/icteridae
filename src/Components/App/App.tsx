@@ -3,7 +3,7 @@ import {NavBarInstance} from '../Navbar/Navbar';
 import {Default} from '../Default/Default';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 
-export const App: React.FC = () => (
+ export const App: React.FC = () => (
     <HashRouter>
       <NavBarInstance appearance="subtle"/>
       <Switch>
