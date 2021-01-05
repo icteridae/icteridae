@@ -60,6 +60,9 @@ function PageSearchResult () {
     return (
         <div className="pageSearchResult">
             <SearchResultList query={query} data={data}/>
+            <div className="abstractView">
+                {data[0].preview}
+            </div>
         </div>
     );
 }
