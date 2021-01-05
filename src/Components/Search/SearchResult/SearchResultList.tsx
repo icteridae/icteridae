@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './styles/ResultList.css';
+import './styles/SearchResultList.css';
 import SearchResultCard from "./SearchResultCard";
 
 type data = {
