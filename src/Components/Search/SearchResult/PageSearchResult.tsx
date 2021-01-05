@@ -1,7 +1,7 @@
 import React from 'react';
 import SearchResultCard from './SearchResultCard';
 import './styles/PageSearchResult.css'
-import ResultList from "./ResultList";
+import SearchResultList from "./SearchResultList";
 
 
 const query:string = "Dies ist eins query";
@@ -59,7 +59,7 @@ const data = [
 function PageSearchResult () {
     return (
         <div className="pageSearchResult">
-            <ResultList query={query} data={data}/>
+            <SearchResultList query={query} data={data}/>
         </div>
     );
 }

@@ -17,7 +17,7 @@ type ResultListProps = {
     data: Array<data>
 }
 
-const ResultList : React.FC<ResultListProps> = (props) => {
+const SearchResultList : React.FC<ResultListProps> = (props) => {
     return (
         <div className="resultList">
             <h2>Showing search results for <b>"{props.query}"</b>:</h2>
@@ -29,4 +29,4 @@ const ResultList : React.FC<ResultListProps> = (props) => {
     );
 }
 
-export default ResultList;
+export default SearchResultList;
