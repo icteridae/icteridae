@@ -1,6 +1,7 @@
 import React from 'react';
 import SearchResultCard from './SearchResultCard';
 import './styles/PageSearchResult.css'
+import ResultList from "./ResultList";
 
 
 const query:string = "Dies ist eins query";
@@ -58,13 +59,7 @@ const data = [
 function PageSearchResult () {
     return (
         <div className="pageSearchResult">
-            <div className="resultList">
-                <h2>Showing search results for <b>"{query}"</b>:</h2>
-                {data.map((entry) => {
-                    return <SearchResultCard key={entry.key} data={entry}/>
-                })
-                }
-            </div>
+            <ResultList query={query} data={data}/>
         </div>
     );
 }

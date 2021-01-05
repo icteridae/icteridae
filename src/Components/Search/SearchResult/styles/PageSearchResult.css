@@ -6,19 +6,3 @@
     width: 100%;
 }
 
-.resultList {
-    display: flex;
-    flex-direction: column;
-    width: 50%;
-    text-align: left;
-    margin-left: 5vh;
-}
-
-.resultList > div {
-    margin-bottom: 20px;
-}
-
-h2 {
-    font-weight: unset;
-    margin-bottom: 40px;
-}
