@@ -5,6 +5,7 @@ import './styles/SearchResultCard.css';
 
 type SearchResultCardProps = {
     data: {
+        key: number;
         title: string,
         authors: string[],
         date: string,
@@ -20,7 +21,6 @@ const SearchResultCard : React.FC<SearchResultCardProps> = (props) => {
                 <h3 className="title">{props.data.title}</h3>
                 <span className="author">{props.data.authors.join(", ")}</span>
                 <span className="date">{props.data.date}</span>
-                <span className="citations">{props.data.citations + " Citations"}</span>
                 <span className="previewText">{props.data.preview.substr(0, 283) + "..."}</span>
             </div>
         </Panel>
