@@ -14,6 +14,7 @@ type data = {
 
 type ResultListProps = {
     query: string,
+    func: Function,
     data: Array<data>
 }
 
@@ -22,7 +23,7 @@ const SearchResultList : React.FC<ResultListProps> = (props) => {
         <div className="resultList">
             <h2>Showing search results for <b>"{props.query}"</b>:</h2>
             {props.data.map((entry) => {
-                return <SearchResultCard key={entry.key} data={entry}/>
+                return <SearchResultCard func={props.func} key={entry.key} data={entry}/>
             })
             }
         </div>
