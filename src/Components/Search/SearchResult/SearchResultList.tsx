@@ -34,6 +34,11 @@ const SearchResultList : React.FC<ResultListProps> = (props) => {
 
         setListToRemainingHeight();
         window.addEventListener('resize', setListToRemainingHeight);
+
+        // Cleanup: Remove EventListener when component will unmount
+        return () => {
+            window.removeEventListener('resize', setListToRemainingHeight);
+        }
     }, []);
 
     return (
