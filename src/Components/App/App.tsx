@@ -1,19 +1,14 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import {NavBarInstance} from './Common/Navbar';
-import PageSearchResult from "./Components/Search/SearchResult/PageSearchResult";
+import {NavBarInstance} from '../Navbar/Navbar';
+import {Default} from '../Default/Default';
+import { HashRouter, Route, Switch } from 'react-router-dom';
 
-function App() {
-  return (
-    <div>
+export const App: React.FC = () => (
+    <HashRouter>
       <NavBarInstance appearance="subtle"/>
-    
-    <div className="App" style={{width:"100%"}}>
-      <PageSearchResult/>
-    </div>
-    </div>
-  );
-}
-
-export default App;
+      <Switch>
+        <Route exact path='/' component={Default}/>
+        {/* TODO: insert other routes. See paths in Navbar.tsx */}
+      </Switch>
+    </HashRouter>
+);
