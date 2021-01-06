@@ -4,6 +4,7 @@
     width: 50%;
     text-align: left;
     margin-left: 5vh;
+    overflow: scroll;
 }
 
 .resultList > div {
