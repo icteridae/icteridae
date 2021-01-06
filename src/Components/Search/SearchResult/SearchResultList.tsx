@@ -24,11 +24,12 @@ const SearchResultList : React.FC<ResultListProps> = (props) => {
             let windowHeight = window.innerHeight;
             // @ts-ignore
             let navbarHeight = document.getElementById("navbar").offsetHeight;
-
+            // @ts-ignore
+            let queryTitleHeight = document.getElementById("queryTitle").offsetHeight;
             let list = document.getElementById("list");
 
             // @ts-ignore
-            list.style.height = (windowHeight - navbarHeight) + "px";
+            list.style.height = (windowHeight - navbarHeight - queryTitleHeight) + "px";
         }
 
         setListToRemainingHeight();
@@ -37,7 +38,6 @@ const SearchResultList : React.FC<ResultListProps> = (props) => {
 
     return (
         <div id="list" className="resultList">
-            <h2>Showing search results for <b>"{props.query}"</b>:</h2>
             {props.data.map((entry) => {
                 return <SearchResultCard func={props.func} key={entry.key} data={entry}/>
             })

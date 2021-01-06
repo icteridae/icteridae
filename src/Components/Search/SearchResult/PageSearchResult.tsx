@@ -68,10 +68,15 @@ function PageSearchResult () {
 
     return (
         <div className="pageSearchResult">
-            <SearchResultList query={query} data={data} func={setSelected}/>
-            <div className="abstractView">
-                <h1>{selected.title}</h1>
-                {selected.preview}
+            <div id="queryTitle">
+                <h2>Showing search results for <b>"{query}"</b>:</h2>
+            </div>
+            <div className="wrapper">
+                <SearchResultList query={query} data={data} func={setSelected}/>
+                <div className="abstractView">
+                    <h1>{selected.title}</h1>
+                    {selected.preview}
+                </div>
             </div>
         </div>
     );

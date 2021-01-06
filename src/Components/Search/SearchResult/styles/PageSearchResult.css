@@ -1,11 +1,14 @@
 .pageSearchResult {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: flex-start;
 
     width: 100%;
 }
 
+.wrapper {
+    display: flex;
+}
 .abstractView {
     display: flex;
     flex-direction: column;
@@ -13,5 +16,5 @@
 
     text-align: left;
     font-size: 30px;
-    padding: 20px 20px;
+    padding: 0 20px;
 }
