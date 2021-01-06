@@ -1,0 +1,42 @@
+*{
+    -ms-overflow-style: none;
+}
+::-webkit-scrollbar {
+    display: none;
+}
+
+.FrontPage {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    background-color: #282c34;
+    align-items: center;
+    justify-content: center;
+    align-content: stretch;
+    flex:1;
+}
+
+.Header{
+    padding: 20px;
+    font-size: 30px;
+    order:1;
+    min-height: 15vh;
+    text-align: center;
+}
+.Searching {
+    text-align: center;
+    order:2;
+    width:50%;
+    min-width: 350px;
+    min-height: 65vh;
+    background-color: #282c34;
+}
+
+.Imprint {
+    background-color: #0f131a;
+    flex:1;
+    text-align: center;
+    order:3;
+    min-height: 10vh;
+    min-width: 100%;
+}
