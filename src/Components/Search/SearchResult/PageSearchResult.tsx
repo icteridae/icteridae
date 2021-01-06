@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import SearchResultCard from './SearchResultCard';
 import './styles/PageSearchResult.css'
 import SearchResultList from "./SearchResultList";
 
