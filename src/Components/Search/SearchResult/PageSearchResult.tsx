@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import './styles/PageSearchResult.css'
 import SearchResultList from "./SearchResultList";
 
-
 const query:string = "Dies ist eins query";
 const data = [
     {

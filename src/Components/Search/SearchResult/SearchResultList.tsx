@@ -1,5 +1,4 @@
 import React, {useEffect} from 'react';
-
 import './styles/SearchResultList.css';
 import SearchResultCard from "./SearchResultCard";
 
@@ -30,7 +29,6 @@ const SearchResultList : React.FC<ResultListProps> = (props) => {
 
             // @ts-ignore
             list.style.height = (windowHeight - navbarHeight) + "px";
-            console.log("test");
         }
 
         setListToRemainingHeight();

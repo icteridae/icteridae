@@ -1,6 +1,4 @@
 import React from 'react';
-import {Panel} from 'rsuite';
-
 import './styles/SearchResultCard.css';
 
 type SearchResultCardProps = {
