@@ -5,6 +5,11 @@
     text-align: left;
     margin-left: 5vh;
     overflow: scroll;
+    scrollbar-width: none;     /*remove scrollbar in Firefox*/
+}
+
+.resultList::-webkit-scrollbar {
+    display: none;
 }
 
 .resultList > div {
