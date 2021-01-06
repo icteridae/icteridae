@@ -14,6 +14,7 @@
     justify-content: center;
     align-content: stretch;
     flex:1;
+    font-family: Roboto;
 }
 
 .Header{
@@ -28,7 +29,7 @@
     order:2;
     width:50%;
     min-width: 350px;
-    min-height: 65vh;
+    height: 65vh;
     background-color: #282c34;
 }
 
@@ -37,6 +38,12 @@
     flex:1;
     text-align: center;
     order:3;
-    min-height: 10vh;
+    height: 10vh;
     min-width: 100%;
+    vertical-align: center;
+    padding:2vh;
+}
+
+img {
+    height: 6vh;
 }

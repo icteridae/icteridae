@@ -1,7 +1,7 @@
 import React from 'react';
 import {SearchBar} from "../Search/SearchBar/SearchBar";
 import './FrontPage.css'
-
+import logo from '../../icon.png'
 
 export const FrontPage: React.FC = () => (
       <div className="FrontPage">
@@ -12,7 +12,7 @@ export const FrontPage: React.FC = () => (
               <SearchBar placeholder="Search for your Papers!" />
           </body>
           <footer className="Imprint">
-              Ich bin ein Test!
+              <img src={logo} alt="Logo"/> &copy; 2021 Icteridae
           </footer>
       </div>
 )
