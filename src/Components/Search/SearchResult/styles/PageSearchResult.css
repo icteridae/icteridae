@@ -4,6 +4,7 @@
     justify-content: flex-start;
 
     width: 100%;
+    background-color: #0F131A;
 }
 
 .wrapper {
@@ -17,4 +18,15 @@
     text-align: left;
     font-size: 30px;
     padding: 0 20px;
+
+    background-color: #0F131A;
+    height: 78vh;
+    margin-right: 5vh;
+    border-radius: 20px;
+}
+
+#queryTitle h2 {
+    font-weight: unset;
+
+    margin: 20px 0 40px 20px;
 }
