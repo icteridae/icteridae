@@ -3,11 +3,19 @@ import './styles/SearchResultList.css';
 import SearchResultCard from "./SearchResultCard";
 
 type data = {
-    key: number;
+    id: number;
     title: string,
     authors: {name: string, ids:number[]}[],
     year: number,
     paperAbstract: string
+}
+
+const dummy = {
+    key: 0,
+    title: "",
+    authors: [{name: "", ids:null}],
+    year: 0,
+    paperAbstract: ""
 }
 
 type ResultListProps = {
@@ -16,9 +24,9 @@ type ResultListProps = {
 }
 
 const SearchResultList : React.FC<ResultListProps> = (props) => {
-    // Effect hook for dynamically changing the height of the resultList and thus getting a scrollbar BECAUSE SCROLLBARS
-    const [searchResults, setSearchResults] : any = useState();
+    const [searchResults, setSearchResults] : any = useState([dummy]);
 
+    // Effect hook for dynamically changing the height of the resultList and thus getting a scrollbar BECAUSE SCROLLBARS
     useEffect(() => {
         function setListToRemainingHeight() {
             let windowHeight = window.innerHeight;
@@ -28,8 +36,6 @@ const SearchResultList : React.FC<ResultListProps> = (props) => {
             let queryTitleHeight = document.getElementById("queryTitle").offsetHeight;
             let list = document.getElementById("list");
 
-            if(list == null)
-                return;
             // @ts-ignore
             list.style.height = (windowHeight - navbarHeight - queryTitleHeight) + "px";
         }
@@ -61,7 +67,7 @@ const SearchResultList : React.FC<ResultListProps> = (props) => {
     return (
         <div id="list" className="resultList">
             {
-                searchResults.map((entry: any) => {
+                searchResults.map((entry: data) => {
                     return <SearchResultCard func={props.func} key={entry.id} data={entry}/>
                 })
             }

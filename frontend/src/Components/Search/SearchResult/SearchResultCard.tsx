@@ -4,7 +4,7 @@ import './styles/SearchResultCard.css';
 type SearchResultCardProps = {
     func: Function,
     data: {
-        key: number;
+        id: number;
         title: string,
         authors: {name: string, ids:Array<Number>}[],
         year: number,
