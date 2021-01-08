@@ -63,18 +63,18 @@ def generate_graph(request):
     request needs to have 'papier_id':any field
     """
 
+
+    paper_id = request.query_params.get('paper_id', None)
+    if paper_id not in dummy_dict:
+        return http.HttpResponseBadRequest('Paper not found')
+
     papers = dummy_data
-
-    similarities = [{'name': sim['name'],
-     'description': sim['description']} for sim in dummy_similarities]
-
+    similarities = [{'name': sim['name'], 'description': sim['description']} for sim in dummy_similarities]
     tensor = [[[sim['function'](p1, p2) for p2 in dummy_data] for p1 in dummy_data] for sim in dummy_similarities]
 
     return http.JsonResponse({'tensor': tensor, 
                               'paper': papers,
                               'similarities': similarities})
-
-    return http.HttpResponse('Generate Graph Endpoint')
 
 @api_view(['GET'])
 def get_paper(request):
