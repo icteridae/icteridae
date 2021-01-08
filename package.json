@@ -35,8 +35,6 @@
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
     "@types/react-router-dom": "^5.1.6",
-    "cross-env": "^7.0.3",
-    "electron-is-dev": "^1.2.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-force-graph-2d": "^1.18.1",
@@ -47,28 +45,11 @@
     "web-vitals": "^0.2.4"
   },
   "homepage": "./",
-  "main": "build/electron/main.js",
   "scripts": {
-    "react-start": "react-scripts start",
-    "react-build": "react-scripts build",
-    "react-test": "react-scripts test",
-    "react-eject": "react-scripts eject",
-    "electron-build": "electron-builder",
-    "build": "yarn react-build && tsc -p electron && yarn electron-build",
-    "start": "tsc -p electron && concurrently \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\""
-  },
-  "build": {
-    "extends": null,
-    "files": [
-      "./build/**/*"
-    ],
-    "linux": {
-      "icon": "../public/icon.png",
-      "category": "Science"
-    },
-    "win": {
-      "icon": "..\\public\\icon.png"
-    }
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
@@ -89,9 +70,5 @@
     ]
   },
   "devDependencies": {
-    "concurrently": "^5.3.0",
-    "electron": "^11.1.0",
-    "electron-builder": "^22.9.1",
-    "wait-on": "^5.2.0"
   }
 }
