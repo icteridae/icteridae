@@ -22,14 +22,12 @@
     font-size: 30px;
     order:1;
     min-height: 15vh;
-    text-align: center;
 }
 
 .Body {
-    text-align: center;
     order:2;
     width:50%;
-    height: 65vh;
+    min-height: 65vh;
     background-color: #282c34;
 }
 
@@ -39,20 +37,21 @@
 
 .Suggestions{
     padding: 4vh;
-    display: flex;
-    grid-auto-rows: 1fr;
+    display: grid;
+    grid-template-columns: 1fr;
+
     align-items: center;
     justify-content: space-evenly;
+    grid-row-gap: 42px;
+    align-self:center;
 }
 
 .Imprint {
     background-color: #0f131a;
     flex:1;
-    text-align: center;
     order:3;
     height: 10vh;
     min-width: 100%;
-    vertical-align: center;
     padding:2vh;
 }
 
