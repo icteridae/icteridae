@@ -9,7 +9,7 @@ export const NavBarInstance: React.FC<NavbarProps> = (props) => {
     const [showSettings, setShowSettings] = React.useState<boolean>(false);
 
     return (
-        <div>
+        <div id="navbar">
             <Navbar {...props}>
                 <Navbar.Header>
                     <div className="navbar-brand">Icteridae</div>
