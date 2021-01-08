@@ -4,7 +4,7 @@ import {Link} from 'react-router-dom';
 
 import './Card.css';
 
-interface CardProps {
+export interface CardProps {
     title: string;
     year: string;
     authors: Array<string>;
