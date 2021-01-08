@@ -1,41 +1,39 @@
-
-# Getting Started for development
+# Getting Started 
 
 ## Setup
 
 Make sure you have a recent version of yarn.
-
-Clone the project using 
+Clone the project using
 
 
     git clone git@github.com:icteridae/icteridae.git
 
 
-Change into the now downloaded directory with
-
-    cd icteridae
-
-Install the needed dependencies using
+#### Install dependencies
+  
+Navigate into the `frontend` directory and install the needed dependencies using
 
     yarn
 
-## Running 
+Then, navigate into the `backend` directory and install the needed dependencies using
 
-Run just the React project using
+    pip install -r requirements.txt
 
-    yarn react-start
 
-Alternatively you can run the React project in an Electron environment using
+## Running
+
+### Start Django Server
+Navigate into the `backend/` directory and run
+
+    python manage.py runserver
+
+### Start React Server
+
+Navigate into the `frontend/` directory and run
 
     yarn start
-
-## Building
-
-You can build the project for your local system using 
-
-    yarn build
-
-You'll the executable files in `icteridae/dist/`.
+   
+### Visit http://localhost:3000
 
 ## Structure guidelines
 
