@@ -8,11 +8,11 @@ import {SearchBar} from "../Search/SearchBar/SearchBar";
  * TODO: remove file when not needed anymore
  */
 
-export const Default: React.FC = () => (    
+export const Default: React.FC = () => (
     <div className="App">
         <div className="SearchBar">
             <SearchBar text = "Ich bin eine Biene!"></SearchBar>
         </div>
     </div>
-  );
+);
 
