@@ -22,7 +22,6 @@
 .title {
     font-family: "Segoe UI",Arial,sans-serif;
     font-weight: lighter;
-    text-decoration: underline;
 }
 
 .author {
@@ -34,3 +33,10 @@
     font-size: 16px;
 }
 
+a {
+    color: #96d4bc;
+}
+
+a:hover {
+    color:#A8DCC8;
+}

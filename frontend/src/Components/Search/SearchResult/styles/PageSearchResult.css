@@ -23,6 +23,8 @@
     height: 78vh;
     margin-right: 5vh;
     border-radius: 20px;
+
+    border-left: 6px outset #61847D;
 }
 
 #queryTitle h2 {
