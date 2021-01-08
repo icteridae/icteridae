@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django import http
 import json
 import copy
+import math
 
 from rest_framework.decorators import api_view
 
@@ -11,6 +12,18 @@ dummy_data = [{"id":"ade4912fd8eaef703ec102f642554981b618e145","title":"Surface 
         {"id":"0ca2b4e22a8a31f19a0dedf3a38549b0e5a9fd5d","title":"[Effect of long-term administration of parotin tablets in gastroptosis].","paperAbstract":"","authors":[{"name":"A  Matsuoka","ids":["2562735"]}],"inCitations":[],"outCitations":[],"year":1973,"s2Url":"https://semanticscholar.org/paper/0ca2b4e22a8a31f19a0dedf3a38549b0e5a9fd5d","sources":["Medline"],"pdfUrls":[],"venue":"Horumon to rinsho. Clinical endocrinology","journalName":"Horumon to rinsho. Clinical endocrinology","journalVolume":"21 6","journalPages":"\n          641-3\n        ","doi":"","doiUrl":"","pmid":"4738809","fieldsOfStudy":["Medicine"],"magId":"2411529736","s2PdfUrl":"","entities":[]}]
 
 dummy_dict = {item['id']: item for item in dummy_data}
+
+dummy_similarities = [
+    {'name': 'O-Title Similarity',
+     'description': 'Similarity is |x-y|-1 where x,y are the occurences of the letter o in the respective titles',
+     'function': lambda x,y: abs(x['title'].count('o') - y['title'].count('o'))
+    },
+    {
+     'name': 'S-Title Similarity',
+     'description': 'Similarity is |x-y|-1 where x,y are the occurences of the letter s in the respective titles',
+     'function': lambda x,y: abs(x['title'].count('s') - y['title'].count('s'))
+    }
+]
 
 # Create your views here.
 @api_view(['GET'])
@@ -37,6 +50,17 @@ def generate_graph(request):
 
     request needs to have 'papier_id':any field
     """
+
+    papers = dummy_data
+
+    similarities = [{'name': sim['name'],
+     'description': sim['description']} for sim in dummy_similarities]
+
+    tensor = [[[sim['function'](p1, p2) for p2 in dummy_data] for p1 in dummy_data] for sim in dummy_similarities]
+
+    return http.JsonResponse({'tensor': tensor, 
+                              'paper': papers,
+                              'similarities': similarities})
 
     return http.HttpResponse('Generate Graph Endpoint')
 
