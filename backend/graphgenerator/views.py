@@ -20,8 +20,13 @@ def search(request):
 
     request needs to have 'query':str field
     """
+    query = request.query_params.get('query', None)
+    if query is None:
+        return http.HttpResponseBadRequest('No query supplied')
+    page = request.query_params.get('page', 1)
+    pagesize = request.query_params.get('pagesize', 20)
 
-    return http.JsonResponse(dummy_data, safe=False)
+    return http.JsonResponse({'data': dummy_data, 'max_pages': (len(dummy_data)-1)//pagesize + 1}, safe=False)
 
 
 @api_view(['GET'])
