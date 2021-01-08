@@ -2,7 +2,7 @@ import * as React from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
 import {Button} from "rsuite";
 
-const myData = {
+/*const myData = {
     nodes: [
         {
             id: "id1",
@@ -93,7 +93,18 @@ const myData = {
             width: 3
         },
     ]
-};
+};*/
+
+/*json: {
+    tensor: list[list[list[number]]] (shape: similarity_id x paper1_id x paper2_id),
+    papers: list[obj : paper_obj],
+    Similarities: list[obj : similarity_obj]
+},*/
+
+interface graph {
+    nodes : {id: string, name: string, color: string}[],
+    links : {source: string, target: string, color: string, width?: number}[]
+}
 
 const genArray = (N:number) => {
     let a = [];
@@ -135,13 +146,22 @@ const genGraph = (N:number) => {
 }
 
 export const Graph: React.FC = () => {
-    const[state, setState] = React.useState(1);
+    const[state, setState] = React.useState<graph>(genGraph(1));
 
     return(
         <div>
-            <Button onClick={() => setState(state + 1)}>+1</Button>
-            <Button onClick={() => setState(0)}>Reset</Button>
-            <ForceGraph2D graphData={genGraph(state)}
+            <Button onClick={() => setState(({nodes, links}) : graph =>
+                {const id = nodes.length;
+                    return ({
+                        nodes: [...nodes, { id: id.toString(), name: id.toString(), color: "#FF0000" }],
+                        links: [...links, { source: id.toString(), target: getCategories()[Math.floor(Math.random()*3)], color: "#FFFFFF"}]
+                    });
+                })}>+1</Button>
+            <Button onClick={() => setState(({nodes, links}) => ({
+                nodes: nodes.slice(0,4),
+                links: links.slice(0,3)
+            }))}>Reset</Button>
+            <ForceGraph2D graphData={state}
                           onNodeClick={(node:any, e) => {
                               e.preventDefault();
                               if (node.name === "1") {
