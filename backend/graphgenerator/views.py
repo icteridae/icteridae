@@ -1,8 +1,6 @@
 from django.shortcuts import render
 from django import http
 import json
-import copy
-import math
 
 from rest_framework.decorators import api_view
 
