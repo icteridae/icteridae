@@ -1,0 +1,15 @@
+.App {
+  text-align: center;
+  display: flex;
+  background-color: #282c34;
+  align-items: center;
+  justify-content: center;
+  flex:1;
+}
+
+*{
+  -ms-overflow-style: none;
+}
+::-webkit-scrollbar {
+  display: none;
+}

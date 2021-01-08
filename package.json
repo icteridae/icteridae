@@ -2,27 +2,73 @@
   "name": "icteridae",
   "version": "0.1.0",
   "private": true,
+  "author": {
+    "name": "Bachelorpraktikum Team 62",
+    "url": "https://github.com/icteridae"
+  },
+  "description": "An App for interactive research exploration",
+  "contributors": [
+    {
+      "name": "Lennart Mischnaewski",
+      "email": "lenmisch@gmail.com"
+    },
+    {
+      "name": "Hoebelt Hoebelt",
+      "email": "de-hoebelt@t-online.de"
+    },
+    {
+      "name": "Alexander Sinkovic"
+    },
+    {
+      "name": "Nico Kunz"
+    },
+    {
+      "name": "Leonidas Petri"
+    }
+  ],
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
+    "@types/jest": "^26.0.15",
+    "@types/node": "^12.0.0",
+    "@types/react": "^16.9.53",
+    "@types/react-dom": "^16.9.8",
+    "@types/react-router-dom": "^5.1.6",
     "cross-env": "^7.0.3",
     "electron-is-dev": "^1.2.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-force-graph-2d": "^1.18.1",
+    "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
+    "rsuite": "^4.8.6",
+    "typescript": "^4.0.3",
     "web-vitals": "^0.2.4"
   },
   "homepage": "./",
-  "main": "public/electron.js",
+  "main": "build/electron/main.js",
   "scripts": {
     "react-start": "react-scripts start",
     "react-build": "react-scripts build",
     "react-test": "react-scripts test",
     "react-eject": "react-scripts eject",
     "electron-build": "electron-builder",
-    "build": "yarn react-build && yarn electron-build",
-    "start": "concurrently \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\""
+    "build": "yarn react-build && tsc -p electron && yarn electron-build",
+    "start": "tsc -p electron && concurrently \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\""
+  },
+  "build": {
+    "extends": null,
+    "files": [
+      "./build/**/*"
+    ],
+    "linux": {
+      "icon": "../public/icon.png",
+      "category": "Science"
+    },
+    "win": {
+      "icon": "..\\public\\icon.png"
+    }
   },
   "eslintConfig": {
     "extends": [
