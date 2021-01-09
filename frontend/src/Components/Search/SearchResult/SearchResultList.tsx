@@ -1,14 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import './styles/SearchResultList.css';
 import SearchResultCard from "./SearchResultCard";
-
-type data = {
-    id: number;
-    title: string,
-    authors: {name: string, ids:number[]}[],
-    year: number,
-    paperAbstract: string
-}
+import DataInterface from './Types'
 
 type ResultListProps = {
     query: string,
@@ -16,7 +9,7 @@ type ResultListProps = {
 }
 
 const SearchResultList : React.FC<ResultListProps> = (props) => {
-    const [searchResults, setSearchResults] = useState<data[]>();
+    const [searchResults, setSearchResults] = useState<DataInterface[]>();
     const [lastSelected, setLastHighlighted] = useState<number>();
 
     /**
@@ -59,6 +52,7 @@ const SearchResultList : React.FC<ResultListProps> = (props) => {
         fetch(requestURL)
             .then(res => res.json())
             .then(result => setSearchResults(result.data));
+        console.log(searchResults);
     }, [props.query]);
 
     
@@ -66,7 +60,7 @@ const SearchResultList : React.FC<ResultListProps> = (props) => {
         <div id="list" className="resultList">
             {
                 // short-circuit eval, if searchResults null don't render
-                searchResults != null && searchResults.map((entry: data, index: number) => {
+                searchResults != null && searchResults.map((entry: DataInterface, index: number) => {
                     return <SearchResultCard highlightCard={highlightCard} func={props.func} key={entry.id} dataKey={index} data={entry}/>
                 })
             }

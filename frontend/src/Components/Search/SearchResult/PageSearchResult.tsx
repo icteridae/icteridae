@@ -1,11 +1,12 @@
 import React, {useState} from 'react';
-import './styles/PageSearchResult.css'
+import './styles/PageSearchResult.css';
 import SearchResultList from "./SearchResultList";
+import DataInterface from "./Types";
 
 const query: string = "Dies ist eins query";
 
 const PageSearchResult = () => {
-    const [selected, setSelected] = useState<data>();
+    const [selected, setSelected] = useState<DataInterface>();
 
     return (
         <div className="pageSearchResult">
@@ -20,17 +21,8 @@ const PageSearchResult = () => {
     );
 }
 
-type data = {
-    id: number;
-    title: string,
-    authors: {name: string, ids:number[]}[],
-    fieldsOfStudy: Array<string>,
-    year: number,
-    paperAbstract: string
-}
 
-
-const AbstractView : React.FC<{selected: data}> = (props) => {
+const AbstractView : React.FC<{selected: DataInterface}> = (props) => {
     return(
         <div className="abstractView">
             {(props.selected != null) && <h1>{props.selected.title}</h1>}
