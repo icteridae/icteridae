@@ -124,7 +124,7 @@ const getCategories = () =>{
     return cat;
 }
 
-const genGraph = (N:number) => {
+const genGraph = (N:any) => {
     return ({
         nodes: getCategories().map(id => ({
             id: id,
@@ -148,8 +148,8 @@ const genGraph = (N:number) => {
 }
 
 export const Graph: React.FC = () => {
-    const [state, setState] = React.useState<graph>(genGraph(1));
     const [dummyState, setDummyState] = React.useState(undefined);
+    const [state, setState] = React.useState<graph>(genGraph(dummyState));
     React.useEffect(() => {
             fetch("127.0.0.1:8000")
                 .then(res => res.json())
