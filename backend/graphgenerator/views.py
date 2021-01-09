@@ -59,7 +59,8 @@ def search(request):
     max_pages = (len(data)-1)//pagesize
     
     page = request.query_params.get('page', '0')
-    if not page.isnumeric() or int(page) >= max_pages:
+    print(page, max_pages)
+    if not page.isnumeric() or int(page) > max_pages:
         return http.HttpResponseBadRequest('invalid page number.')
     page = int(page)
     
