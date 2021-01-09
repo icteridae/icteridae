@@ -5,7 +5,7 @@ import SearchResultList from "./SearchResultList";
 const query: string = "Dies ist eins query";
 
 const PageSearchResult = () => {
-    const [selected, setSelected] = useState<{title: string, paperAbstract: string}>();
+    const [selected, setSelected] = useState<data>();
 
     return (
         <div className="pageSearchResult">
@@ -20,11 +20,20 @@ const PageSearchResult = () => {
     );
 }
 
+type data = {
+    id: number;
+    title: string,
+    authors: {name: string, ids:number[]}[],
+    year: number,
+    paperAbstract: string
+}
 
-const AbstractView : React.FC<{selected: {title: string, paperAbstract: string}}> = (props) => {
+
+const AbstractView : React.FC<{selected: data}> = (props) => {
     return(
         <div className="abstractView">
             {(props.selected != null) && <h1>{props.selected.title}</h1>}
+            <h3>{props.selected.authors.map(obj => obj.name).join(", ")}</h3>
             {(props.selected != null) && props.selected.paperAbstract}
         </div>
     );
