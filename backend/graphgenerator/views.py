@@ -72,7 +72,7 @@ def generate_graph(request):
     finds relevant papers
     generates a tensor with paper similarities of relevant papers
 
-    request needs to have 'papier_id':any field
+    request needs to have 'paper_id':any field
     """
 
 
