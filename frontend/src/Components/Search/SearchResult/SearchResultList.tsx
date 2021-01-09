@@ -20,7 +20,7 @@ const dummy = {
 
 type ResultListProps = {
     query: string,
-    func: Function,
+    func: Function
 }
 
 const SearchResultList : React.FC<ResultListProps> = (props) => {
