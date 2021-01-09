@@ -43,13 +43,27 @@ def search(request):
 
     request needs to have 'query':str field
     """
+
+    # TODO: perform search
+    data = dummy_data
+
     query = request.query_params.get('query', None)
     if query is None:
-        return http.HttpResponseBadRequest('No query supplied')
-    page = request.query_params.get('page', 1)
-    pagesize = request.query_params.get('pagesize', 20)
+        return http.HttpResponseBadRequest('no query supplied.')
 
-    return http.JsonResponse({'data': dummy_data, 'max_pages': (len(dummy_data)-1)//pagesize + 1}, safe=False)
+    pagesize = request.query_params.get('pagesize', '20')
+    if not pagesize.isnumeric() or int(pagesize) < 1:
+        return http.HttpResponseBadRequest('invalid page size.')
+    pagesize = int(pagesize)
+
+    max_pages = (len(data)-1)//pagesize
+    
+    page = request.query_params.get('page', '0')
+    if not page.isnumeric() or int(page) >= max_pages:
+        return http.HttpResponseBadRequest('invalid page number.')
+    page = int(page)
+    
+    return http.JsonResponse({'data': data[pagesize * page: pagesize * (page+1)], 'max_pages': max_pages}, safe=False)
 
 
 @api_view(['GET'])
