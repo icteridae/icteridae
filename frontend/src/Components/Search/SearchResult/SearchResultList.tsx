@@ -52,7 +52,7 @@ const SearchResultList : React.FC<ResultListProps> = (props) => {
         fetch(requestURL)
             .then(res => res.json())
             .then(result => setSearchResults(result.data));
-        console.log(searchResults);
+            console.log(searchResults);
     }, [props.query]);
 
     

@@ -13,6 +13,8 @@ interface DataInterface {
     authors: {name: string, ids:number[]}[];
     year: number;
     fieldsOfStudy: Array<string>;
+    inCitations: Array<string>;
+    outCitations: Array<string>;
     paperAbstract: string;
 }
 

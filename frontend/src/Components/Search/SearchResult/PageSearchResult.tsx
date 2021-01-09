@@ -29,6 +29,7 @@ const AbstractView : React.FC<{selected: DataInterface}> = (props) => {
             <h3>{props.selected.authors.map(obj => obj.name).join(", ")}</h3>
             <span>{props.selected.fieldsOfStudy.join(" ,")}</span>
             <span>{props.selected.year}</span>
+            <span>{"Citations: " + props.selected.inCitations.length + ", References: " + props.selected.outCitations.length}</span>
             {(props.selected.paperAbstract === "") ? "no Abstract available" : props.selected.paperAbstract}
         </div>
     );
