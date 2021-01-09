@@ -106,6 +106,8 @@ interface graph {
     links : {source: string, target: string, color: string, width?: number}[]
 }
 
+//const testData = fetch("127.0.0.1:8000").then(res => res.json()).then((result) => {} );
+
 const genArray = (N:number) => {
     let a = [];
     for (let i = 0; i < N; i++){
@@ -146,7 +148,13 @@ const genGraph = (N:number) => {
 }
 
 export const Graph: React.FC = () => {
-    const[state, setState] = React.useState<graph>(genGraph(1));
+    const [state, setState] = React.useState<graph>(genGraph(1));
+    const [dummyState, setDummyState] = React.useState(undefined);
+    React.useEffect(() => {
+            fetch("127.0.0.1:8000")
+                .then(res => res.json())
+                .then(setDummyState)
+        },[])
 
     return(
         <div>
