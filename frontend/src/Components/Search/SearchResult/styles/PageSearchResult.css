@@ -40,6 +40,8 @@
     font-family: "Segoe UI",Arial,sans-serif;
     font-weight: lighter;
     color: #96d4bc;
+    font-size: 40px;
+    line-height: inherit;
 }
 
 .abstractView h3 {
