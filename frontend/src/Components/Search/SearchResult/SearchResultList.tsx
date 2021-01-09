@@ -10,21 +10,13 @@ type data = {
     paperAbstract: string
 }
 
-const dummy = {
-    key: 0,
-    title: "",
-    authors: [{name: "", ids:null}],
-    year: 0,
-    paperAbstract: ""
-}
-
 type ResultListProps = {
     query: string,
     func: Function
 }
 
 const SearchResultList : React.FC<ResultListProps> = (props) => {
-    const [searchResults, setSearchResults] : any = useState([dummy]);
+    const [searchResults, setSearchResults] = useState<data[]>();
 
     // Effect hook for dynamically changing the height of the resultList and thus getting a scrollbar BECAUSE SCROLLBARS
     useEffect(() => {
@@ -58,16 +50,11 @@ const SearchResultList : React.FC<ResultListProps> = (props) => {
             .then(result => setSearchResults(result.data));
     }, [props.query]);
 
-
-    if(searchResults == null) {
-        return null;
-        //TODO: SPINNER
-    }
-
     return (
         <div id="list" className="resultList">
             {
-                searchResults.map((entry: data) => {
+                // short-circuit eval, if searchResults null don't render
+                searchResults != null && searchResults.map((entry: data) => {
                     return <SearchResultCard func={props.func} key={entry.id} data={entry}/>
                 })
             }
