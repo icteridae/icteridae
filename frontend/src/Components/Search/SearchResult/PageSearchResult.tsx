@@ -14,11 +14,18 @@ const PageSearchResult = () => {
             </div>
             <div className="wrapper">
                 <SearchResultList query={query} func={setSelected}/>
-                <div className="abstractView">
-                    {(selected != null) && <h1>{selected.title}</h1>}
-                    {(selected != null) && selected.paperAbstract}
-                </div>
+                {(selected != null) && <AbstractView selected={selected}/>}
             </div>
+        </div>
+    );
+}
+
+
+const AbstractView : React.FC<{selected: {title: string, paperAbstract: string}}> = (props) => {
+    return(
+        <div className="abstractView">
+            {(props.selected != null) && <h1>{props.selected.title}</h1>}
+            {(props.selected != null) && props.selected.paperAbstract}
         </div>
     );
 }
