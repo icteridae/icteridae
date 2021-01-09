@@ -43,6 +43,10 @@
 }
 
 .abstractView h3 {
+    color: darkgray
+}
+
+.abstractView span {
     margin-bottom: 0.8em;
     color: darkgray
 }
