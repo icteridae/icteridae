@@ -1,5 +1,5 @@
 import * as React from 'react';
-import ForceGraph2D from 'react-force-graph-2d';
+import ForceGraph2D, {GraphData, NodeObject, LinkObject} from 'react-force-graph-2d';
 import {Button} from "rsuite";
 
 /*const myData = {
@@ -101,9 +101,29 @@ import {Button} from "rsuite";
     Similarities: list[obj : similarity_obj]
 },*/
 
-interface graph {
-    nodes : {id: string, name: string, color: string}[],
-    links : {source: string, target: string, color: string, width?: number}[]
+interface dummyData {
+    source: {
+        id : string,
+        title : string,
+        paperAbstract : string,
+        authors : {name: string, ids : string[]}[],
+        inCitations : string[],
+        outCitations : string[],
+        year : number,
+        s2Url : string,
+        sources : string[],
+        pdfUrls : string[],
+        venue : string,
+        journalName : string,
+        journalVolume : string,
+        journalPages : string,
+        doi : string,
+        doiUrl : string,
+        pmid : string,
+        fieldsOfStudy : string[],
+        magId : string,
+        s2PdfUrl : string,
+        entities : string[]}[]
 }
 
 //const testData = fetch("127.0.0.1:8000").then(res => res.json()).then((result) => {} );
@@ -124,7 +144,7 @@ const getCategories = () =>{
     return cat;
 }
 
-const genGraph = (N:any) => {
+/*const genGraphOld = (N:number) => {
     return ({
         nodes: getCategories().map(id => ({
             id: id,
@@ -145,24 +165,57 @@ const genGraph = (N:any) => {
             color: "#FFFFFF"
         })))
     });
+}*/
+
+const genGraph = (data:dummyData) =>{
+    return ({
+            nodes: [({
+                id: "0",
+                name: "Origin",
+                color: "00FF00",
+            })].concat(data.source.map(id => ({
+                id: id.id,
+                name: id.title,
+                color: "#FF0000"
+            }))),
+            links: data.source.map(id => ({
+                source: "0",
+                target: id.id,
+                color: "FFFFFF"
+            }))
+        }
+    )
+
 }
 
-export const Graph: React.FC = () => {
-    const [dummyState, setDummyState] = React.useState(undefined);
-    const [state, setState] = React.useState<graph>(genGraph(dummyState));
+/*export const Graph: React.FC = () => {
+    const [dummyState, setDummyState] = React.useState<dummyData | any>(undefined);
+    const [state, setState] = React.useState<GraphData>(genGraph(dummyState));
     React.useEffect(() => {
             fetch("127.0.0.1:8000")
                 .then(res => res.json())
                 .then(setDummyState)
-        },[])
+        },[])*/ //Ablage
+
+export const Graph: React.FC = () => {
+    const [state, setState] = React.useState<GraphData>({nodes:[], links:[]});
+    React.useEffect(() => {
+            loadData();
+        },[]);
+    const loadData = async () => {
+        const response = await fetch("127.0.0.1:8000/api/generate-graph");
+        const data = await response.json();
+        setState(genGraph(data));
+        console.log(data.title);
+    }
 
     return(
         <div>
-            <Button onClick={() => setState(({nodes, links}) : graph =>
+            <Button onClick={() => setState(({nodes, links}) : GraphData =>
                 {const id = nodes.length;
                     return ({
-                        nodes: [...nodes, { id: id.toString(), name: id.toString(), color: "#FF0000" }],
-                        links: [...links, { source: id.toString(), target: getCategories()[Math.floor(Math.random()*3)], color: "#FFFFFF"}]
+                        nodes: [...nodes, ({ id: id.toString(), name: id.toString(), color: "#FF0000" } as NodeObject)],
+                        links: [...links, ({ source: id.toString(), target: getCategories()[Math.floor(Math.random()*3)], color: "#FFFFFF"} as LinkObject)]
                     });
                 })}>+1</Button>
             <Button onClick={() => setState(({nodes, links}) => ({
@@ -170,12 +223,12 @@ export const Graph: React.FC = () => {
                 links: links.slice(0,3)
             }))}>Reset</Button>
             <ForceGraph2D graphData={state}
-                          onNodeClick={(node:any, e) => {
+                          onNodeClick={(node, e) => {
                               e.preventDefault();
-                              if (node.name === "1") {
+                              if (node.id === "1") {
                                   window.location.href = 'http://lenny.codes/'
                               } else {
-                                  alert(node.name)
+                                  alert(node.id)
                               }
                           }}
                           linkWidth="width"
