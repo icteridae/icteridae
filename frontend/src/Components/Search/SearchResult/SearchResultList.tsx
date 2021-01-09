@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import './styles/SearchResultList.css';
 import SearchResultCard from "./SearchResultCard";
 
@@ -17,6 +17,17 @@ type ResultListProps = {
 
 const SearchResultList : React.FC<ResultListProps> = (props) => {
     const [searchResults, setSearchResults] = useState<data[]>();
+    const [lastSelected, setLastHighlighted] = useState<number>();
+
+    /**
+     * Highlight a card with the given key and unhighlight the card that was last highlighted
+     * @param {number} key The data-key value of the card to be highlighted
+     */
+    function highlightCard(key: number) {
+        document.querySelector(`[data-key="${lastSelected}"]`)?.classList.remove("card-selected");
+        document.querySelector(`[data-key="${key}"]`)?.classList.add("card-selected");
+        setLastHighlighted(key);
+    }
 
     // Effect hook for dynamically changing the height of the resultList and thus getting a scrollbar BECAUSE SCROLLBARS
     useEffect(() => {
@@ -50,12 +61,13 @@ const SearchResultList : React.FC<ResultListProps> = (props) => {
             .then(result => setSearchResults(result.data));
     }, [props.query]);
 
+    
     return (
         <div id="list" className="resultList">
             {
                 // short-circuit eval, if searchResults null don't render
-                searchResults != null && searchResults.map((entry: data) => {
-                    return <SearchResultCard func={props.func} key={entry.id} data={entry}/>
+                searchResults != null && searchResults.map((entry: data, index: number) => {
+                    return <SearchResultCard highlightCard={highlightCard} func={props.func} key={entry.id} dataKey={index} data={entry}/>
                 })
             }
         </div>

@@ -8,7 +8,7 @@
     border-left: 6px outset #0F131A;
 }
 
-.searchResultCard:hover {
+.card-selected {
 
     border-left: 6px outset #61847D;
 }
