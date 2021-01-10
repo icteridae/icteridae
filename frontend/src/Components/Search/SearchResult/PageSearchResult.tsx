@@ -4,8 +4,6 @@ import SearchResultList from "./SearchResultList";
 import DataInterface from "./Types";
 import { useParams } from 'react-router-dom';
 
-const query: string = "Dies ist eins query";
-
 export const PageSearchResult : React.FC = () => {
     let {query} = useParams<{query: string}>(); 
     const [selected, setSelected] = useState<DataInterface>();
