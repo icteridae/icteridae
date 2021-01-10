@@ -1,25 +1,37 @@
 import json
 
 from .models import Paper, Author, FieldOfStudy, PdfUrl
-from django.db import transaction
+from django.db import transaction, connection
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank 
+
+# responsible for loading data into database
+
+# each line of data should correspond to a single paper json object
+# data can be split into multiple files. specify paths to files in PATHS attribute
+
+# file is optimized to work with a Postgresql database 
+# if using another type, querys may have to be modified
 
 PAPER_BATCH = 100000 # batch size of bulk inserts. increase for better performance, decrease for less RAM usage
 VERBOSE_COUNT = 17317 # Frequency of status output
-BREAK_POINT = 1000000 # Use reduced files for debugging. Otherwise set to None
+BREAK_POINT = 100000 # Use reduced files for debugging. Otherwise set to None
 PATHS = [f'result{i}.json'for i in range(2)] 
 
-paper_ids = set() # do not edit. used for citation validation
+paper_ids = set() # do not edit. used for more efficient citation validation
+# with large data, this may need a lot of random access memory
 
 def load_papers():
     """
-    Loads all papers and fields of study into database
+    loads all papers and fields of study into database
     """
     paper_ids.clear() # IDs are saved for citation validation
-
-    print('Deleting stored papers...')
-    Paper.objects.all().delete()
-    FieldOfStudy.objects.all().delete()
     
+    print('Deleting stored papers...')
+    cursor = connection.cursor()
+    
+    cursor.execute('TRUNCATE graphgenerator_fieldofstudy CASCADE;')
+    cursor.execute('TRUNCATE graphgenerator_paper CASCADE;')
+
     fields = set()
     
     print('Reading papers...')
@@ -58,15 +70,21 @@ def load_papers():
             Paper.objects.bulk_create(papers)
 
     FieldOfStudy.objects.bulk_create([FieldOfStudy(field=field) for field in fields])
-            
+
+    
+
+# time for 200000 entries:     
+# start: 14:36:15 ################################
+# end: 
 
 def load_authors():
     """
-    Loads all authors into database
+    loads all authors into database
     """
 
     print('Deleting stored authors...')
-    Author.objects.all().delete()
+    cursor = connection.cursor()
+    cursor.execute('TRUNCATE graphgenerator_author;')
     print('Reading authors (saving)...')
 
     for pathid, path in enumerate(PATHS):
@@ -95,7 +113,7 @@ def load_authors():
 
 def connect_authors():
     """
-    Connects all authors to respective paper
+    connects all authors to respective paper
     """
     print('Reading authors (connecting)...')
     models = []
@@ -128,8 +146,8 @@ def connect_authors():
 
 def connect_citations():
     """
-    Add citation relation to all papers in the dataset
-    Citations of papers not in the source data will not be included
+    add citation relation to all papers in the dataset
+    citations of papers not in the source data will not be included
     """
 
     print('Reading citations...')
@@ -168,12 +186,16 @@ def connect_citations():
         ThroughModel.objects.bulk_create(models, ignore_conflicts=True)
                 
 
+def create_search_index():
+    print('Creating vectors for search index...')
+    Paper.objects.update(search_vector=SearchVector('title', 'year', weight='A') + SearchVector('paperAbstract', weight='B')) 
 
 def load():
     load_papers()
     connect_citations()
     load_authors()
     connect_authors()
+    create_search_index()
     return
 
     
