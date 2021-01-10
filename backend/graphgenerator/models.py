@@ -1,5 +1,7 @@
 from django.db import models
 
+from django.contrib.postgres.search import SearchVectorField
+from django.contrib.postgres.indexes import GinIndex
 # Create your models here.
 
 class Paper(models.Model): # Independant
@@ -9,7 +11,7 @@ class Paper(models.Model): # Independant
 
     id = models.CharField(max_length=40, primary_key=True)
 
-    title = models.CharField(max_length=200) # TODO check max title length
+    title = models.CharField(max_length=400) # TODO check max title length
     paperAbstract = models.TextField(blank=True)
     
     authors = models.ManyToManyField('Author')
@@ -29,6 +31,11 @@ class Paper(models.Model): # Independant
     # magid # TODO
     # s2PdUrl # TODO
     # entities # TODO
+
+    search_vector = SearchVectorField(null=True, blank=True)
+
+    class Meta(object):
+        indexes = [GinIndex(fields=['search_vector'])]
 
 class Author(models.Model): # Independant
     name = models.CharField(max_length=200) 
