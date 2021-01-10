@@ -14,8 +14,7 @@ export const SearchBar: React.FC<SearchBarProps> = (props) => {
     let history = useHistory();
 
     const buttonClick = () => {
-        /** TODO: IMPLEMENT API-REQUEST WITH INPUT AS PARAMETER TO BACKEND ==> SHOWING RESULT-LIST **/
-        history.push(`results/${input}`);
+        history.push(`/results/${input}`);
     }
 
     return (

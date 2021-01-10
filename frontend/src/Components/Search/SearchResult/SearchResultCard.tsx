@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './styles/SearchResultCard.css';
 import DataInterface from './Types';
 
@@ -19,7 +20,9 @@ const SearchResultCard : React.FC<SearchResultCardProps> = (props) => {
                     props.highlightCard(props.dataKey);
                 }}
                 >
-                <h3 className="title"><a href="/">{props.data.title}</a></h3>
+                <h3 className="title">
+                    <Link to={`paper/${props.data.id}`}>{props.data.title}</Link>
+                </h3>
                 <span className="author">{props.data.authors.map(obj => obj.name).join(", ")}</span>
                 <span>{props.data.fieldsOfStudy.join(" ,")}</span>
                 <span className="date">{props.data.year}</span>
