@@ -51,7 +51,7 @@ const SearchResultList : React.FC<ResultListProps> = (props) => {
 
         fetch(requestURL)
             .then(res => res.json())
-            .then(result => setSearchResults(result.data));
+            .then(result => setSearchResults(result.data)).catch(() => console.log("Can't access " + requestURL));
     }, [props.query]);
 
     

@@ -11,7 +11,7 @@ import {PageSearchResult} from '../Search/SearchResult/PageSearchResult';
       <NavBarInstance appearance="subtle"/>
       <Switch>
           <Route exact path='/' component={FrontPage}/>
-          <Route exact path='/results' component={PageSearchResult}/>
+          <Route exact path='/results/:query' component={PageSearchResult}/>
           <Route exact path='/privacy' component={Privacy}/>
           <Route exact path='/Graph' component={Graph}/>
           {/* TODO: insert other routes. See paths in Navbar.tsx */}
