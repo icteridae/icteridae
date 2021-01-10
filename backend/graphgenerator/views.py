@@ -7,6 +7,10 @@ from rest_framework.decorators import api_view
 from .models import Paper
 from .serializers import PaperSerializer
 
+from django.contrib.postgres.search import TrigramSimilarity
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank 
+
+
 dummy_data = [{"id":"618bc3157edf07afd08eaba3d23c8bdfba7c4b84","title":"33 INVITED Combination of tyrosine kinase inhibitors, or monoclonal antibodies, with radiotherapy and chemotherapy","paperAbstract":"","authors":[{"name":"M. J. Ratain","ids":["3505532"]}],"inCitations":[],"outCitations":[],"year":2006,"s2Url":"https://semanticscholar.org/paper/618bc3157edf07afd08eaba3d23c8bdfba7c4b84","sources":[],"pdfUrls":[],"venue":"","journalName":"Ejc Supplements","journalVolume":"4","journalPages":"14","doi":"10.1016/S1359-6349(06)70039-8","doiUrl":"https://doi.org/10.1016/S1359-6349%2806%2970039-8","pmid":"","fieldsOfStudy":["Medicine"],"magId":"2032332581","s2PdfUrl":"","entities":[]},
 {"id":"d3ff20bc1a3bb222099ef652c65d494901620908","title":"Franklin, Bruce H (2010). War Stars. Guerra, ciencia ficción y hegemonía imperial. Buenos Aires: Final Abierto. Franklin, Bruce H (2009). Vietnam y las fantasías norteamericanas. Buenos Aires: Final Abierto.","paperAbstract":"","authors":[{"name":"Pablo  Francescutti","ids":["114162097"]}],"inCitations":["7f06236ff5178025b007a0169b662e17c0c97080","583deb28cfc856a725297d559c6246e0707fcb9c"],"outCitations":[],"year":2012,"s2Url":"https://semanticscholar.org/paper/d3ff20bc1a3bb222099ef652c65d494901620908","sources":[],"pdfUrls":[],"venue":"","journalName":"Papeles del CEIC: International Journal on Collective Identity Research","journalVolume":"2012","journalPages":"","doi":"","doiUrl":"","pmid":"","fieldsOfStudy":["Art"],"magId":"1586193067","s2PdfUrl":"","entities":[]},
 {"id":"705aef0d9386adb25aed4d3c5e16bd1ecb00ab3a","title":"A surgical experience of 1200 cases of penetrating brain wounds in battle, N. W. Europe, 1944-45.","paperAbstract":"","authors":[{"name":"J M SMALL","ids":["2619598"]},{"name":"E A TURNER","ids":["47282552"]}],"inCitations":["da23bd2a8453a81c76435db78c6cf76417561852","8e8802d1366e34b1bd0247803742764d25619d26","23241e4e1f60e8cd8b0c3673895c3222bec46fc5","fb752692153b9201c6c7a09066ecdb4224975345","1ac3946227aebbe0065b4a604c84b2cdec19330a","44fdf46e57c142abbcb46106fde35118ded92913","12d3c118c699b7d5b51024e5a2776ea52df3b87b","f1d52b2356c8c2906309c8dd91b8b86139fc4f19","241b15d57104d82fb3b3fca57792658511661971","33c5f963d4c1eccf775695dbd991c371320f4421","348c966cf96051ea314c7a55100d177e9a8372a1","6c1d2a3a1a460ff724372c66f65b3da0417a914f","8b2e9930a67be1a89b05a73751e10cc548759b6b","a37a1b4e45103fb58d319894dd3d344e6feb333d","1b3598b779f4b94e90b9c81b0106db193e07ec86","cec27376fb8450c673293657ab0d3acd57190d5a","e9ebcd31d6b954f9f3e8ce3e98c61146c3bf4631","6ec6ecc333c80168bc6cff4fcb49bed256fb69cf","cf9a9170b0364a24eb09725fad40c004eaa0c49a","590e5bf1d7dc61ca9a529c1ec3a6a54089d0ba4f","7ed1f60b5855d073977856e86100fb8872da9642","d7aa92efb7bd6d873ccc62c642e3e6ee1a428307","b3bc2f99ada713dcacf4808bdee8161c1ea3fb79","a82f4f914d3c8b16447317a351dde00fdf8922b7","f16400e1f0c8339607eff6ada438bc6e1bcaa163","79b99d75c89a829ba7e44aeaef901f545be5b2d2","0a430ada300a0cc1dd87585adbe8d6d38d743715","44cc2863d2a47f68e495ca2ca9ee1c7b03c57a8d","40f2963d4c44f889840cfd5564292679bad6211e","99900faea6b8031997c932d6bbf05c32dfd63765","7f56ead0e9d69553726e7ec0628d3277c102f9d4","c0faacb765356e6da2e7466e673c6582bfd26273"],"outCitations":[],"year":1947,"s2Url":"https://semanticscholar.org/paper/705aef0d9386adb25aed4d3c5e16bd1ecb00ab3a","sources":["Medline"],"pdfUrls":[],"venue":"The British journal of surgery","journalName":"The British journal of surgery","journalVolume":"55 Suppl 1","journalPages":"\n          62-74\n        ","doi":"","doiUrl":"","pmid":"18918450","fieldsOfStudy":["Medicine"],"magId":"2273784851","s2PdfUrl":"","entities":[]},
@@ -47,9 +51,6 @@ def search(request):
     request needs to have 'query':str field
     """
 
-    # TODO: perform search
-    data = dummy_data
-
     query = request.query_params.get('query', None)
     if query is None:
         return http.HttpResponseBadRequest('no query supplied.')
@@ -59,15 +60,29 @@ def search(request):
         return http.HttpResponseBadRequest('invalid page size.')
     pagesize = int(pagesize)
 
-    max_pages = (len(data)-1)//pagesize
+    search_query = SearchQuery(query)
+
+    search_result = Paper.objects.filter(search_vector=search_query).annotate(
+        rank = SearchRank(
+            'search_vector',
+            search_query
+        )
+    ).order_by('-rank')
+
+    max_pages = (search_result.count()-1)//pagesize
     
     page = request.query_params.get('page', '0')
-    print(page, max_pages)
     if not page.isnumeric() or int(page) > max_pages:
         return http.HttpResponseBadRequest('invalid page number.')
     page = int(page)
-    
-    return http.JsonResponse({'data': data[pagesize * page: pagesize * (page+1)], 'max_pages': max_pages}, safe=False)
+
+    #search_result = Paper.objects.annotate(
+    #    similarity=TrigramSimilarity('search_vector', query)
+    #).filter(similarity__gt=0.3).order_by('-similarity')[pagesize * page: pagesize * (page+1)]
+
+    #search_result = Paper.objects.filter(search_vector = search_query)[pagesize * page: pagesize * (page+1)]
+
+    return http.JsonResponse({'data': PaperSerializer(search_result[pagesize * page: pagesize * (page+1)], many=True).data, 'max_pages': max_pages}, safe=False)
 
 
 @api_view(['GET'])
