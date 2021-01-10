@@ -5,7 +5,7 @@ class PaperSerializer(serializers.ModelSerializer):
     outCitations = serializers.SerializerMethodField('getOutCitations')
 
     def getOutCitations(self, paper):
-        return [paper.id for paper in paper.paper_set.all()]
+        return [paper.id for paper in paper.outCitations.all()]
 
     class Meta:
         model = Paper

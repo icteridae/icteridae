@@ -13,7 +13,7 @@ class Paper(models.Model): # Independant
     paperAbstract = models.TextField(blank=True)
     
     authors = models.ManyToManyField('Author')
-    inCitations = models.ManyToManyField('self', symmetrical=False)
+    inCitations = models.ManyToManyField('self', symmetrical=False, related_name='outCitations')
     # outCitations probably not needed?
     year = models.IntegerField(null=True)
     s2Url = models.URLField()
