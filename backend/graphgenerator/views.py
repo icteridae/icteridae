@@ -1,15 +1,11 @@
-from django.shortcuts import render
-from django import http
 import json
 
+from django import http
+from django.contrib.postgres.search import SearchQuery, SearchRank  # , SearchVector,TrigramSimilarity
 from rest_framework.decorators import api_view
 
 from .models import Paper
 from .serializers import PaperSerializer
-
-from django.contrib.postgres.search import TrigramSimilarity
-from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank 
-
 
 dummy_data = [{"id":"618bc3157edf07afd08eaba3d23c8bdfba7c4b84","title":"33 INVITED Combination of tyrosine kinase inhibitors, or monoclonal antibodies, with radiotherapy and chemotherapy","paperAbstract":"","authors":[{"name":"M. J. Ratain","ids":["3505532"]}],"inCitations":[],"outCitations":[],"year":2006,"s2Url":"https://semanticscholar.org/paper/618bc3157edf07afd08eaba3d23c8bdfba7c4b84","sources":[],"pdfUrls":[],"venue":"","journalName":"Ejc Supplements","journalVolume":"4","journalPages":"14","doi":"10.1016/S1359-6349(06)70039-8","doiUrl":"https://doi.org/10.1016/S1359-6349%2806%2970039-8","pmid":"","fieldsOfStudy":["Medicine"],"magId":"2032332581","s2PdfUrl":"","entities":[]},
 {"id":"d3ff20bc1a3bb222099ef652c65d494901620908","title":"Franklin, Bruce H (2010). War Stars. Guerra, ciencia ficción y hegemonía imperial. Buenos Aires: Final Abierto. Franklin, Bruce H (2009). Vietnam y las fantasías norteamericanas. Buenos Aires: Final Abierto.","paperAbstract":"","authors":[{"name":"Pablo  Francescutti","ids":["114162097"]}],"inCitations":["7f06236ff5178025b007a0169b662e17c0c97080","583deb28cfc856a725297d559c6246e0707fcb9c"],"outCitations":[],"year":2012,"s2Url":"https://semanticscholar.org/paper/d3ff20bc1a3bb222099ef652c65d494901620908","sources":[],"pdfUrls":[],"venue":"","journalName":"Papeles del CEIC: International Journal on Collective Identity Research","journalVolume":"2012","journalPages":"","doi":"","doiUrl":"","pmid":"","fieldsOfStudy":["Art"],"magId":"1586193067","s2PdfUrl":"","entities":[]},
@@ -31,16 +27,18 @@ dummy_data = [{"id":"618bc3157edf07afd08eaba3d23c8bdfba7c4b84","title":"33 INVIT
 dummy_dict = {item['id']: item for item in dummy_data}
 
 dummy_similarities = [
-    {'name': 'O-Title Similarity',
-     'description': 'Similarity is |x-y|-1 where x,y are the occurences of the letter o in the respective titles',
-     'function': lambda x,y: abs(x['title'].count('o') - y['title'].count('o'))
+    {
+        'name': 'O-Title Similarity',
+        'description': 'Similarity is |x-y|-1 where x,y are the occurrences of the letter o in the respective titles',
+        'function': lambda x, y: abs(x['title'].count('o') - y['title'].count('o'))
     },
     {
-     'name': 'S-Title Similarity',
-     'description': 'Similarity is |x-y|-1 where x,y are the occurences of the letter s in the respective titles',
-     'function': lambda x,y: abs(x['title'].count('s') - y['title'].count('s'))
+        'name': 'S-Title Similarity',
+        'description': 'Similarity is |x-y|-1 where x,y are the occurrences of the letter s in the respective titles',
+        'function': lambda x, y: abs(x['title'].count('s') - y['title'].count('s'))
     }
 ]
+
 
 # Create your views here.
 @api_view(['GET'])
@@ -63,26 +61,33 @@ def search(request):
     search_query = SearchQuery(query)
 
     search_result = Paper.objects.filter(search_vector=search_query).annotate(
-        rank = SearchRank(
+        rank=SearchRank(
             'search_vector',
             search_query
         )
     ).order_by('-rank')
 
-    max_pages = (search_result.count()-1)//pagesize
-    
+    max_pages = (search_result.count() - 1) // pagesize
+
     page = request.query_params.get('page', '0')
     if not page.isnumeric() or int(page) > max_pages:
         return http.HttpResponseBadRequest('invalid page number.')
     page = int(page)
 
-    #search_result = Paper.objects.annotate(
+    # search_result = Paper.objects.annotate(
     #    similarity=TrigramSimilarity('search_vector', query)
-    #).filter(similarity__gt=0.3).order_by('-similarity')[pagesize * page: pagesize * (page+1)]
+    # ).filter(similarity__gt=0.3).order_by('-similarity')[pagesize * page: pagesize * (page+1)]
 
-    #search_result = Paper.objects.filter(search_vector = search_query)[pagesize * page: pagesize * (page+1)]
+    # search_result = Paper.objects.filter(search_vector = search_query)
+    # [pagesize * page: pagesize * (page+1)]
 
-    return http.JsonResponse({'data': PaperSerializer(search_result[pagesize * page: pagesize * (page+1)], many=True).data, 'max_pages': max_pages}, safe=False)
+    return http.JsonResponse(
+        {
+            'data': PaperSerializer(search_result[pagesize * page: pagesize * (page + 1)],
+                                    many=True).data,
+            'max_pages': max_pages
+        },
+        safe=False)
 
 
 @api_view(['GET'])
@@ -94,7 +99,6 @@ def generate_graph(request):
     request needs to have 'paper_id':any field
     """
 
-
     paper_id = request.query_params.get('paper_id', None)
     if paper_id not in dummy_dict:
         return http.HttpResponseBadRequest('Paper not found')
@@ -103,9 +107,10 @@ def generate_graph(request):
     similarities = [{'name': sim['name'], 'description': sim['description']} for sim in dummy_similarities]
     tensor = [[[sim['function'](p1, p2) for p2 in dummy_data] for p1 in dummy_data] for sim in dummy_similarities]
 
-    return http.JsonResponse({'tensor': tensor, 
+    return http.JsonResponse({'tensor': tensor,
                               'paper': papers,
                               'similarities': similarities})
+
 
 @api_view(['GET'])
 def get_paper(request):
