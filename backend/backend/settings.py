@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'backend',
     'graphgenerator',
+    'watson'
 ]
 
 MIDDLEWARE = [
@@ -53,6 +54,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'watson.middleware.SearchContextMiddleware'
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
