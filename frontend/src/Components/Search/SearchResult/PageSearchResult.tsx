@@ -5,7 +5,7 @@ import DataInterface from "./Types";
 
 const query: string = "Dies ist eins query";
 
-const PageSearchResult = () => {
+export const PageSearchResult : React.FC = () => {
     const [selected, setSelected] = useState<DataInterface>();
 
     return (
@@ -35,4 +35,3 @@ const AbstractView : React.FC<{selected: DataInterface}> = (props) => {
     );
 }
 
-export default PageSearchResult;
