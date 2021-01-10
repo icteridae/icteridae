@@ -10,14 +10,14 @@ type ResultListProps = {
 
 const SearchResultList : React.FC<ResultListProps> = (props) => {
     const [searchResults, setSearchResults] = useState<DataInterface[]>();
-    const [lastSelected, setLastHighlighted] = useState<number>();
+    const [lastHighlighted, setLastHighlighted] = useState<number>();
 
     /**
      * Highlight a card with the given key and unhighlight the card that was last highlighted
      * @param {number} key The data-key value of the card to be highlighted
      */
     function highlightCard(key: number) {
-        document.querySelector(`[data-key="${lastSelected}"]`)?.classList.remove("card-selected");
+        document.querySelector(`[data-key="${lastHighlighted}"]`)?.classList.remove("card-selected");
         document.querySelector(`[data-key="${key}"]`)?.classList.add("card-selected");
         setLastHighlighted(key);
     }

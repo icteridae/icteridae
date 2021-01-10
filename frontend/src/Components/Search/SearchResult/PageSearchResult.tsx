@@ -27,9 +27,9 @@ const AbstractView : React.FC<{selected: DataInterface}> = (props) => {
         <div className="abstractView">
             {(props.selected != null) && <h1>{props.selected.title}</h1>}
             <h3>{props.selected.authors.map(obj => obj.name).join(", ")}</h3>
-            <span>{props.selected.fieldsOfStudy.join(" ,")}</span>
-            <span>{props.selected.year}</span>
-            <span>{"Citations: " + props.selected.inCitations.length + ", References: " + props.selected.outCitations.length}</span>
+            <span className="fieldsOfStudy">{props.selected.fieldsOfStudy.join(" ,")}</span>
+            <span className="year">{props.selected.year}</span>
+            <span className="Citations">{"Citations: " + props.selected.inCitations.length + ", References: " + props.selected.outCitations.length}</span>
             {(props.selected.paperAbstract === "") ? "no Abstract available" : props.selected.paperAbstract}
         </div>
     );
