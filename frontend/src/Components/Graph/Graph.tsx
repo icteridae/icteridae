@@ -137,6 +137,10 @@ const genGraph = (data:papersAndSimilarities) =>{
  * @returns everything that is displayed under the Graph Tab
  */
 export const Graph: React.FC = () => {
+    {/**
+    ** Reference to the Graph used for TODO: insert Usage
+    */}
+    const fgRef = React.useRef();
     {/*
     ** useState Hook to save the graphData 
     */}
@@ -146,6 +150,9 @@ export const Graph: React.FC = () => {
     */}
     React.useEffect(() => {
             loadData();
+            const fg:any = fgRef.current;
+
+            fg.d3Force('center', null);
         },[]);
     {/*
     ** loadData fetches the graph_Data from the backend and saves the generated Graph in the State Hook graph
@@ -179,7 +186,8 @@ export const Graph: React.FC = () => {
              * ForceGraph2D renders the actual graph
              * For information on the attributes, pls visit: https://github.com/vasturiano/react-force-graph
              */}
-            <ForceGraph2D graphData={graph}
+            <ForceGraph2D ref = {fgRef}
+                          graphData={graph}
                           onNodeClick={(node, e) => {
                               e.preventDefault();
                               if (node.id === "1") {
@@ -191,7 +199,8 @@ export const Graph: React.FC = () => {
                           linkWidth="width"
                           linkCurvature="curvature"
                           linkDirectionalArrowLength="arrowLen"
-                          linkDirectionalParticles="dirParticles"/>
+                          linkDirectionalParticles="dirParticles"
+                          d3VelocityDecay={0.04}/>
         </div>
                           )
 }
