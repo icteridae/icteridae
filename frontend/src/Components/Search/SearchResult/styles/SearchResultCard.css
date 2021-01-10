@@ -3,12 +3,12 @@
     transition: 0.5s;
     border-radius: 6px;
     padding: 20px;
-    width: 80%;
+    width: 100%;
 
     border-left: 6px outset #0F131A;
 }
 
-.searchResultCard:hover {
+.card-selected {
 
     border-left: 6px outset #61847D;
 }
@@ -22,10 +22,9 @@
 .title {
     font-family: "Segoe UI",Arial,sans-serif;
     font-weight: lighter;
-    text-decoration: underline;
 }
 
-.author {
+.date {
     margin-bottom: 10px;
 }
 
@@ -34,3 +33,10 @@
     font-size: 16px;
 }
 
+a {
+    color: #96d4bc;
+}
+
+a:hover {
+    color:#A8DCC8;
+}
