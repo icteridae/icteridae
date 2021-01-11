@@ -16,8 +16,8 @@ from .models import Paper, Author, FieldOfStudy, PdfUrl
 # if using another type, querys may have to be modified
 
 PAPER_BATCH = 100000  # batch size of bulk inserts. increase for better performance, decrease for less RAM usage
-VERBOSE_COUNT = 17317  # Frequency of status output
-BREAK_POINT = 100000  # Use reduced files for debugging. Otherwise set to None
+VERBOSE_COUNT = 71317  # Frequency of status output
+BREAK_POINT = 1000000  # Use reduced files for debugging. Otherwise set to None
 PATHS = [f'result{i}.json' for i in range(2)]
 
 paper_ids = set()  # do not edit. used for more efficient citation validation
@@ -42,8 +42,8 @@ def load_papers():
     print('Reading papers...')
 
     for pathid, path in enumerate(PATHS):  # data can be split into multiple files
-        papers = []
         with open(path, 'r') as file:
+            papers = []
             for idx, line in enumerate(file):
 
                 if idx % VERBOSE_COUNT == 0: print(f'...(~{100 * idx / 2500000}%)', f'({pathid + 1}/{len(PATHS)})')
@@ -64,14 +64,12 @@ def load_papers():
                 for field in data['fieldsOfStudy']:
                     fields.add(field)
 
+                if idx == BREAK_POINT: break  # only read first BREAK_POINT lines. Use for debugging
+
                 if idx % PAPER_BATCH == 0:
-                    print('Pushing to database...')
                     Paper.objects.bulk_create(papers)
                     papers = []
 
-                if idx == BREAK_POINT: break  # only read first BREAK_POINT lines. Use for debugging
-
-            print('Pushing to database...')
             Paper.objects.bulk_create(papers)
 
     FieldOfStudy.objects.bulk_create([FieldOfStudy(field=field) for field in fields])
@@ -92,8 +90,8 @@ def load_authors():
     print('Reading authors (saving)...')
 
     for pathid, path in enumerate(PATHS):
-        authors = []
         with open(path) as file:
+            authors = []
             for idx, line in enumerate(file):
                 if idx % VERBOSE_COUNT == 0: print(f'...(~{100 * idx / 2311301}%)', f'({pathid + 1}/{len(PATHS)})')
 
@@ -104,15 +102,15 @@ def load_authors():
                     id=author['ids'][0] if len(author['ids']) > 0 else data['id']
                 ) for author in data['authors']])
 
+                if idx == BREAK_POINT: break
+
                 if idx % PAPER_BATCH == 0:
-                    print('Pushing to database...')
                     Author.objects.bulk_create(authors, ignore_conflicts=True)
                     authors = []
 
-                if idx == BREAK_POINT: break
 
-            print('Pushing to database...')
             Author.objects.bulk_create(authors, ignore_conflicts=True)
+
 
 
 def connect_authors():
@@ -120,13 +118,11 @@ def connect_authors():
     connects all authors to respective paper
     """
     print('Reading authors (connecting)...')
-    models = []
 
     ThroughModel = Paper.authors.through
     for pathid, path in enumerate(PATHS):
-        authors = []
         with open(path) as file:
-
+            models = []
             for idx, line in enumerate(file):
                 if idx % VERBOSE_COUNT == 0: print(f'...(~{100 * idx / 2311301}%)', f'({pathid + 1}/{len(PATHS)})')
 
@@ -138,14 +134,14 @@ def connect_authors():
                     for author in data['authors']
                 ])
 
+                if idx == BREAK_POINT: break
+
                 if idx % PAPER_BATCH == 0 and idx > 0:
                     print('Pushing to database...')
                     ThroughModel.objects.bulk_create(models, ignore_conflicts=True)
                     models = []
 
-                if idx == BREAK_POINT: break
-
-        ThroughModel.objects.bulk_create(models, ignore_conflicts=True)
+            ThroughModel.objects.bulk_create(models, ignore_conflicts=True)
 
 
 def connect_citations():
@@ -155,15 +151,14 @@ def connect_citations():
     """
 
     print('Reading citations...')
-    models = []
+    
 
     Paper.inCitations.through.objects.all().delete()  # delete previous data
     ThroughModel = Paper.inCitations.through  # through model allows for better performance
 
     for pathid, path in enumerate(PATHS):
-        authors = []
         with open(path) as file:
-
+            models = []
             for idx, line in enumerate(file):
                 if idx % VERBOSE_COUNT == 0: print(f'...(~{100 * idx / 2311301}%)', f'({pathid + 1}/{len(PATHS)})')
 
@@ -180,14 +175,14 @@ def connect_citations():
                     for outCitation in data['outCitations'] if outCitation in paper_ids
                 ])  # include citations in both directions
 
+                if idx == BREAK_POINT: break
+
                 if idx % PAPER_BATCH == 0 and idx > 0:
                     print('Pushing to database...')
                     ThroughModel.objects.bulk_create(models, ignore_conflicts=True)
                     models = []
 
-                if idx == BREAK_POINT: break
-
-        ThroughModel.objects.bulk_create(models, ignore_conflicts=True)
+            ThroughModel.objects.bulk_create(models, ignore_conflicts=True)
 
 
 def create_search_index():
