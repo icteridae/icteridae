@@ -2,6 +2,7 @@ import {Icon, Input, InputGroup} from "rsuite";
 
 import './SearchBar.css'
 import {useState} from "react";
+import { useHistory } from "react-router-dom";
 
 interface SearchBarProps {
     text?: string;
@@ -10,9 +11,10 @@ interface SearchBarProps {
 
 export const SearchBar: React.FC<SearchBarProps> = (props) => {
     const[input, setInput] = useState('');
+    let history = useHistory();
 
-    const ButtonClick = () => {
-        /** TODO: IMPLEMENT API-REQUEST WITH INPUT AS PARAMETER TO BACKEND ==> SHOWING RESULT-LIST **/
+    const buttonClick = () => {
+        history.push(`/results/${input}`);
     }
 
     return (
@@ -20,7 +22,7 @@ export const SearchBar: React.FC<SearchBarProps> = (props) => {
             {props.text? <><div className='text'>{props.text} </div> <br /></> : null}
             <InputGroup>
                 <Input placeholder={props.placeholder} onChange={(e) => setInput(e)}/>
-                <InputGroup.Button onClick={ButtonClick}>
+                <InputGroup.Button onClick={buttonClick}>
                     <Icon icon="search" />
                 </InputGroup.Button>
             </InputGroup>
