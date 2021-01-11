@@ -1,13 +1,19 @@
 import * as React from 'react';
-import ForceGraph2D, {GraphData, NodeObject, LinkObject} from 'react-force-graph-2d';
-import {Button} from "rsuite";
+import ForceGraph2D, {GraphData, LinkObject, NodeObject} from 'react-force-graph-2d';
+import {Button, Drawer} from "rsuite";
+import './Graph.css'
+
+interface GraphProps {
+    text?: string;
+    placeholder?: string;
+}
 
 /**
  * This interface characterizes a single Paper
  */
 interface paper {
     /** The unique ID of the paper */
-    id : string, 
+    id : string,
 
     /** The name of the paper */
     title : string,
@@ -81,7 +87,7 @@ interface similarity{
     description: string
 }
 
-/** 
+/**
  * Json structure of the Response from /api/generate_graph/
  */
 interface papersAndSimilarities{
@@ -113,13 +119,30 @@ const getCategories = () =>{
  */
 const genGraph = (data:papersAndSimilarities) =>{
     return ({
-            nodes: [({
-                id: "0",
-                name: "Origin",
-                color: "#00FF00",
-            })].concat(data.paper.map(id => ({
+            nodes: [(initNode
+            )].concat(data.paper.map(id => ({
                 id: id.id,
-                name: id.title,
+                title: id.title,
+                paperAbstract: id.paperAbstract,
+                authors: id.authors,
+                inCitations: id.inCitations,
+                outCitations: id.outCitations,
+                year: id.year,
+                s2Url: id.s2Url,
+                sources: id.sources,
+                pdfUrls: id.pdfUrls,
+                venue:id.venue,
+                journalName: id.journalName,
+                journalVolume: id.journalVolume,
+                journalPages: id.journalPages,
+                doi: id.doi,
+                doiUrl: id.doiUrl,
+                pmid: id.pmid,
+                fieldsOfStudy: id.fieldsOfStudy,
+                magId:id.magId,
+                s2PdfUrl: id.s2PdfUrl,
+                entities: id.entities,
+
                 color: "#FF0000"
             }))),
             links: data.paper.map(id => ({
@@ -132,28 +155,54 @@ const genGraph = (data:papersAndSimilarities) =>{
 
 }
 
+const initNode = {
+    id: "0",
+    title: "Origin",
+    paperAbstract: "",
+    authors: [{name: "John Glanz", "ids":["321534234"]}],
+    inCitations: [""],
+    outCitations: [""],
+    year: 2021,
+    s2Url: "",
+    sources: [""],
+    pdfUrls: [""],
+    venue: "",
+    journalName: "",
+    journalVolume: "",
+    journalPages: "",
+    doi: "",
+    doiUrl: "",
+    pmid: "",
+    fieldsOfStudy: [""],
+    magId: "",
+    s2PdfUrl: "",
+    entities: [""],
+
+    color: "#00FF00",
+}
+
 /**
  * main Method for generating the Graph
  * @returns everything that is displayed under the Graph Tab
  */
 export const Graph: React.FC = () => {
     {/**
-    ** Reference to the Graph used for TODO: insert Usage
-    */}
+     ** Reference to the Graph used for TODO: insert Usage
+     */}
     const fgRef = React.useRef();
     {/*
-    ** useState Hook to save the graphData 
+    ** useState Hook to save the graphData
     */}
     const [graph, setGraph] = React.useState<GraphData>({nodes:[], links:[]});
     {/*
     ** EffectHook for the initial Load of the graph
     */}
     React.useEffect(() => {
-            loadData();
-            const fg:any = fgRef.current;
+        loadData();
+        const fg:any = fgRef.current;
 
-            fg.d3Force('center', null);
-        },[]);
+        fg.d3Force('center', null);
+    },[]);
     {/*
     ** loadData fetches the graph_Data from the backend and saves the generated Graph in the State Hook graph
     */}
@@ -162,6 +211,8 @@ export const Graph: React.FC = () => {
         const data = await response.json();
         setGraph(genGraph(data));
     }
+    const[drawer, setDrawer] = React.useState(true);
+    const[selectedNode, setNode] = React.useState(initNode);
 
     return(
         <div>
@@ -169,12 +220,12 @@ export const Graph: React.FC = () => {
              * TODO: Delete
              */}
             <Button onClick={() => setGraph(({nodes, links}) : GraphData =>
-                {const id = nodes.length;
-                    return ({
-                        nodes: [...nodes, ({ id: id.toString(), name: id.toString(), color: "#FF0000" } as NodeObject)],
-                        links: [...links, ({ source: id.toString(), target: getCategories()[Math.floor(Math.random()*3)], color: "#FFFFFF"} as LinkObject)]
-                    });
-                })}>+1</Button>
+            {const id = nodes.length;
+                return ({
+                    nodes: [...nodes, ({ id: id.toString(), name: id.toString(), color: "#FF0000" } as NodeObject)],
+                    links: [...links, ({ source: id.toString(), target: getCategories()[Math.floor(Math.random()*3)], color: "#FFFFFF"} as LinkObject)]
+                });
+            })}>+1</Button>
             {/**
              * TODO: Delete
              */}
@@ -186,15 +237,45 @@ export const Graph: React.FC = () => {
              * ForceGraph2D renders the actual graph
              * For information on the attributes, pls visit: https://github.com/vasturiano/react-force-graph
              */}
+            <Drawer
+                show={drawer}
+                backdrop={false}
+                onHide={() => {setDrawer(false)}}
+            >
+                <Drawer.Header>
+                    <Drawer.Title>
+                        {selectedNode.title}
+                    </Drawer.Title>
+                </Drawer.Header>
+                <Drawer.Body>
+                    <p>
+                        <Button color="cyan" appearance="ghost" onClick={() => (window.open(selectedNode.s2Url))}>
+                            Open in Semantic Scholar
+                        </Button>
+                    </p>
+                    <p style={{color:"grey"}}>{selectedNode.year}{selectedNode.authors.map(author => <>, {author.name}</>)}
+                        <br/>Field: {selectedNode.fieldsOfStudy.map(field => <> {field}</>)}
+                    </p>
+                    <p>{selectedNode.paperAbstract}</p>
+                </Drawer.Body>
+                <Drawer.Footer>
+
+                </Drawer.Footer>
+            </Drawer>
             <ForceGraph2D ref = {fgRef}
                           graphData={graph}
-                          onNodeClick={(node, e) => {
+                          onNodeClick={(node:any, e) => {
                               e.preventDefault();
-                              if (node.id === "1") {
-                                  window.location.href = 'http://lenny.codes/'
+                              if (node.id === selectedNode.id) {
+                                  setDrawer(!drawer)
                               } else {
-                                  alert(node.id)
+                                  setNode(node)
+                                  setDrawer(true)
                               }
+                          }}
+                          onBackgroundClick={(e) => {
+                              e.preventDefault()
+                              setDrawer(false)
                           }}
                           linkWidth="width"
                           linkCurvature="curvature"
@@ -202,5 +283,5 @@ export const Graph: React.FC = () => {
                           linkDirectionalParticles="dirParticles"
                           d3VelocityDecay={0.04}/>
         </div>
-                          )
+    )
 }
