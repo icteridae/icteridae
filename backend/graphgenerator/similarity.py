@@ -27,7 +27,8 @@ class STitleSimilarity(PairwiseSimilarity):
     description = 'Similarity is |x-y|-1 where x,y are the occurrences of the letter s in the respective titles'
 
     def similarity(self, p1: Paper, p2: Paper):
-        return abs(p1.title.count('s') - p2.title.count('s'))
+        return 10 - abs(p1.title.count('s') - p2.title.count('s'))
+
 
 class OTitleSimilarity(PairwiseSimilarity):
 
@@ -35,6 +36,16 @@ class OTitleSimilarity(PairwiseSimilarity):
     description = 'Similarity is |x-y|-1 where x,y are the occurrences of the letter o in the respective titles'
 
     def similarity(self, p1: Paper, p2: Paper):
-        return abs(p1.title.count('o') - p2.title.count('o'))
+        return 10 - abs(p1.title.count('o') - p2.title.count('o'))
 
-USING_SIMILARITIES = [STitleSimilarity, OTitleSimilarity]
+
+class YearSimilarity(PairwiseSimilarity):
+
+    name = 'Year Similarity'
+    description = 'Similarity is larger as papers are released closer to each other'
+
+    def similarity(self, p1: Paper, p2: Paper):
+        return (50 - abs(p1.year - p2.year)) / 5
+
+
+USING_SIMILARITIES = [STitleSimilarity, OTitleSimilarity, YearSimilarity]
