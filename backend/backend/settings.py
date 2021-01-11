@@ -88,9 +88,9 @@ DATABASES = {
 
         'NAME': 'icteridae',
 
-        'USER': 'postgres',
+        'USER': 'icteridae',
 
-        'PASSWORD': 'icteridae',
+        'PASSWORD': 'bp62',
 
         'HOST': 'localhost',
 
