@@ -122,7 +122,7 @@ const genGraph = (data:papersAndSimilarities) =>{
                 name: id.title,
                 color: "#FF0000"
             }))),
-            links: data.paper.map(id => ({
+            links: data.paper.map(id => /*tensor[0].map(paper1 => paper1[0]*/({
                 source: "0",
                 target: id.id,
                 color: "#FFFFFF"
@@ -145,6 +145,7 @@ export const Graph: React.FC = () => {
     ** useState Hook to save the graphData 
     */}
     const [graph, setGraph] = React.useState<GraphData>({nodes:[], links:[]});
+    const [tensor, setTensor] = React.useState<number[][][]>();
     {/*
     ** EffectHook for the initial Load of the graph
     */}
@@ -152,7 +153,10 @@ export const Graph: React.FC = () => {
             loadData();
             const fg:any = fgRef.current;
 
-            fg.d3Force('center', null);
+            //fg.d3Force('center', null);
+            // TODO: insert Function that uses Tensor instead of Math.random()
+            fg.d3Force("link").iterations(1).distance(() => Math.random() * 100 + 30);
+            
         },[]);
     {/*
     ** loadData fetches the graph_Data from the backend and saves the generated Graph in the State Hook graph
@@ -160,6 +164,7 @@ export const Graph: React.FC = () => {
     const loadData = async () => {
         const response = await fetch("http://127.0.0.1:8000/api/generate_graph/?paper_id=d3ff20bc1a3bb222099ef652c65d494901620908");
         const data = await response.json();
+        setTensor(data);
         setGraph(genGraph(data));
     }
 
