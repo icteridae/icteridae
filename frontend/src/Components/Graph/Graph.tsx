@@ -3,11 +3,6 @@ import ForceGraph2D, {GraphData, LinkObject, NodeObject} from 'react-force-graph
 import {Button, Drawer} from "rsuite";
 import './Graph.css'
 
-interface GraphProps {
-    text?: string;
-    placeholder?: string;
-}
-
 /**
  * This interface characterizes a single Paper
  */
@@ -249,7 +244,7 @@ export const Graph: React.FC = () => {
                 </Drawer.Header>
                 <Drawer.Body>
                     <p>
-                        <Button color="cyan" appearance="ghost" onClick={() => (window.open(selectedNode.s2Url))}>
+                        <Button color="cyan" appearance="ghost" href={selectedNode.s2Url} target="_blank">
                             Open in Semantic Scholar
                         </Button>
                     </p>
@@ -277,6 +272,7 @@ export const Graph: React.FC = () => {
                               e.preventDefault()
                               setDrawer(false)
                           }}
+                          nodeLabel="title"
                           linkWidth="width"
                           linkCurvature="curvature"
                           linkDirectionalArrowLength="arrowLen"
