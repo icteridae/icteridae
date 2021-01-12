@@ -138,7 +138,7 @@ const genGraph = (data:papersAndSimilarities) =>{
                 s2PdfUrl: id.s2PdfUrl,
                 entities: id.entities,
 
-                color: "#FF0000"
+                color: ""
             }))),
             links: data.paper.map(id => ({
                 source: "0",
@@ -157,8 +157,8 @@ const initNode = {
     title: "Origin",
     paperAbstract: "",
     authors: [{name: "John Glanz", "ids":["321534234"]}],
-    inCitations: [""],
-    outCitations: [""],
+    inCitations: ["asdasd", "aisdingk"],
+    outCitations: ["fadg"],
     year: 2021,
     s2Url: "",
     sources: [""],
@@ -170,12 +170,12 @@ const initNode = {
     doi: "",
     doiUrl: "",
     pmid: "",
-    fieldsOfStudy: [""],
+    fieldsOfStudy: ["Materials Science"],
     magId: "",
     s2PdfUrl: "",
     entities: [""],
 
-    color: "#00FF00",
+    color: "",
 }
 
 /**
@@ -256,7 +256,8 @@ export const Graph: React.FC = () => {
                         </Button>
                     </p>
                     <p style={{color:"grey"}}>{selectedNode.year}{selectedNode.authors.map(author => <>, {author.name}</>)}
-                        <br/>Field: {selectedNode.fieldsOfStudy.map(field => <> {field}</>)}
+                        <br/> Citations: {selectedNode.inCitations.length}, References: {selectedNode.outCitations.length}
+                        <br/><p style={{color:selectedNode.color}}>Field: {selectedNode.fieldsOfStudy.map(field => <> {field}</>)} </p>
                     </p>
                     <p>{selectedNode.paperAbstract}</p>
                 </Drawer.Body>
@@ -283,6 +284,7 @@ export const Graph: React.FC = () => {
                               e.preventDefault()
                               setDrawer(false)
                           }}
+                          nodeAutoColorBy="fieldsOfStudy"
                           nodeLabel="title"
                           linkWidth="width"
                           linkCurvature="curvature"
