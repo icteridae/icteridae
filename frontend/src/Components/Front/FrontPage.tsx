@@ -30,16 +30,11 @@ export const FrontPage: React.FC = () => {
     } ,[]);
 
     function OverweriteRecentPapers() {
-        let testData : Array<string> = ["fffff7a0aeb935156d1ab28746b271cb1113f364",
-            "ffffcd18f22c6a876e361f1eb8283d7a0f6bf74d",
-            "ffffc95b7b1e4face20fdc6b1783c46a99681f50",
-            "ffffc7ff61c975683e76530d3aec53f2a0443b7e",
-            "ffffaad09a2adfde45e259af41dd3e4eab941541",
-            "ffff9fbc334a7c05e0d6f0c2b169aa03c822dfe0",
-            "ffff9c6a01a1ee28c7be84debd99478261503c45",
-            "ffff911f5d5705f9152de1f7701c7c9174f7d552",
-            "ffff8a102dd06527f0fed80a7df7b4333595ba90",
-            "ffff7933cdb5fe0e75579cd9fad08b6dbe8b56d6"];
+        let testData : Array<string> = ["6f0cde1483ec8317021e67bef2d07d99f3f6af62",
+            "a18a66068cf4f6db749293db0aba21a852b0aa56",
+            "fa9ad2f5d6fbc88815eb01ee7136cad0a599709a",
+            "1d1825e95afae6bdfad17a34d267bf3b09d52195",
+            "9801a956fba18683644cd26d9a4b83d6006f7937"];
         SetPaperIds(testData);
         setRecentPapers(testData);
     }
