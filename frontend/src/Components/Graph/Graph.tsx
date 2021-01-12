@@ -149,7 +149,9 @@ const genGraph = (data:papersAndSimilarities) =>{
     )
 
 }
-
+/**
+ * TODO: delete + set correct origin node
+ */
 const initNode = {
     id: "0",
     title: "Origin",
@@ -206,7 +208,13 @@ export const Graph: React.FC = () => {
         const data = await response.json();
         setGraph(genGraph(data));
     }
+    {/*
+    ** set whether the drawer is shown or hidden
+    */}
     const[drawer, setDrawer] = React.useState(true);
+    {/*
+    ** selected Node to display on drawer
+    */}
     const[selectedNode, setNode] = React.useState(initNode);
 
     return(
@@ -229,8 +237,7 @@ export const Graph: React.FC = () => {
                 links: links.slice(0,3)
             }))}>Reset</Button>
             {/**
-             * ForceGraph2D renders the actual graph
-             * For information on the attributes, pls visit: https://github.com/vasturiano/react-force-graph
+             * Drawer displays paper meta data
              */}
             <Drawer
                 show={drawer}
@@ -257,6 +264,10 @@ export const Graph: React.FC = () => {
 
                 </Drawer.Footer>
             </Drawer>
+            {/**
+             * ForceGraph2D renders the actual graph
+             * For information on the attributes, pls visit: https://github.com/vasturiano/react-force-graph
+             */}
             <ForceGraph2D ref = {fgRef}
                           graphData={graph}
                           onNodeClick={(node:any, e) => {
