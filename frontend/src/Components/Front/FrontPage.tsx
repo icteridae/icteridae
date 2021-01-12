@@ -5,11 +5,19 @@ import './FrontPage.css'
 import logo from '../../icon.png'
 import {getRecentPapers, setRecentPapers} from "../../Utils/Webstorage";
 
-
-
+/**
+ * Frontpage is shown when the user the Web-Application. If exists it shows the recently opened papers
+ * @returns the front/Search page
+ */
 export const FrontPage: React.FC = () => {
+
     const [RecentPaper, SetRecentPaper] = useState<Array<CardProps>>();
     const [PaperIds, SetPaperIds] = useState<Array<string>>(getRecentPapers());
+
+    /**
+     * Initial effect hook for loading the recently open papers from the localstorage.
+     * The loaded ids are send to the backend which returns the metadata from the papers
+     */
     React.useEffect(() =>{
         let BaseRequestURL = 'http://127.0.0.1:8000/api/paper/?paper_id='
         const max : number = (PaperIds?.length>10 ? 10 : PaperIds?.length);
@@ -29,6 +37,9 @@ export const FrontPage: React.FC = () => {
 
     } ,[]);
 
+    /**
+     * Temporary function for storing paper_ids
+     */
     function OverweriteRecentPapers() {
         let testData : Array<string> = ["6f0cde1483ec8317021e67bef2d07d99f3f6af62",
             "a18a66068cf4f6db749293db0aba21a852b0aa56",
@@ -48,8 +59,10 @@ export const FrontPage: React.FC = () => {
         <div className="Searching">
             <SearchBar placeholder="Search for your Papers!"/>
         </div>
+        {/* Temprorary Button for the temp function*/}
         <button onClick={() => OverweriteRecentPapers()}>Ich bin nen Knopf </button>
-        {(RecentPaper) &&
+        {/* If there couldn't be loaded any recent paper or there aren't recent Paper the Suggestion class is not rendered*/}
+        {(RecentPaper && RecentPaper[0]) &&
         <div className="Suggestions">
             <u>
                 <div className="Title">Recently opened Papers:</div>
