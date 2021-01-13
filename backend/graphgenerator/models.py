@@ -10,6 +10,7 @@ from django.db import models
 
 from django.contrib.postgres.search import SearchVectorField
 from django.contrib.postgres.indexes import GinIndex
+from django.contrib.postgres.fields import ArrayField
 
 
 # Create your models here.
@@ -35,6 +36,7 @@ class Paper(models.Model):  # Independent
     # journalVolume # TODO
     # journalPages # TODO
     # doi # TODO
+    pdfUrl = ArrayField(base_field=models.URLField(), default=list)
     doiUrl = models.URLField(null=True)
     # pmid # TODO
     fieldsOfStudy = models.ManyToManyField('FieldOfStudy')
@@ -45,7 +47,8 @@ class Paper(models.Model):  # Independent
     search_vector = SearchVectorField(null=True, blank=True)  # Used for increased search performance. Do not edit
 
     class Meta(object):
-        indexes = [GinIndex(fields=['search_vector'])]
+        indexes = [GinIndex(fields=['search_vector']),
+                   GinIndex(name='graph_paper_ln_gin_idx', fields=['title'], opclasses=['gin_trgm_ops'])]
 
 
 class Author(models.Model):  # Independent
@@ -61,11 +64,3 @@ class FieldOfStudy(models.Model):  # Independent
 
     def __str__(self):
         return self.field
-
-
-class PdfUrl(models.Model):  # Dependant on Paper
-    url = models.URLField()
-    paper = models.ForeignKey(Paper, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.url
