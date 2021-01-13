@@ -1,82 +1,93 @@
 import React, {useEffect, useState} from 'react';
-import {SearchBar} from "../Search/SearchBar/SearchBar";
+
 import {Card, CardProps} from "./Card/Card";
+import {SearchBar} from "../Search/SearchBar/SearchBar";
+import {getRecentPapers, setRecentPapers} from "../../Utils/Webstorage";
+import Config from '../../Utils/Config'
+
 import './FrontPage.css'
 import logo from '../../icon.png'
-import {getRecentPapers, setRecentPapers} from "../../Utils/Webstorage";
-
 /**
  * Frontpage is shown when the user the Web-Application. If exists it shows the recently opened papers
  * @returns the front/Search page
  */
 export const FrontPage: React.FC = () => {
-
-    const [RecentPaper, SetRecentPaper] = useState<Array<CardProps>>();
-    const [PaperIds, SetPaperIds] = useState<Array<string>>(getRecentPapers());
+    const [recentlyOpenedPapers, setRecentlyOpenedPapers] = useState<Array<PaperData>>([]);
+    const [paperIds, setPaperIds] = useState<Array<string>>(getRecentPapers());
 
     /**
      * Initial effect hook for loading the recently open papers from the localstorage.
      * The loaded ids are send to the backend which returns the metadata from the papers
      */
-    React.useEffect(() =>{
-        let BaseRequestURL = 'http://127.0.0.1:8000/api/paper/?paper_id='
-        const max : number = (PaperIds?.length>10 ? 10 : PaperIds?.length);
-        let papers: Array<CardProps> = new Array<CardProps>(max);
-        for (let i= max-1; i>-1; i--) {
-            fetch(BaseRequestURL + PaperIds[i])
+    useEffect(() => {
+        const baseURL : string = Config.base_url;
+        const paperIDs = getRecentPapers();
+        
+        //capped at 10 papers max, if paperIds == null, zero papers will be loaded
+        const numberOfPapers : number = (paperIDs == null) ? 0 : Math.min(paperIds.length, 10);
+        let papers: Array<PaperData> = new Array<PaperData>(numberOfPapers);
+        
+        // fetch all papers
+        let promises = [];
+        for (let i = numberOfPapers-1; i > -1; i--) {
+            promises.push(fetch(baseURL +"/api/paper/?paper_id=" + paperIDs[i])
                 .then(res => res.json())
                 .then(res => {
-                    let t = JSON.parse(res.getItem("title")) as string;
-                    let y = JSON.parse(res.getItem("year")) as string;
-                    let a = JSON.parse(res.getItem("authors")) as Array<string>;
-                    let pap : CardProps = {title: t, year:y, authors: a, link:'/graph/'};
-                    papers[i] = pap;
+                    papers[i] = {...res, link: "/graph"};
                 })
+            )
         }
-        SetRecentPaper(papers);
-
-    } ,[]);
+        
+        // set paperIds and recentlyOpenedPapers once all promises succeed
+        Promise.all(promises).then(() => {
+            setPaperIds(paperIDs)
+            setRecentlyOpenedPapers(papers);
+        });
+    } ,[paperIds]);
 
     /**
      * Temporary function for storing paper_ids
      */
-    function OverweriteRecentPapers() {
-        let testData : Array<string> = ["6f0cde1483ec8317021e67bef2d07d99f3f6af62",
-            "a18a66068cf4f6db749293db0aba21a852b0aa56",
-            "fa9ad2f5d6fbc88815eb01ee7136cad0a599709a",
-            "1d1825e95afae6bdfad17a34d267bf3b09d52195",
-            "9801a956fba18683644cd26d9a4b83d6006f7937"];
-        SetPaperIds(testData);
+    function overwriteRecentPapers() {
+        let testData : Array<string> = ["7303cff26e66f6abcbf65620198f2d368e5d18f1",
+            "5d31c8fe61c6210c26b496ed80d8ed2e57967370",
+            "a005c55622ab40e0b596c7174b28e3f0738804e7",
+            "e9faa7906e35846bfdb78ff813de2e7bc8d3a309"];
+        setPaperIds(testData);
         setRecentPapers(testData);
     }
 
     return (
-       <div className="FrontPage">
-        <header className="Header">
-            Welcome to Icteridae!
-        </header>
-        <body className="Body">
-        <div className="Searching">
-            <SearchBar placeholder="Search for your Papers!"/>
+        <div className="frontpage">
+            <h1 className="frontpage-header">
+                Welcome to Icteridae!
+            </h1>
+            <div className="frontpage-content">
+                <div className="frontpage-searchbar">
+                    <SearchBar placeholder="Search for your Papers!"/>
+                </div>
+                {/* Temprorary Button for the temp function*/}
+                <button onClick={() => overwriteRecentPapers()}>Ich bin nen Knopf </button>
+                {/* If there couldn't be loaded any recent paper or there aren't recent Paper the Suggestion class is not rendered*/}
+                {(recentlyOpenedPapers) &&
+                    <div className="suggestions">
+                        <div className="frontpage-title">Recently opened Papers:</div>
+                        {recentlyOpenedPapers?.map((value, index) => <Card key={value.id} title={value.title} year={value.year} authors={value.authors} link={'/graph'}/>)}
+                    </div>
+                }
+            </div>
+            <footer className="imprint">
+                <img src={logo} alt="Logo"/> &copy; 2021 Icteridae
+            </footer>
         </div>
-        {/* Temprorary Button for the temp function*/}
-        <button onClick={() => OverweriteRecentPapers()}>Ich bin nen Knopf </button>
-        {/* If there couldn't be loaded any recent paper or there aren't recent Paper the Suggestion class is not rendered*/}
-        {(RecentPaper && RecentPaper[0]) &&
-        <div className="Suggestions">
-            <u>
-                <div className="Title">Recently opened Papers:</div>
-            </u>
-            {RecentPaper?.map((value, index) => {
-                return <Card title={value.title} year={value.year} authors={value.authors} link={'/graph'}/>
-            })}
-        </div>
-        }
-        </body>
-        <footer className="Imprint">
-            <img src={logo} alt="Logo"/> &copy; 2021 Icteridae
-        </footer>
-    </div>
     );
+}
+
+interface PaperData {
+    id: string,
+    title: string;
+    year: string;
+    authors: Array<string>;
+    link: string
 }
 
