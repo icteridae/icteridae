@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import './styles/SearchResultCard.css';
 import { DataInterface } from './Types';
 
-type SearchResultCardProps = {
+interface SearchResultCardProps {
     func: Function,
     highlightCard: Function,
     data: DataInterface,

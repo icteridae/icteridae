@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import './styles/SearchResultList.css';
 import { SearchResultCard } from "./SearchResultCard";
-import { DataInterface } from './Types'
-import Config from '../../../Utils/Config'
+import { DataInterface } from './Types';
+import Config from '../../../Utils/Config';
 
-type ResultListProps = {
+interface ResultListProps {
     query: string,
     func: Function
 }
