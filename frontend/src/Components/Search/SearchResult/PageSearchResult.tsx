@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import './styles/PageSearchResult.css';
-import SearchResultList from "./SearchResultList";
-import DataInterface from "./Types";
+import { SearchResultList } from "./SearchResultList";
+import { DataInterface } from "./Types";
 import { useParams } from 'react-router-dom';
 
 export const PageSearchResult : React.FC = () => {

@@ -1,7 +1,7 @@
 /**
  * Interface for Data returned by the API
  */
-interface DataInterface {
+export interface DataInterface {
     id: number;
     title: string;
     authors: {name: string, ids:number[]}[];
@@ -11,5 +11,3 @@ interface DataInterface {
     outCitations: Array<string>;
     paperAbstract: string;
 }
-
-export default DataInterface;

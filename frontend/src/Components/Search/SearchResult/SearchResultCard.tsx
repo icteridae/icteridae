@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './styles/SearchResultCard.css';
-import DataInterface from './Types';
+import { DataInterface } from './Types';
 
 type SearchResultCardProps = {
     func: Function,
@@ -10,7 +10,7 @@ type SearchResultCardProps = {
     dataKey: number
 }
 
-const SearchResultCard : React.FC<SearchResultCardProps> = (props) => {
+export const SearchResultCard : React.FC<SearchResultCardProps> = (props) => {
     return (
         <div className={"searchResultCard"} data-key={props.dataKey}>
             <div 
@@ -31,5 +31,3 @@ const SearchResultCard : React.FC<SearchResultCardProps> = (props) => {
         </div>
     );
 }
-
-export default SearchResultCard;

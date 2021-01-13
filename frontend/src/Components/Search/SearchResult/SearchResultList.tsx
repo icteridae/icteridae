@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import './styles/SearchResultList.css';
-import SearchResultCard from "./SearchResultCard";
-import DataInterface from './Types'
+import { SearchResultCard } from "./SearchResultCard";
+import { DataInterface } from './Types'
 import Config from '../../../Utils/Config'
 
 type ResultListProps = {
@@ -9,7 +9,7 @@ type ResultListProps = {
     func: Function
 }
 
-const SearchResultList : React.FC<ResultListProps> = (props) => {
+export const SearchResultList : React.FC<ResultListProps> = (props) => {
     const [searchResults, setSearchResults] = useState<DataInterface[]>();
     const [lastHighlighted, setLastHighlighted] = useState<number>();
 
@@ -67,5 +67,3 @@ const SearchResultList : React.FC<ResultListProps> = (props) => {
         </div>
     );
 }
-
-export default SearchResultList;
