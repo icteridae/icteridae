@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {Row, Col, Slider, InputNumber} from 'rsuite';
 import ForceGraph2D, {GraphData, NodeObject, LinkObject} from 'react-force-graph-2d';
 
 /**
@@ -98,11 +99,11 @@ interface papersAndSimilarities{
  * This interface adds the similarity attribute to LinkObjects. Is only used if we include our own Link Force
  */
 interface myLinkObject extends LinkObject{
-    similarity: number;
+    similarity: number[];
 }
 
 // Variable used to identify the ID of the selected Paper
-// let selectedPaper = "0";
+let selectedPaper = "0";
 
 /**
  * This method generates the graph for the provided graphsAndSimilarities Object
@@ -113,9 +114,9 @@ const genGraph = (data:papersAndSimilarities) =>{
     var i,j;
     var links = [];
     var paper1:paper;
-    // selectedPaper = data.paper[0].id;
+    selectedPaper = data.paper[0].id;
     // For now we only use the very first similarity tensor[0] 
-    //Iterate over all Papers
+    // Iterate over all Papers
     for (i = 0; i < data.paper.length-1; i++){
         paper1 = data.paper[i];
         // Iterate over all other Papers so that every pair will be looked at once.
@@ -123,49 +124,45 @@ const genGraph = (data:papersAndSimilarities) =>{
             // Include only similarities that pass a certain threshhold
             if(data.tensor[0][i][j] > 5){
                     links.push({
-                    source: paper1.id,
-                    target: data.paper[j].id,
-                    color: "#FFFFFF",
-                    similarity: data.tensor[0][i][j],
+                        source: paper1.id,
+                        target: data.paper[j].id,
+                        color: "#FFFFFF",
+                        similarity: [data.tensor[0][i][j]],
                 })}
         }
     }
+    var nodes = [];
+    for (i = 0; i < data.paper.length; i++){
+        nodes.push({
+            id: data.paper[i].id,
+                name: "Number of o´s in Name: " + (data.paper[i].title.split("o").length-1),
+                color: (data.paper[i].id == selectedPaper) ? "#861a22" : "#96d4bc",
+        })
+    }
+    // Fix Position of the selected Paper in the center of the canvas
+    (nodes[0] as NodeObject).fx = 0;
+    (nodes[0] as NodeObject).fy = 0;
     
-    return ({
-            nodes: data.paper.map((id) => ({
-                id: id.id,
-                name: "Number of o´s in Name: " + (id.title.split("o").length-1),
-                color: "#FF0000"
-            })),
-            links :links
+    return ({    
+            nodes: nodes,
+            links: links
         }
     );
 }
 
-/**
- * main Method for generating the Graph
- * @returns everything that is displayed under the Graph Tab
- */
-export const Graph: React.FC = () => {
-    /**
-    ** Reference to the Graph used for TODO: insert Usage
-    */
-    const fgRef = React.useRef();
+export const GraphFetch: React.FC = () => {
     /*
     ** useState Hook to save the graphData 
     */
     const [graph, setGraph] = React.useState<GraphData>({nodes:[], links:[]});
+
     /*
     ** EffectHook for the initial Load of the graph
     */
     React.useEffect(() => {
-            loadData();
-            const fg:any = fgRef.current;
+        loadData();
+    },[]);
 
-            //Playing with the forces on the graph
-            //fg.d3Force('center', null);
-            //fg.d3Force("link").iterations(1).distance((link:myLinkObject) => link.similarity);
-        },[]);
     /*
     ** loadData fetches the graph_Data from the backend and saves the generated Graph in the State Hook graph
     */
@@ -175,14 +172,74 @@ export const Graph: React.FC = () => {
         setGraph(genGraph(data));
     }
 
+    return (
+        <Graph data={graph}/>
+
+    )
+}
+
+/**
+ * main Method for generating the Graph
+ * @returns everything that is displayed under the Graph Tab
+ */
+export const Graph: React.FC<{"data": GraphData}> = (props) => {
+    /**
+    ** Reference to the Graph used for TODO: insert Usage
+    */
+    const fgRef = React.useRef();
+    /*
+    ** useState Hook to save the graphData 
+    */
+    const [sliderValue, setSliderValue] = React.useState(10.5);
+    /*
+    ** EffectHook for the initial Load of the graph
+    */
+    React.useEffect(() => {
+            const fg:any = fgRef.current;
+            //Playing with the forces on the graph
+            //fg.d3Force('center', null);
+            //fg.d3Force("link").iterations(1).distance((link:myLinkObject) => link.similarity[0]*5);
+            fg.d3Force("link").iterations(1).distance((link:myLinkObject) => link.similarity.reduce(((x,y) => x + y), 2)*5);
+        },[]);
+    /*
+    ** loadData fetches the graph_Data from the backend and saves the generated Graph in the State Hook graph
+    */
+    React.useEffect(() => {
+        const fg:any = fgRef.current;
+        fg.d3Force("link").iterations(1).distance((link:myLinkObject) => (link.similarity.reduce(((x,y) => x + y), 0)*sliderValue));
+        fg.d3ReheatSimulation();
+    },[sliderValue]);
+
     return(
         <div>
+            <Row>
+                <Col md={10}>
+                    <Slider
+                        progress
+                        style={{ marginTop: 16, marginLeft: 50 }}
+                        value={sliderValue}
+                        onChange={value => {
+                            setSliderValue(value);
+                        }}
+                        />
+                </Col>
+                <Col md={4}>
+                    <InputNumber
+                        min={0}
+                        max={100}
+                        value={sliderValue}
+                        onChange={value => {
+                            setSliderValue((value as any));
+                        }}
+                    />
+                </Col>
+            </Row>
             {/**
              * ForceGraph2D renders the actual graph
              * For information on the attributes, pls visit: https://github.com/vasturiano/react-force-graph
              */}
             <ForceGraph2D ref = {fgRef}
-                          graphData={graph}
+                          graphData={props.data}
                           onNodeClick={(node, e) => {
                               e.preventDefault();
                               if (node.id === "1") {
@@ -197,7 +254,10 @@ export const Graph: React.FC = () => {
                           linkDirectionalParticles="dirParticles"
                           //Add this line together with the initialising and instantiating of selectedPaper to show only Links connected to the selectetPaper
                           //linkVisibility={(link:LinkObject) => ((link.source as NodeObject).id == selectedPaper)}
-                          d3VelocityDecay={0.04}/>
+                          d3VelocityDecay={0.4}
+                          cooldownTicks={100}
+                          onEngineStop={() => (fgRef.current as any).zoomToFit(400, 100)}
+                          />
         </div>
                           )
 }
