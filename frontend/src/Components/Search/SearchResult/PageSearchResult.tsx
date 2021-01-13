@@ -14,7 +14,7 @@ export const PageSearchResult : React.FC = () => {
                 <h2>Showing search results for <b>"{query}"</b>:</h2>
             </div>
             <div className="wrapper">
-                <SearchResultList query={query} func={setSelected}/>
+                <SearchResultList query={query} raiseStateSelected={setSelected}/>
                 {(selected != null) && <AbstractView selected={selected}/>}
             </div>
         </div>

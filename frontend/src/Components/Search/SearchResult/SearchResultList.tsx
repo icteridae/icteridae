@@ -6,7 +6,9 @@ import Config from '../../../Utils/Config';
 
 interface ResultListProps {
     query: string,
-    func: Function
+
+    /**function used to raise state, takes DataInterface as argument */
+    raiseStateSelected: React.Dispatch<React.SetStateAction<DataInterface | undefined>>
 }
 
 export const SearchResultList : React.FC<ResultListProps> = (props) => {
@@ -61,7 +63,7 @@ export const SearchResultList : React.FC<ResultListProps> = (props) => {
             {
                 // short-circuit eval, if searchResults null don't render
                 searchResults != null && searchResults.map((entry: DataInterface, index: number) => {
-                    return <SearchResultCard highlightCard={highlightCard} func={props.func} key={entry.id} dataKey={index} data={entry}/>
+                    return <SearchResultCard highlightCard={highlightCard} raiseStateSelected={props.raiseStateSelected} key={entry.id} dataKey={index} data={entry}/>
                 })
             }
         </div>

@@ -4,8 +4,9 @@ import './styles/SearchResultCard.css';
 import { DataInterface } from './Types';
 
 interface SearchResultCardProps {
-    func: Function,
-    highlightCard: Function,
+    /**function used to raise state, takes DataInterface as argument */
+    raiseStateSelected: React.Dispatch<React.SetStateAction<DataInterface | undefined>>,
+    highlightCard: (dataKey:number) => void,
     data: DataInterface,
     dataKey: number
 }
@@ -16,7 +17,7 @@ export const SearchResultCard : React.FC<SearchResultCardProps> = (props) => {
             <div 
                 className="content" 
                 onMouseEnter={() => {
-                    props.func(props.data);
+                    props.raiseStateSelected(props.data);
                     props.highlightCard(props.dataKey);
                 }}
                 >
