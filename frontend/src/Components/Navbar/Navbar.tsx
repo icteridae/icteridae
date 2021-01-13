@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { Navbar, Nav, Icon, Dropdown, Button, NavbarProps } from 'rsuite';
+import { usePaperGraph, usePaperNameList } from "../../Utils/GraphContext";
 import { Settings } from "./Settings";
 import './styles/Navbar.css'
 
@@ -12,6 +13,9 @@ import './styles/Navbar.css'
 export const NavBarInstance: React.FC<NavbarProps> = (props) => {
     const [activeKey, handleSelect] = React.useState<string | null>(null);
     const [showSettings, setShowSettings] = React.useState<boolean>(false);
+
+    const paperNameList = usePaperNameList();
+    const paperGraphDict = usePaperGraph();
 
     return (
         <div id="navbar">
@@ -25,11 +29,13 @@ export const NavBarInstance: React.FC<NavbarProps> = (props) => {
                         <Nav.Item componentClass={Link} to='/papers/' eventKey="mypapers" icon={<Icon icon="bookmark" /> }>My Papers</Nav.Item>
                         <Nav.Item componentClass={Link} to='/graph/' eventKey="graph" icon={<Icon icon="circle-thin" /> }>Graph</Nav.Item>
                         <Nav.Item componentClass={Link} to='/privacy/' eventKey="privacy" icon={<Icon icon="circle-thin" />}>Privacy</Nav.Item>
-                        <Dropdown eventKey="dropdown" title="About" icon={<Icon icon="info" />} toggleComponentClass={Button} appearance="default">
-                            <Dropdown.Item componentClass={Link} to='/description/' eventKey="description" icon={<Icon icon="file-text" />} >Description</Dropdown.Item>
-                            <Dropdown.Item componentClass={Link} to='/contact/' eventKey="contact" icon={<Icon icon="group" />} >Contact</Dropdown.Item>
-                        </Dropdown>
+                        <Nav.Item componentClass={Link} to='/about/' eventKey="about" icon={<Icon icon="info" />}>About</Nav.Item>
                     </Nav>
+
+                        {paperNameList.map((element, index) => 
+                            <Nav.Item componentClass={Link} to={'/graph/' + element.id} key={element.id} eventKey={element.id} icon={<Icon icon={paperGraphDict[element.id] == null ? "circle-thin" : 'circle'} />}>{element.title}: {element.id}</Nav.Item>
+                        )}
+
                     <Nav pullRight>
                         <Nav.Item eventKey="github" icon={<Icon icon={"github"} />} href={"https://github.com/icteridae/icteridae"} target="_blank" > Github </Nav.Item>
                         <Nav.Item eventkey="settings" icon={<Icon icon="cog" />} onClick={() => setShowSettings(true)}>Settings</Nav.Item>
