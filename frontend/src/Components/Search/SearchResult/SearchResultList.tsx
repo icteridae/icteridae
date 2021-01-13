@@ -28,15 +28,15 @@ export const SearchResultList : React.FC<ResultListProps> = (props) => {
     // Effect hook for dynamically changing the height of the resultList and thus getting a scrollbar BECAUSE SCROLLBARS
     useEffect(() => {
         function setListToRemainingHeight() {
-            let windowHeight = window.innerHeight;
-            // @ts-ignore
-            let navbarHeight = document.getElementById("navbar").offsetHeight;
-            // @ts-ignore
-            let queryTitleHeight = document.getElementById("queryTitle").offsetHeight;
-            let list = document.getElementById("list");
+            const windowHeight = window.innerHeight;
+            
+            const navbarHeight : number | undefined = document.getElementById("navbar")?.offsetHeight;
+            const queryTitleHeight : number | undefined = document.getElementById("queryTitle")?.offsetHeight;
+            const list: HTMLElement | null = document.getElementById("list");
 
-            // @ts-ignore
-            list.style.height = (windowHeight - navbarHeight - queryTitleHeight) + "px";
+            // only set height if none of these is null or undefined
+            if(navbarHeight != null && queryTitleHeight != null && list != null)
+                list.style.height = (windowHeight - navbarHeight - queryTitleHeight) + "px";
         }
 
         setListToRemainingHeight();
