@@ -31,8 +31,8 @@ export const SearchResultList : React.FC<ResultListProps> = (props) => {
             const windowHeight = window.innerHeight;
             
             const navbarHeight : number | undefined = document.getElementById("navbar")?.offsetHeight;
-            const queryTitleHeight : number | undefined = document.getElementById("queryTitle")?.offsetHeight;
-            const list: HTMLElement | null = document.getElementById("list");
+            const queryTitleHeight : number | undefined = document.getElementById("query-title")?.offsetHeight;
+            const list: HTMLElement | null = document.getElementById("search-result-list");
 
             // only set height if none of these is null or undefined
             if(navbarHeight != null && queryTitleHeight != null && list != null)
@@ -59,10 +59,10 @@ export const SearchResultList : React.FC<ResultListProps> = (props) => {
 
     
     return (
-        <div id="list" className="resultList">
+        <div id="search-result-list" className="result-list">
             {
                 // short-circuit eval, if searchResults null don't render
-                searchResults != null && searchResults.map((entry: DataInterface, index: number) => {
+                (searchResults != null) && searchResults.map((entry: DataInterface, index: number) => {
                     return <SearchResultCard highlightCard={highlightCard} raiseStateSelected={props.raiseStateSelected} key={entry.id} dataKey={index} data={entry}/>
                 })
             }

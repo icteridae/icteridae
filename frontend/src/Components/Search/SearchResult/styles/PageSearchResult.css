@@ -1,4 +1,4 @@
-.pageSearchResult {
+.page-search-result {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -7,18 +7,18 @@
     background-color: #0F131A;
 }
 
-#queryTitle h2 {
+.page-search-result #query-title h2 {
     font-weight: unset;
 
     margin: 20px 0 40px 20px;
 }
 
-.wrapper {
+.page-search-result .wrapper {
     display: flex;
 }
 
 
-.abstractView {
+.page-search-result .abstract-view {
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -36,7 +36,7 @@
     border-left: 6px outset #61847D;
 }
 
-.abstractView h1 {
+.page-search-result .abstract-view h1 {
     font-family: "Segoe UI",Arial,sans-serif;
     font-weight: lighter;
     color: #96d4bc;
@@ -44,19 +44,19 @@
     line-height: inherit;
 }
 
-.abstractView h3 {
+.page-search-result .abstract-view h3 {
     color: darkgray;
 }
 
-.abstractView span {
+.page-search-result .abstract-view span {
     color: darkgray;
 }
 
-.abstractView span:last-of-type {
+.page-search-result .abstract-view span:last-of-type {
     margin-bottom: 0.8em;
 }
 
-.abstractView > * {
+.page-search-result .abstract-view > * {
     font-weight: lighter;
 }
 
