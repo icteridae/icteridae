@@ -40,10 +40,11 @@ export const FrontPage: React.FC = () => {
         
         // set paperIds and recentlyOpenedPapers once all promises succeed
         Promise.all(promises).then(() => {
+            console.log(papers);
             setPaperIds(paperIDs)
             setRecentlyOpenedPapers(papers);
         });
-    } ,[paperIds]);
+    } ,[]);
 
     /**
      * Temporary function for storing paper_ids
@@ -87,7 +88,7 @@ interface PaperData {
     id: string,
     title: string;
     year: string;
-    authors: Array<string>;
+    authors: Array<{id: string, name: string}>;
     link: string
 }
 

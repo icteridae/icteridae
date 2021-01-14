@@ -11,7 +11,7 @@ export interface CardProps {
     key: string,
     title: string;
     year: string;
-    authors: Array<string>;
+    authors: Array<{id: string, name: string}>;
     link: string;
 }
 
@@ -26,7 +26,7 @@ export const Card: React.FC<CardProps> = (props) => (
             <div>
                 <Panel {...props} bordered header={props.title}>
                     <p>{props.year}<br/>
-                        {props.authors.map((value, index) => {return <><br />{value}</> })}
+                        {props.authors.map((value, index) => {return <><br />{value.name}</> })}
                     </p>
                 </Panel>
             </div>
