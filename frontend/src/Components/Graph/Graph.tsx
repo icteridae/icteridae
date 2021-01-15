@@ -1,13 +1,14 @@
 import * as React from 'react';
-import {Row, Col, Slider, InputNumber} from 'rsuite';
-import ForceGraph2D, {GraphData, NodeObject, LinkObject} from 'react-force-graph-2d';
+import ForceGraph2D, {GraphData, LinkObject, NodeObject} from 'react-force-graph-2d';
+import {Button, Drawer, Row, Col, Slider, InputNumber} from "rsuite";
+import './Graph.css'
 
 /**
  * This interface characterizes a single Paper
  */
-interface paper {
+interface paper extends NodeObject{
     /** The unique ID of the paper */
-    id : string, 
+    id : string,
 
     /** The name of the paper */
     title : string,
@@ -67,7 +68,10 @@ interface paper {
     s2PdfUrl : string,
 
     /** Extracted entities (deprecated on 2019-09-17) */
-    entities : string[]
+    entities : string[],
+
+    /** The color of the node */
+    color: string
 }
 
 /**
@@ -81,7 +85,7 @@ interface similarity{
     description: string
 }
 
-/** 
+/**
  * Json structure of the Response from /api/generate_graph/
  */
 interface papersAndSimilarities{
@@ -100,6 +104,14 @@ interface papersAndSimilarities{
  */
 interface myLinkObject extends LinkObject{
     similarity: number[];
+}
+
+/**
+ * This interface adjust the nodes and links of the graph to contain enough information
+ */
+interface myGraphData extends GraphData{
+    nodes: paper[],
+    links: myLinkObject[],
 }
 
 // Variable used to identify the ID of the selected Paper
@@ -131,14 +143,40 @@ const genGraph = (data:papersAndSimilarities) =>{
                 })}
         }
     }
-    var nodes = [];
-    for (i = 0; i < data.paper.length; i++){
+    var nodes = data.paper.map(id => ({
+        id: id.id,
+        title: id.title,
+        paperAbstract: id.paperAbstract,
+        authors: id.authors,
+        inCitations: id.inCitations,
+        outCitations: id.outCitations,
+        year: id.year,
+        s2Url: id.s2Url,
+        sources: id.sources,
+        pdfUrls: id.pdfUrls,
+        venue:id.venue,
+        journalName: id.journalName,
+        journalVolume: id.journalVolume,
+        journalPages: id.journalPages,
+        doi: id.doi,
+        doiUrl: id.doiUrl,
+        pmid: id.pmid,
+        fieldsOfStudy: id.fieldsOfStudy,
+        magId:id.magId,
+        s2PdfUrl: id.s2PdfUrl,
+        entities: id.entities,
+        name: "Number of o´s in Name: " + (id.title.split("o").length-1),
+
+        color: ""
+    }));
+    // TODO: Delete when above method works correctly
+    /*for (i = 0; i < data.paper.length; i++){
         nodes.push({
             id: data.paper[i].id,
-                name: "Number of o´s in Name: " + (data.paper[i].title.split("o").length-1),
-                color: (data.paper[i].id == selectedPaper) ? "#861a22" : "#96d4bc",
+            name: "Number of o´s in Name: " + (data.paper[i].title.split("o").length-1),
+            color: (data.paper[i].id == selectedPaper) ? "#861a22" : "#96d4bc",
         })
-    }
+    }*/
     // Fix Position of the selected Paper in the center of the canvas
     (nodes[0] as NodeObject).fx = 0;
     (nodes[0] as NodeObject).fy = 0;
@@ -154,7 +192,7 @@ export const GraphFetch: React.FC = () => {
     /*
     ** useState Hook to save the graphData 
     */
-    const [graph, setGraph] = React.useState<GraphData>({nodes:[], links:[]});
+    const [graph, setGraph] = React.useState<myGraphData>({nodes:[], links:[]});
 
     /*
     ** EffectHook for the initial Load of the graph
@@ -176,12 +214,40 @@ export const GraphFetch: React.FC = () => {
         <Graph data={graph}/>
     )
 }
+/**
+ * TODO: delete + set correct origin node
+ */
+const initNode = {
+    id: "0",
+    title: "Origin",
+    paperAbstract: "",
+    authors: [{name: "John Glanz", "ids":["321534234"]}],
+    inCitations: ["asdasd", "aisdingk"],
+    outCitations: ["fadg"],
+    year: 2021,
+    s2Url: "",
+    sources: [""],
+    pdfUrls: [""],
+    venue: "",
+    journalName: "",
+    journalVolume: "",
+    journalPages: "",
+    doi: "",
+    doiUrl: "",
+    pmid: "",
+    fieldsOfStudy: ["Materials Science"],
+    magId: "",
+    s2PdfUrl: "",
+    entities: [""],
+
+    color: "",
+}
 
 /**
  * main Method for generating the Graph
  * @returns everything that is displayed under the Graph Tab
  */
-export const Graph: React.FC<{"data": GraphData}> = (props) => {
+export const Graph: React.FC<{"data": myGraphData}> = (props) => {
     /**
     ** Reference to the Graph used for TODO: insert Usage
     */
@@ -190,6 +256,14 @@ export const Graph: React.FC<{"data": GraphData}> = (props) => {
     ** useState Hook to save the graphData 
     */
     const [sliderValue, setSliderValue] = React.useState(10.5);
+    /*
+    ** set whether the drawer is shown or hidden
+    */
+    const[drawer, setDrawer] = React.useState(false);
+    /*
+    ** selected Node to display on drawer
+    */
+    const[selectedNode, setNode] = React.useState(initNode);
     /*
     ** EffectHook for the initial Load of the graph
     */
@@ -234,6 +308,35 @@ export const Graph: React.FC<{"data": GraphData}> = (props) => {
                 </Col>
             </Row>
             {/**
+             * Drawer displays paper meta data
+             */}
+            <Drawer
+                show={drawer}
+                backdrop={false}
+                onHide={() => {setDrawer(false)}}
+            >
+                <Drawer.Header>
+                    <Drawer.Title>
+                        {selectedNode.title}
+                    </Drawer.Title>
+                </Drawer.Header>
+                <Drawer.Body>
+                    <p>
+                        <Button color="cyan" appearance="ghost" href={selectedNode.s2Url} target="_blank">
+                            Open in Semantic Scholar
+                        </Button>
+                    </p>
+                    <p style={{color:"grey"}}>{selectedNode.year}{selectedNode.authors.map(author => <>, {author.name}</>)}
+                        <br/> Citations: {selectedNode.inCitations.length}, References: {selectedNode.outCitations.length}
+                        <br/><p style={{color:selectedNode.color}}>Field: {selectedNode.fieldsOfStudy.map(field => <> {field}</>)} </p>
+                    </p>
+                    <p>{selectedNode.paperAbstract}</p>
+                </Drawer.Body>
+                <Drawer.Footer>
+
+                </Drawer.Footer>
+            </Drawer>
+            {/**
              * ForceGraph2D renders the actual graph
              * For information on the attributes, pls visit: https://github.com/vasturiano/react-force-graph
              */}
@@ -241,12 +344,19 @@ export const Graph: React.FC<{"data": GraphData}> = (props) => {
                           graphData={props.data}
                           onNodeClick={(node, e) => {
                               e.preventDefault();
-                              if (node.id === "1") {
-                                  window.location.href = 'http://lenny.codes/'
+                              if (node.id === selectedNode.id) {
+                                  setDrawer(!drawer)
                               } else {
-                                  alert(node.id)
+                                  setNode((node as paper))
+                                  setDrawer(true)
                               }
                           }}
+                          onBackgroundClick={(e) => {
+                              e.preventDefault()
+                              setDrawer(false)
+                          }}
+                          nodeAutoColorBy="fieldsOfStudy"
+                          nodeLabel="title"
                           linkWidth="width"
                           linkCurvature="curvature"
                           linkDirectionalArrowLength="arrowLen"
@@ -258,5 +368,5 @@ export const Graph: React.FC<{"data": GraphData}> = (props) => {
                           onEngineStop={() => (fgRef.current as any).zoomToFit(400, 100)}
                           />
         </div>
-                          )
+    )
 }
