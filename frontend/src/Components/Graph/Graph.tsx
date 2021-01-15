@@ -174,7 +174,6 @@ export const GraphFetch: React.FC = () => {
 
     return (
         <Graph data={graph}/>
-
     )
 }
 
