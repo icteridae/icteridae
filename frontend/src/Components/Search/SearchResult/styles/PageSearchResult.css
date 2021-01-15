@@ -9,6 +9,8 @@
 
 .page-search-result #query-title h2 {
     font-weight: unset;
+    font-size: 1.9vw;
+    line-height: 5.2vh;
 
     margin: 20px 0 40px 20px;
 }

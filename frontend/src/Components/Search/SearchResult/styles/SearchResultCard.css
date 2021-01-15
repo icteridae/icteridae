@@ -20,7 +20,10 @@
 
 .search-result-card .title {
     font-family: "Segoe UI",Arial,sans-serif;
+    font-size: 1.46vw;
     font-weight: lighter;
+
+    line-height: 4.7vh;
 }
 
 .search-result-card .date {
@@ -29,7 +32,7 @@
 
 .search-result-card .content span {
     color: darkgray;
-    font-size: 16px;
+    font-size: 0.9vw;
 }
 
 .search-result-card a {
