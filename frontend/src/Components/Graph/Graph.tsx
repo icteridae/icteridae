@@ -123,7 +123,7 @@ let selectedPaper = "0";
  * @returns a GraphData object consisting of nodes[] and links[]
  */
 const genGraph = (data:papersAndSimilarities) =>{
-    var i,j;
+    var i,j,s;
     var links = [];
     var paper1:paper;
     selectedPaper = data.paper[0].id;
@@ -134,18 +134,22 @@ const genGraph = (data:papersAndSimilarities) =>{
         // Iterate over all other Papers so that every pair will be looked at once.
         for (j = i+1; j < data.paper.length; j++){
             // Include only similarities that pass a certain threshhold
-            if(data.tensor[0][i][j] > 5){
-                    links.push({
-                        source: paper1.id,
-                        target: data.paper[j].id,
-                        color: "#FFFFFF",
-                        similarity: [data.tensor[0][i][j]],
-                })}
+            let sim = [];
+            for (s = 0; s < data.tensor.length; s++){
+                sim.push(data.tensor[s][i][j]);
+            }
+            //if(sim.reduce((x, y) => x + y) > 10){
+                links.push({
+                    source: paper1.id,
+                    target: data.paper[j].id,
+                    color: "#FFFFFF",
+                    similarity: sim,
+            })/*}*/
         }
     }
     var nodes = data.paper.map(id => ({
         id: id.id,
-        title: id.title,
+        title: "Number of o´s in Name: " + (id.title.split("o").length-1) + "\nNumber of s in Name: " + (id.title.split("s").length-1),
         paperAbstract: id.paperAbstract,
         authors: id.authors,
         inCitations: id.inCitations,
@@ -165,7 +169,7 @@ const genGraph = (data:papersAndSimilarities) =>{
         magId:id.magId,
         s2PdfUrl: id.s2PdfUrl,
         entities: id.entities,
-        name: "Number of o´s in Name: " + (id.title.split("o").length-1),
+        //name: "Number of o´s in Name: " + (id.title.split("o").length-1),
 
         color: ""
     }));
@@ -253,9 +257,13 @@ export const Graph: React.FC<{"data": myGraphData}> = (props) => {
     */
     const fgRef = React.useRef();
     /*
-    ** useState Hook to save the graphData 
+    ** useState Hook to save influence of the first slider (O-Similarity);
     */
-    const [sliderValue, setSliderValue] = React.useState(10.5);
+    const [firstSliderValue, setFirstSliderValue] = React.useState(50);
+    /**
+     * useState Hook to save influence of the second slider (S-Similarity);
+     */
+    const [secondSliderValue, setSecondSliderValue] = React.useState(50);
     /*
     ** set whether the drawer is shown or hidden
     */
@@ -279,9 +287,9 @@ export const Graph: React.FC<{"data": myGraphData}> = (props) => {
     */
     React.useEffect(() => {
         const fg:any = fgRef.current;
-        fg.d3Force("link").iterations(1).distance((link:myLinkObject) => (link.similarity.reduce(((x,y) => x + y), 0)*sliderValue));
+        fg.d3Force("link").iterations(1).distance((link:myLinkObject) => (link.similarity[0] * firstSliderValue/10 + link.similarity[1] * secondSliderValue/10));//link.similarity.reduce(((x,y) => x + y), 0)*sliderValue));
         fg.d3ReheatSimulation();
-    },[sliderValue]);
+    },[firstSliderValue, secondSliderValue]);
 
     return(
         <div>
@@ -290,9 +298,9 @@ export const Graph: React.FC<{"data": myGraphData}> = (props) => {
                     <Slider
                         progress
                         style={{ marginTop: 16, marginLeft: 50 }}
-                        value={sliderValue}
+                        value={firstSliderValue}
                         onChange={value => {
-                            setSliderValue(value);
+                            setFirstSliderValue(value);
                         }}
                         />
                 </Col>
@@ -300,9 +308,31 @@ export const Graph: React.FC<{"data": myGraphData}> = (props) => {
                     <InputNumber
                         min={0}
                         max={100}
-                        value={sliderValue}
+                        value={firstSliderValue}
                         onChange={value => {
-                            setSliderValue((value as any));
+                            setFirstSliderValue((value as any));
+                        }}
+                    />
+                </Col>
+            </Row>
+            <Row>
+                <Col md={10}>
+                    <Slider
+                        progress
+                        style={{ marginTop: 16, marginLeft: 50 }}
+                        value={secondSliderValue}
+                        onChange={value => {
+                            setSecondSliderValue(value);
+                        }}
+                        />
+                </Col>
+                <Col md={4}>
+                    <InputNumber
+                        min={0}
+                        max={100}
+                        value={secondSliderValue}
+                        onChange={value => {
+                            setSecondSliderValue((value as any));
                         }}
                     />
                 </Col>
@@ -362,7 +392,7 @@ export const Graph: React.FC<{"data": myGraphData}> = (props) => {
                           linkDirectionalArrowLength="arrowLen"
                           linkDirectionalParticles="dirParticles"
                           //Add this line together with the initialising and instantiating of selectedPaper to show only Links connected to the selectetPaper
-                          //linkVisibility={(link:LinkObject) => ((link.source as NodeObject).id == selectedPaper)}
+                          linkVisibility={(link:LinkObject) => ((link.source as NodeObject).id == selectedPaper)}
                           d3VelocityDecay={0.4}
                           cooldownTicks={100}
                           onEngineStop={() => (fgRef.current as any).zoomToFit(400, 100)}
