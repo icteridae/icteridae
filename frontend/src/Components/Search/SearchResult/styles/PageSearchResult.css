@@ -24,12 +24,12 @@
     flex: 1;
 
     text-align: left;
-    font-size: 30px;
+    font-size: 1.55vw;
     padding: 0 20px;
 
     background-color: #0F131A;
-    height: 78vh;
-    margin-left: 28vh;
+    margin-left: 14.2vw;
+    margin-bottom: 20px;
     overflow-y: scroll;
 
     border-radius: 20px;
@@ -40,12 +40,13 @@
     font-family: "Segoe UI",Arial,sans-serif;
     font-weight: lighter;
     color: #96d4bc;
-    font-size: 40px;
+    font-size: 2.4vw;
     line-height: inherit;
 }
 
 .page-search-result .abstract-view h3 {
     color: darkgray;
+    font-size: 1.74vw;
 }
 
 .page-search-result .abstract-view span {
