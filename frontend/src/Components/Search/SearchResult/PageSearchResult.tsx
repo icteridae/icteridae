@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import './styles/PageSearchResult.css';
-import { SearchResultList } from "./SearchResultList";
+import { SearchResultList, setAbstractViewToListHeight} from "./SearchResultList";
 import { DataInterface } from "./Types";
 import { useParams } from 'react-router-dom';
 
@@ -23,8 +23,14 @@ export const PageSearchResult : React.FC = () => {
 
 
 const AbstractView : React.FC<{selected: DataInterface}> = (props) => {
+    // Effect hook for setting the height of AbstractView when it's rendered for the first time
+    useEffect(() => {
+        setAbstractViewToListHeight();
+        console.log("AbstractView");
+    }, [])
+
     return(
-        <div className="abstract-view">
+        <div id="search-result-abstract-view" className="abstract-view">
             {(props.selected != null) && <h1>{props.selected.title}</h1>}
             <h3>{props.selected.authors.map(obj => obj.name).join(", ")}</h3>
             <span className="fields-of-study">{props.selected.fieldsOfStudy.join(" ,")}</span>
