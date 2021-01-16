@@ -1,10 +1,50 @@
-*{
-    -ms-overflow-style: none;
-}
 ::-webkit-scrollbar {
     display: none;
 }
 
+.frontpage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+
+    background-color: #0F131A;
+}
+
+.frontpage-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    font-family: "Segoe UI",Arial,sans-serif;
+
+}
+
+.frontpage-content h1 {
+    font-weight: lighter;
+    margin-top: 17vh;
+    margin-bottom: 2vh;
+}
+
+.recent-papers h5 {
+    font-weight: lighter;
+    padding-top: 30vh;
+}
+
+
+
+.frontpage-footer {
+    background-color: #161C27;
+    height: 10vh;
+    min-width: 100%;
+    padding:2vh;
+}
+
+.frontpage-footer img {
+    height: 6vh;
+}
+
+/*
 .frontpage {
     text-align: center;
     display: flex;
@@ -61,4 +101,4 @@
 
 img {
     height: 6vh;
-}
+}*/

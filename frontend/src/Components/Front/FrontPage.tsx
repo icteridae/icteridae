@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 
-import {Card, CardProps} from "./Card/Card";
+import {Card} from "./Card/Card";
 import {SearchBar} from "../Search/SearchBar/SearchBar";
 import {getRecentPapers, setRecentPapers} from "../../Utils/Webstorage";
 import Config from '../../Utils/Config'
@@ -43,7 +43,7 @@ export const FrontPage: React.FC = () => {
             setPaperIds(paperIDs)
             setRecentlyOpenedPapers(papers);
         });
-    } ,[paperIds]);
+    } ,[]);
 
     /**
      * Temporary function for storing paper_ids
@@ -59,24 +59,19 @@ export const FrontPage: React.FC = () => {
 
     return (
         <div className="frontpage">
-            <h1 className="frontpage-header">
-                Welcome to Icteridae!
-            </h1>
             <div className="frontpage-content">
-                <div className="frontpage-searchbar">
-                    <SearchBar placeholder="Search for your Papers!"/>
-                </div>
-                {/* Temprorary Button for the temp function*/}
-                <button onClick={() => overwriteRecentPapers()}>Ich bin nen Knopf </button>
-                {/* If there couldn't be loaded any recent paper or there aren't recent Paper the Suggestion class is not rendered*/}
+                <h1>
+                    Welcome to Icteridae!
+                </h1>
+                <SearchBar/>
                 {(recentlyOpenedPapers) &&
-                    <div className="suggestions">
-                        <div className="frontpage-title">Recently opened Papers:</div>
-                        {recentlyOpenedPapers?.map((value, index) => <Card key={value.id} title={value.title} year={value.year} authors={value.authors} link={'/graph'}/>)}
+                    <div className="recent-papers">
+                        <h5>Recently opened Papers:</h5>
+                        {recentlyOpenedPapers?.map((value, index) => <Card key={value.id} title={value.title} year={value.year} authors={value.authors.map(obj => obj.name)} link={'/graph'}/>)}
                     </div>
                 }
             </div>
-            <footer className="imprint">
+            <footer className="frontpage-footer">
                 <img src={logo} alt="Logo"/> &copy; 2021 Icteridae
             </footer>
         </div>
@@ -87,7 +82,7 @@ interface PaperData {
     id: string,
     title: string;
     year: string;
-    authors: Array<string>;
+    authors: Array<{id: string, name:string}>;
     link: string
 }
 
