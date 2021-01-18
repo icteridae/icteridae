@@ -28,10 +28,13 @@
 
 .recent-papers h5 {
     font-weight: lighter;
-    padding-top: 30vh;
+    margin-top: 30vh;
+    margin-bottom: 2vh;
 }
 
-
+.recent-papers {
+    width: 50%;
+}
 
 .frontpage-footer {
     background-color: #161C27;

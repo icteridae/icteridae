@@ -1,18 +1,18 @@
 import React, {useEffect, useState} from 'react';
-
-import {Card} from "./Card/Card";
 import {SearchBar} from "../Search/SearchBar/SearchBar";
 import {getRecentPapers, setRecentPapers} from "../../Utils/Webstorage";
 import Config from '../../Utils/Config'
 
 import './FrontPage.css'
 import logo from '../../icon.png'
+import SearchResultCard from '../Search/SearchResult/SearchResultCard';
+import DataInterface from '../Search/SearchResult/Types';
 /**
  * Frontpage is shown when the user the Web-Application. If exists it shows the recently opened papers
  * @returns the front/Search page
  */
 export const FrontPage: React.FC = () => {
-    const [recentlyOpenedPapers, setRecentlyOpenedPapers] = useState<Array<PaperData>>([]);
+    const [recentlyOpenedPapers, setRecentlyOpenedPapers] = useState<Array<DataInterface>>([]);
     const [paperIds, setPaperIds] = useState<Array<string>>(getRecentPapers());
 
     /**
@@ -25,7 +25,7 @@ export const FrontPage: React.FC = () => {
         
         //capped at 10 papers max, if paperIds == null, zero papers will be loaded
         const numberOfPapers : number = (paperIDs == null) ? 0 : Math.min(paperIds.length, 10);
-        let papers: Array<PaperData> = new Array<PaperData>(numberOfPapers);
+        let papers: Array<DataInterface> = new Array<DataInterface>(numberOfPapers);
         
         // fetch all papers
         let promises = [];
@@ -43,7 +43,7 @@ export const FrontPage: React.FC = () => {
             setPaperIds(paperIDs)
             setRecentlyOpenedPapers(papers);
         });
-    } ,[]);
+    }, []);
 
     /**
      * Temporary function for storing paper_ids
@@ -67,7 +67,7 @@ export const FrontPage: React.FC = () => {
                 {(recentlyOpenedPapers) &&
                     <div className="recent-papers">
                         <h5>Recently opened Papers:</h5>
-                        {recentlyOpenedPapers?.map((value, index) => <Card key={value.id} title={value.title} year={value.year} authors={value.authors.map(obj => obj.name)} link={'/graph'}/>)}
+                        {recentlyOpenedPapers?.map((value, index) => <SearchResultCard dataKey={value.id} key={value.id} data={value} func={()=>null} highlightCard={() => null}/>)}
                     </div>
                 }
             </div>
@@ -77,12 +77,3 @@ export const FrontPage: React.FC = () => {
         </div>
     );
 }
-
-interface PaperData {
-    id: string,
-    title: string;
-    year: string;
-    authors: Array<{id: string, name:string}>;
-    link: string
-}
-
