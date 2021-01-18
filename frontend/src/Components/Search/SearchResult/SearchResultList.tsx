@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import './styles/SearchResultList.css';
 import SearchResultCard from "./SearchResultCard";
 import DataInterface from './Types'
+import Config from '../../../Utils/Config'
 
 type ResultListProps = {
     query: string,
@@ -47,11 +48,11 @@ const SearchResultList : React.FC<ResultListProps> = (props) => {
 
     // Effect hook for fetching query data from search API
     useEffect(() => {
-        let requestURL = 'http://127.0.0.1:8000/api/search?query=' + props.query;
+        let requestURL = Config.base_url + '/api/search/?query=' + props.query;
 
         fetch(requestURL)
             .then(res => res.json())
-            .then(result => setSearchResults(result.data));
+            .then(result => setSearchResults(result.data)).catch(() => console.log("Can't access " + requestURL));
     }, [props.query]);
 
     

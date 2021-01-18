@@ -1,0 +1,13 @@
+.rs-drawer-content {
+    background-color: #161C27;
+}
+
+.rs-drawer-right.rs-drawer-sm {
+    width: 25%;
+}
+.rs-drawer-left, .rs-drawer-right {
+    top: auto;
+    bottom: 0;
+    right: 0;
+    height: calc(100% - 56px);
+}
