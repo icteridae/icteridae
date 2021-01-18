@@ -1,4 +1,4 @@
-.searchResultCard {
+.search-result-card {
     background-color: #0F131A;
     transition: 0.5s;
     border-radius: 6px;
@@ -8,35 +8,37 @@
     border-left: 6px outset #0F131A;
 }
 
-.card-selected {
-
+.search-result-card.card-selected {
     border-left: 6px outset #61847D;
 }
 
-.content {
+.search-result-card .content {
     display: flex;
     flex-direction: column;
 
 }
 
-.title {
+.search-result-card .title {
     font-family: "Segoe UI",Arial,sans-serif;
+    font-size: 1.46vw;
     font-weight: lighter;
+
+    line-height: 4.7vh;
 }
 
-.date {
+.search-result-card .date {
     margin-bottom: 10px;
 }
 
-.content span {
+.search-result-card .content span {
     color: darkgray;
-    font-size: 16px;
+    font-size: 0.9vw;
 }
 
-a {
+.search-result-card a {
     color: #96d4bc;
 }
 
-a:hover {
+.search-result-card a:hover {
     color:#A8DCC8;
 }
