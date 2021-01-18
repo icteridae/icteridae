@@ -1,26 +1,32 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './styles/SearchResultCard.css';
+import DataInterface from './Types';
 
 type SearchResultCardProps = {
     func: Function,
-    data: {
-        key: number;
-        title: string,
-        authors: string[],
-        date: string,
-        citations: number,
-        preview: string
-    }
+    highlightCard: Function,
+    data: DataInterface,
+    dataKey: number
 }
 
 const SearchResultCard : React.FC<SearchResultCardProps> = (props) => {
     return (
-        <div className="searchResultCard">
-            <div className="content" onMouseOver={() => props.func(props.data)}>
-                <h3 className="title">{props.data.title}</h3>
-                <span className="author">{props.data.authors.join(", ")}</span>
-                <span className="date">{props.data.date}</span>
-                <span className="previewText">{props.data.preview.substr(0, 283) + "..."}</span>
+        <div className={"searchResultCard"} data-key={props.dataKey}>
+            <div 
+                className="content" 
+                onMouseEnter={() => {
+                    props.func(props.data);
+                    props.highlightCard(props.dataKey);
+                }}
+                >
+                <h3 className="title">
+                    <Link to={`paper/${props.data.id}`}>{props.data.title}</Link>
+                </h3>
+                <span className="author">{props.data.authors.map(obj => obj.name).join(", ")}</span>
+                <span>{props.data.fieldsOfStudy.join(" ,")}</span>
+                <span className="date">{props.data.year}</span>
+                <span className="previewText">{(props.data.paperAbstract === "") ? "no Abstract available" : (props.data.paperAbstract.substr(0, 283) + "...")}</span>
             </div>
         </div>
     );

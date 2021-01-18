@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'backend',
+    'graphgenerator',
 ]
 
 CORS_ALLOW_CREDENTIALS = False

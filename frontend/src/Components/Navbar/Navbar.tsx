@@ -4,6 +4,11 @@ import { Navbar, Nav, Icon, Dropdown, Button, NavbarProps } from 'rsuite';
 import { Settings } from "./Settings";
 import './styles/Navbar.css'
 
+/**
+ * The Navbar hold links to the different sites of the application
+ * @param props are the standard NabrbarProps from ruite
+ * @returns the navbar with links to the Search-, My Papers-, Graph-, Privacy- and Aboutpages and a link to Github and to the settings
+ */
 export const NavBarInstance: React.FC<NavbarProps> = (props) => {
     const [activeKey, handleSelect] = React.useState<string | null>(null);
     const [showSettings, setShowSettings] = React.useState<boolean>(false);
