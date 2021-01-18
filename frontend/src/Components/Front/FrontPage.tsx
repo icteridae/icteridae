@@ -5,8 +5,8 @@ import Config from '../../Utils/Config'
 
 import './FrontPage.css'
 import logo from '../../icon.png'
-import SearchResultCard from '../Search/SearchResult/SearchResultCard';
-import DataInterface from '../Search/SearchResult/Types';
+import { SearchResultCard }from '../Search/SearchResult/SearchResultCard';
+import { DataInterface } from '../Search/SearchResult/Types';
 /**
  * Frontpage is shown when the user the Web-Application. If exists it shows the recently opened papers
  * @returns the front/Search page
@@ -68,7 +68,7 @@ export const FrontPage: React.FC = () => {
                 {(recentlyOpenedPapers) &&
                     <div className="recent-papers">
                         <h3>Recently opened Papers:</h3>
-                        {recentlyOpenedPapers?.map((value, index) => <SearchResultCard dataKey={value.id} key={value.id} data={value} func={()=>null} highlightCard={() => null}/>)}
+                        {recentlyOpenedPapers?.map((value, index) => <SearchResultCard dataKey={value.id} key={value.id} data={value} raiseStateSelected={()=>null} highlightCard={() => null}/>)}
                     </div>
                 }
             </div>
