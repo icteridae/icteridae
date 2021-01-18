@@ -66,7 +66,7 @@ export const FrontPage: React.FC = () => {
                 <SearchBar/>
                 {(recentlyOpenedPapers) &&
                     <div className="recent-papers">
-                        <h5>Recently opened Papers:</h5>
+                        <h3>Recently opened Papers:</h3>
                         {recentlyOpenedPapers?.map((value, index) => <SearchResultCard dataKey={value.id} key={value.id} data={value} func={()=>null} highlightCard={() => null}/>)}
                     </div>
                 }

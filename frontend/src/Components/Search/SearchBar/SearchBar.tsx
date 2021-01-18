@@ -33,7 +33,7 @@ export const SearchBar: React.FC<SearchBarProps> = (props) => {
             <form onSubmit={buttonClick}>    
                 <InputGroup id="search-bar-group">
                     <Input id="search-bar" placeholder={props.placeholder} onChange={(e) => setInput(e)}/>
-                    <InputGroup.Button type="submit">
+                    <InputGroup.Button type="submit" onClick={buttonClick}>
                         <Icon icon="search" />
                     </InputGroup.Button>
                 </InputGroup>
