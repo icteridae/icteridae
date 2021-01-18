@@ -5,7 +5,7 @@
     display: none;
 }
 
-.FrontPage {
+.frontpage {
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -17,25 +17,25 @@
     font-family: Roboto;
 }
 
-.Header{
+.frontpage-header {
     padding: 20px;
     font-size: 30px;
     order:1;
     min-height: 15vh;
 }
 
-.Body {
+.frontpage-content {
     order:2;
     width:50%;
     min-height: 65vh;
     background-color: #282c34;
 }
 
-.Searching {
+.frontpage-searchbar {
     min-width: 350px;
 }
 
-.Suggestions{
+.suggestions{
     padding: 4vh;
     display: grid;
     grid-template-columns: 1fr;
@@ -45,11 +45,12 @@
     align-self:center;
 }
 
-.Title {
+.frontpage-title {
     font-size:20px;
+    text-decoration: underline;
 }
 
-.Imprint {
+.imprint {
     background-color: #0f131a;
     flex:1;
     order:3;

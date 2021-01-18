@@ -2,12 +2,12 @@ import React, {useState} from 'react';
 import './styles/PageSearchResult.css';
 import SearchResultList from "./SearchResultList";
 import DataInterface from "./Types";
+import { useParams } from 'react-router-dom';
 
-const query: string = "Dies ist eins query";
-
-const PageSearchResult = () => {
+export const PageSearchResult : React.FC = () => {
+    let {query} = useParams<{query: string}>(); 
     const [selected, setSelected] = useState<DataInterface>();
-
+    
     return (
         <div className="pageSearchResult">
             <div id="queryTitle">
@@ -35,4 +35,3 @@ const AbstractView : React.FC<{selected: DataInterface}> = (props) => {
     );
 }
 
-export default PageSearchResult;
