@@ -173,14 +173,6 @@ const genGraph = (data:papersAndSimilarities) =>{
 
         color: ""
     }));
-    // TODO: Delete when above method works correctly
-    /*for (i = 0; i < data.paper.length; i++){
-        nodes.push({
-            id: data.paper[i].id,
-            name: "Number of o´s in Name: " + (data.paper[i].title.split("o").length-1),
-            color: (data.paper[i].id == selectedPaper) ? "#861a22" : "#96d4bc",
-        })
-    }*/
     // Fix Position of the selected Paper in the center of the canvas
     (nodes[0] as NodeObject).fx = 0;
     (nodes[0] as NodeObject).fy = 0;
@@ -267,7 +259,7 @@ export const Graph: React.FC<{"data": myGraphData}> = (props) => {
     /*
     ** set whether the drawer is shown or hidden
     */
-    const[drawer, setDrawer] = React.useState(false);
+    const[drawer, setDrawer] = React.useState(true);
     /*
     ** selected Node to display on drawer
     */
@@ -295,7 +287,7 @@ export const Graph: React.FC<{"data": myGraphData}> = (props) => {
         <div>
             <Row>
                 <Col md={10}>
-                    <Slider
+                    <Slider 
                         progress
                         style={{ marginTop: 16, marginLeft: 50 }}
                         value={firstSliderValue}
