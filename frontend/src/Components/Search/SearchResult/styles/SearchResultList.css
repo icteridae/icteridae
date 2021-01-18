@@ -1,4 +1,4 @@
-.resultList {
+.result-list {
     display: flex;
     flex-direction: column;
     width: 50%;
@@ -8,11 +8,11 @@
     scrollbar-width: none;     /*remove scrollbar in Firefox*/
 }
 
-.resultList::-webkit-scrollbar {
+.result-list::-webkit-scrollbar {
     display: none;
 }
 
-.resultList > div {
+.result-list > div {
     margin-bottom: 20px;
 }
 

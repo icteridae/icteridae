@@ -40,6 +40,7 @@ export const FrontPage: React.FC = () => {
         
         // set paperIds and recentlyOpenedPapers once all promises succeed
         Promise.all(promises).then(() => {
+            console.log(papers);
             setPaperIds(paperIDs)
             setRecentlyOpenedPapers(papers);
         });
