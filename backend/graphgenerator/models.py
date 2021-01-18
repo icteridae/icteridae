@@ -1,17 +1,30 @@
+"""backend models
+
+- Paper
+- Author
+- FieldOfStudy
+- PdfUrl
+"""
+
 from django.db import models
+
+from django.contrib.postgres.search import SearchVectorField
+from django.contrib.postgres.indexes import GinIndex
+from django.contrib.postgres.fields import ArrayField
+
 
 # Create your models here.
 
-class Paper(models.Model): # Independant
+class Paper(models.Model):  # Independent
     """
     Model for a single paper
     """
 
     id = models.CharField(max_length=40, primary_key=True)
 
-    title = models.CharField(max_length=200) # TODO check max title length
+    title = models.CharField(max_length=400)  # TODO check max title length
     paperAbstract = models.TextField(blank=True)
-    
+
     authors = models.ManyToManyField('Author')
     inCitations = models.ManyToManyField('self', symmetrical=False, related_name='outCitations')
     # outCitations probably not needed?
@@ -23,6 +36,7 @@ class Paper(models.Model): # Independant
     # journalVolume # TODO
     # journalPages # TODO
     # doi # TODO
+    pdfUrl = ArrayField(base_field=models.URLField(), default=list)
     doiUrl = models.URLField(null=True)
     # pmid # TODO
     fieldsOfStudy = models.ManyToManyField('FieldOfStudy')
@@ -30,22 +44,23 @@ class Paper(models.Model): # Independant
     # s2PdUrl # TODO
     # entities # TODO
 
-class Author(models.Model): # Independant
-    name = models.CharField(max_length=200) 
+    search_vector = SearchVectorField(null=True, blank=True)  # Used for increased search performance. Do not edit
+
+    class Meta(object):
+        indexes = [GinIndex(fields=['search_vector']),
+                   GinIndex(name='graph_paper_ln_gin_idx', fields=['title'], opclasses=['gin_trgm_ops'])]
+
+
+class Author(models.Model):  # Independent
+    name = models.CharField(max_length=200)
     id = models.CharField(max_length=100, primary_key=True)
 
     def __str__(self):
-        return self.name 
+        return self.name
 
-class FieldOfStudy(models.Model): # Independant
+
+class FieldOfStudy(models.Model):  # Independent
     field = models.CharField(max_length=100, primary_key=True)
 
     def __str__(self):
         return self.field
-
-class PdfUrl(models.Model): # Dependant on Paper
-    url = models.URLField()
-    paper = models.ForeignKey(Paper, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.url
