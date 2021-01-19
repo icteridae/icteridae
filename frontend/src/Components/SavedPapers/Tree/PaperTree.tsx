@@ -25,8 +25,18 @@ const data = [
     }
 ]
 
-const CreatePaperTreeData = () => {
-    let storedData = getSavedPapers();
+const CreatePaperTreeData = (tree : any) => {
+    const baseURL : string = Config.base_url;
+    if(tree.value.charAt(0) === 'p') {
+        const id = tree.label;
+        fetch(baseURL+"/api/paper/?paper_id=" + id)
+            .then(res => res.json())
+            .then(res => tree.label = res.title)
+    }
+    else if (tree.value.charAt(0) === 'd' && tree.children) {
+         tree.children = CreatePaperTreeData(tree.children);
+    }
+    return tree;
 }
 
 const PaperTree: React.FC<{choosePaper: Function, height: number}> = (props ) => {
