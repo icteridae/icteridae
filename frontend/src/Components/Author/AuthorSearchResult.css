@@ -1,0 +1,16 @@
+.author-search-result {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+
+    width: 100%;
+    background-color: #0F131A;
+}
+
+.author-search-result #query-title h2 {
+    font-weight: unset;
+    font-size: 1.9vw;
+    line-height: 5.2vh;
+
+    margin: 20px 0 40px 20px;
+}
