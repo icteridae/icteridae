@@ -1,18 +1,18 @@
 import React, {useEffect, useState} from 'react';
-
-import {Card, CardProps} from "./Card/Card";
 import {SearchBar} from "../Search/SearchBar/SearchBar";
 import {getRecentPapers, setRecentPapers} from "../../Utils/Webstorage";
 import Config from '../../Utils/Config'
 
 import './FrontPage.css'
 import logo from '../../icon.png'
+import { SearchResultCard }from '../Search/SearchResult/SearchResultCard';
+import { DataInterface } from '../Search/SearchResult/Types';
 /**
  * Frontpage is shown when the user the Web-Application. If exists it shows the recently opened papers
  * @returns the front/Search page
  */
 export const FrontPage: React.FC = () => {
-    const [recentlyOpenedPapers, setRecentlyOpenedPapers] = useState<Array<PaperData>>([]);
+    const [recentlyOpenedPapers, setRecentlyOpenedPapers] = useState<Array<DataInterface>>([]);
     const [paperIds, setPaperIds] = useState<Array<string>>(getRecentPapers());
 
     /**
@@ -25,7 +25,7 @@ export const FrontPage: React.FC = () => {
         
         //capped at 10 papers max, if paperIds == null, zero papers will be loaded
         const numberOfPapers : number = (paperIDs == null) ? 0 : Math.min(paperIds.length, 10);
-        let papers: Array<PaperData> = new Array<PaperData>(numberOfPapers);
+        let papers: Array<DataInterface> = new Array<DataInterface>(numberOfPapers);
         
         // fetch all papers
         let promises = [];
@@ -44,7 +44,7 @@ export const FrontPage: React.FC = () => {
             setPaperIds(paperIDs)
             setRecentlyOpenedPapers(papers);
         });
-    } ,[]);
+    }, []);
 
     /**
      * Temporary function for storing paper_ids
@@ -60,35 +60,21 @@ export const FrontPage: React.FC = () => {
 
     return (
         <div className="frontpage">
-            <h1 className="frontpage-header">
-                Welcome to Icteridae!
-            </h1>
             <div className="frontpage-content">
-                <div className="frontpage-searchbar">
-                    <SearchBar placeholder="Search for your Papers!"/>
-                </div>
-                {/* Temprorary Button for the temp function*/}
-                <button onClick={() => overwriteRecentPapers()}>Ich bin nen Knopf </button>
-                {/* If there couldn't be loaded any recent paper or there aren't recent Paper the Suggestion class is not rendered*/}
+                <h1>
+                    Welcome to Icteridae!
+                </h1>
+                <SearchBar/>
                 {(recentlyOpenedPapers) &&
-                    <div className="suggestions">
-                        <div className="frontpage-title">Recently opened Papers:</div>
-                        {recentlyOpenedPapers?.map((value, index) => <Card key={value.id} title={value.title} year={value.year} authors={value.authors} link={'/graph'}/>)}
+                    <div className="recent-papers">
+                        <h3>Recently opened Papers:</h3>
+                        {recentlyOpenedPapers?.map((value, index) => <SearchResultCard dataKey={value.id} key={value.id} data={value} raiseStateSelected={()=>null} highlightCard={() => null}/>)}
                     </div>
                 }
             </div>
-            <footer className="imprint">
+            <footer className="frontpage-footer">
                 <img src={logo} alt="Logo"/> &copy; 2021 Icteridae
             </footer>
         </div>
     );
 }
-
-interface PaperData {
-    id: string,
-    title: string;
-    year: string;
-    authors: Array<{id: string, name: string}>;
-    link: string
-}
-
