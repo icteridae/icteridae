@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Tree, Icon} from 'rsuite';
-import {getSavedPapers} from "../../../Utils/Webstorage";
+import {getSavedPapers, setSavedPapers} from "../../../Utils/Webstorage";
 import Config from '../../../Utils/Config'
 
 type TreeType = {label?: string, value: string, children?: TreeInterface[], id? :string};
@@ -52,7 +52,7 @@ const CreatePaperTreeData = (tree : Array<TreeInterface>) => {
 }
 
 const PaperTree: React.FC<{choosePaper: Function, height: number}> = (props ) => {
-    const [treeData, setTreeData] = React.useState(CreatePaperTreeData(data));
+    const [treeData, setTreeData] = React.useState(CreatePaperTreeData(getSavedPapers()));
     return (
         <Tree
             data={treeData}
@@ -61,13 +61,14 @@ const PaperTree: React.FC<{choosePaper: Function, height: number}> = (props ) =>
             onDrop={
                 ({dropNode, dropNodePosition , createUpdateDataFunction} : any, event : any) => {
                     const v = createUpdateDataFunction(treeData);
-                    return setTreeData(fixTree({value: 'd', children: v})[0].children)
+                    setTreeData(fixTree({value: 'd', children: v})[0].children);
+                    setSavedPapers(treeData);
                 }
             }
             onSelect={(active, value, event) => (
                 props.choosePaper(active)
             )}
-            height={props.height}
+            height={props.height*20}
         />
     );
 }
