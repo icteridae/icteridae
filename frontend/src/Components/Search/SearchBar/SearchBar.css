@@ -1,15 +1,15 @@
-.SearchBar {
-    padding: 40px 20px;
-    display: inline-block;
-    text-align: center;
-    width: 50%;
-    min-width: 300px;
-    vertical-align: middle;
-    marginBottom: 10;
-    background-color: #282c34;
+input#search-bar {
+    background-color: #161C27;
 }
 
-.text{
-    font-size:25px;
-    font-weight: bold;
+#search-bar-group {
+    min-width: 300px;
+    width: 38vw;
+}
+
+.rs-input-group:hover {
+    border-color: #61847D !important;
+}
+.rs-input-group-focus {
+    border-color: #61847D !important;
 }

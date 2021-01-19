@@ -1,14 +1,17 @@
 import React, {useEffect, useState} from 'react';
 import './styles/SearchResultList.css';
-import SearchResultCard from "./SearchResultCard";
-import DataInterface from './Types'
+import { SearchResultCard } from "./SearchResultCard";
+import { DataInterface } from './Types';
+import Config from '../../../Utils/Config';
 
-type ResultListProps = {
+interface ResultListProps {
     query: string,
-    func: Function
+
+    /**function used to raise state, takes DataInterface as argument */
+    raiseStateSelected: React.Dispatch<React.SetStateAction<DataInterface | undefined>>
 }
 
-const SearchResultList : React.FC<ResultListProps> = (props) => {
+export const SearchResultList : React.FC<ResultListProps> = (props) => {
     const [searchResults, setSearchResults] = useState<DataInterface[]>();
     const [lastHighlighted, setLastHighlighted] = useState<number>();
 
@@ -24,16 +27,23 @@ const SearchResultList : React.FC<ResultListProps> = (props) => {
 
     // Effect hook for dynamically changing the height of the resultList and thus getting a scrollbar BECAUSE SCROLLBARS
     useEffect(() => {
+        /**
+         * Sets the height of a DOM-ELement with the id "search-result-list" to the remaining height on the page 
+         * (which is calculated using the height of elements above search-result-list)
+         */
         function setListToRemainingHeight() {
-            let windowHeight = window.innerHeight;
-            // @ts-ignore
-            let navbarHeight = document.getElementById("navbar").offsetHeight;
-            // @ts-ignore
-            let queryTitleHeight = document.getElementById("queryTitle").offsetHeight;
-            let list = document.getElementById("list");
+            const windowHeight = window.innerHeight;
+            
+            const navbarHeight : number | undefined = document.getElementById("navbar")?.offsetHeight;
+            const queryTitleHeight : number | undefined = document.getElementById("query-title")?.offsetHeight;
+            const list : HTMLElement | null = document.getElementById("search-result-list");
+            const abstractView : HTMLElement | null = document.getElementById("search-result-abstract-view")
 
-            // @ts-ignore
-            list.style.height = (windowHeight - navbarHeight - queryTitleHeight) + "px";
+            // only set height if none of these is null or undefined
+            if(navbarHeight != null && queryTitleHeight != null && list != null)
+                list.style.height = (windowHeight - navbarHeight - queryTitleHeight) + "px";
+
+            (abstractView != null) && setAbstractViewToListHeight(list, abstractView);
         }
 
         setListToRemainingHeight();
@@ -47,7 +57,7 @@ const SearchResultList : React.FC<ResultListProps> = (props) => {
 
     // Effect hook for fetching query data from search API
     useEffect(() => {
-        let requestURL = 'http://127.0.0.1:8000/api/search/?query=' + props.query;
+        let requestURL = Config.base_url + '/api/search/?query=' + props.query;
 
         fetch(requestURL)
             .then(res => res.json())
@@ -56,15 +66,27 @@ const SearchResultList : React.FC<ResultListProps> = (props) => {
 
     
     return (
-        <div id="list" className="resultList">
+        <div id="search-result-list" className="result-list">
             {
                 // short-circuit eval, if searchResults null don't render
-                searchResults != null && searchResults.map((entry: DataInterface, index: number) => {
-                    return <SearchResultCard highlightCard={highlightCard} func={props.func} key={entry.id} dataKey={index} data={entry}/>
+                (searchResults != null) && searchResults.map((entry: DataInterface, index: number) => {
+                    return <SearchResultCard highlightCard={highlightCard} raiseStateSelected={props.raiseStateSelected} key={entry.id} dataKey={index} data={entry}/>
                 })
             }
         </div>
     );
 }
 
-export default SearchResultList;
+/**
+ * Sets the height of the DOM-Element with the id "search-result-abstract-view" to the computed height of the DOM-Element with the id "search-result-list"
+ * 
+ * @param list DOM element with id "search-result-list", default value uses  document.getElementById to find the element
+ * @param abstractView DOM element with id "search-result-abstract-view", default value uses  document.getElementById to find the element
+ */
+export function setAbstractViewToListHeight(list = document.getElementById("search-result-list"), abstractView = document.getElementById("search-result-abstract-view")) {
+    // set abstractView to same height as list if both aren't null
+    if(abstractView != null && list != null) {
+        const abstractViewMargin = parseInt(window.getComputedStyle(abstractView).marginBottom);
+        abstractView.style.height = (parseInt(list.style.height) - abstractViewMargin) + "px"
+    }
+}

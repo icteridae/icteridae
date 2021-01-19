@@ -1,4 +1,4 @@
-.pageSearchResult {
+.page-search-result {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -7,56 +7,59 @@
     background-color: #0F131A;
 }
 
-#queryTitle h2 {
+.page-search-result #query-title h2 {
     font-weight: unset;
+    font-size: 1.9vw;
+    line-height: 5.2vh;
 
     margin: 20px 0 40px 20px;
 }
 
-.wrapper {
+.page-search-result .wrapper {
     display: flex;
 }
 
 
-.abstractView {
+.page-search-result .abstract-view {
     display: flex;
     flex-direction: column;
     flex: 1;
 
     text-align: left;
-    font-size: 30px;
+    font-size: 1.55vw;
     padding: 0 20px;
 
     background-color: #0F131A;
-    height: 78vh;
-    margin-left: 28vh;
+    margin-left: 14.2vw;
+    margin-bottom: 20px;
     overflow-y: scroll;
 
     border-radius: 20px;
     border-left: 6px outset #61847D;
 }
 
-.abstractView h1 {
+.page-search-result .abstract-view h1 {
     font-family: "Segoe UI",Arial,sans-serif;
     font-weight: lighter;
     color: #96d4bc;
-    font-size: 40px;
+    font-size: 2.4vw;
     line-height: inherit;
 }
 
-.abstractView h3 {
+.page-search-result .abstract-view h3 {
+    color: darkgray;
+    font-size: 1.74vw;
+}
+
+.page-search-result .abstract-view span {
     color: darkgray;
 }
 
-.abstractView span {
-    color: darkgray;
-}
-
-.abstractView span:last-of-type {
+.page-search-result .abstract-view span:last-of-type {
     margin-bottom: 0.8em;
 }
 
-.abstractView > * {
+.page-search-result .abstract-view > * {
     font-weight: lighter;
 }
 
