@@ -11,3 +11,8 @@ export function setRecentPapers(props: Array<string>){
     }
     return;
 }
+
+export function getSavedPapers() {
+    let savedPapers: Array<string> = JSON.parse(localStorage.getItem("saved") as string);
+    return savedPapers;
+}
