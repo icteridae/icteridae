@@ -5,6 +5,7 @@ import {Privacy} from '../Privacy/Privacy';
 import {GraphFetch} from '../Graph/Graph';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import {PageSearchResult} from '../Search/SearchResult/PageSearchResult';
+import {Paper} from "../SavedPapers/PaperSite";
 
 
  export const App: React.FC = () => (
@@ -15,6 +16,7 @@ import {PageSearchResult} from '../Search/SearchResult/PageSearchResult';
           <Route exact path='/results/:query' component={PageSearchResult}/>
           <Route exact path='/privacy' component={Privacy}/>
           <Route exact path='/graph' component={GraphFetch}/>
+          <Route exact path ='/papers' component={Paper}/>
           <Route exact path='/results/paper/:id' component={FrontPage}/>
           {/* TODO: insert other routes. See paths in Navbar.tsx */}
       </Switch>

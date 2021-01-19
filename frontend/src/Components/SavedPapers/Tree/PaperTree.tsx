@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {Tree, Icon} from 'rsuite';
 import {getSavedPapers} from "../../../Utils/Webstorage";
+import Config from '../../../Utils/Config'
 
 const data = [
     {
