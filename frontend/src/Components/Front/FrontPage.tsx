@@ -7,12 +7,13 @@ import './FrontPage.css'
 import logo from '../../icon.png'
 import { SearchResultCard }from '../Search/SearchResult/SearchResultCard';
 import { DataInterface } from '../Search/SearchResult/Types';
+import { Loader } from 'rsuite';
 /**
  * Frontpage is shown when the user the Web-Application. If exists it shows the recently opened papers
  * @returns the front/Search page
  */
 export const FrontPage: React.FC = () => {
-    const [recentlyOpenedPapers, setRecentlyOpenedPapers] = useState<Array<DataInterface>>([]);
+    const [recentlyOpenedPapers, setRecentlyOpenedPapers] = useState<Array<DataInterface> | null>([]);
     const [paperIds, setPaperIds] = useState<Array<string>>(getRecentPapers());
 
     /**
@@ -43,6 +44,9 @@ export const FrontPage: React.FC = () => {
             console.log(papers);
             setPaperIds(paperIDs)
             setRecentlyOpenedPapers(papers);
+        }).catch(() => {
+            console.log("Papers couldn't be loaded");
+            setRecentlyOpenedPapers(null);
         });
     }, []);
 
@@ -58,6 +62,15 @@ export const FrontPage: React.FC = () => {
         setRecentPapers(testData);
     }
 
+    let loaderOrRecentPapers;
+    if(recentlyOpenedPapers != null) {
+        if(recentlyOpenedPapers.length === 0) {
+            loaderOrRecentPapers = <Loader size="md"/>;
+        } else {
+            loaderOrRecentPapers = recentlyOpenedPapers?.map((value, index) => <SearchResultCard dataKey={value.id} key={value.id} data={value} raiseStateSelected={()=>null} highlightCard={() => null}/>)       
+        }
+    }
+
     return (
         <div className="frontpage">
             <div className="frontpage-content">
@@ -65,12 +78,10 @@ export const FrontPage: React.FC = () => {
                     Welcome to Icteridae!
                 </h1>
                 <SearchBar/>
-                {(recentlyOpenedPapers) &&
-                    <div className="recent-papers">
-                        <h3>Recently opened Papers:</h3>
-                        {recentlyOpenedPapers?.map((value, index) => <SearchResultCard dataKey={value.id} key={value.id} data={value} raiseStateSelected={()=>null} highlightCard={() => null}/>)}
-                    </div>
-                }
+                <div className="recent-papers">
+                    <h3>Recently opened papers:</h3>
+                    {loaderOrRecentPapers}
+                </div>
             </div>
             <footer className="frontpage-footer">
                 <img src={logo} alt="Logo"/> &copy; 2021 Icteridae
