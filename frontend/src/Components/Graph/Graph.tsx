@@ -1,6 +1,7 @@
 import * as React from 'react';
 import ForceGraph2D, {GraphData, LinkObject, NodeObject} from 'react-force-graph-2d';
 import {Button, Drawer, Row, Col, Slider, InputNumber} from "rsuite";
+import Config from '../../Utils/Config';
 import './Graph.css'
 
 /**
@@ -103,7 +104,8 @@ interface papersAndSimilarities{
  * This interface adds the similarity attribute to LinkObjects. Is only used if we include our own Link Force
  */
 interface myLinkObject extends LinkObject{
-    similarity: number[];
+    similarity: number[],
+    label: string,
 }
 
 /**
@@ -138,18 +140,19 @@ const genGraph = (data:papersAndSimilarities) =>{
             for (s = 0; s < data.tensor.length; s++){
                 sim.push(data.tensor[s][i][j]);
             }
-            //if(sim.reduce((x, y) => x + y) > 10){
+            //if(sim.reduce((x, y) => x + y) > 10){ //Threshhold for generating Links
                 links.push({
                     source: paper1.id,
                     target: data.paper[j].id,
                     color: "#FFFFFF",
                     similarity: sim,
+                    label: sim.toString(),
             })/*}*/
         }
     }
     var nodes = data.paper.map(id => ({
         id: id.id,
-        title: "Number of o´s in Name: " + (id.title.split("o").length-1) + "\nNumber of s in Name: " + (id.title.split("s").length-1),
+        title: id.title,//"Number of o´s in Name: " + (id.title.split("o").length-1) + "\nNumber of s in Name: " + (id.title.split("s").length-1),
         paperAbstract: id.paperAbstract,
         authors: id.authors,
         inCitations: id.inCitations,
@@ -201,7 +204,8 @@ export const GraphFetch: React.FC = () => {
     ** loadData fetches the graph_Data from the backend and saves the generated Graph in the State Hook graph
     */
     const loadData = async () => {
-        const response = await fetch("http://127.0.0.1:8000/api/generate_graph/?paper_id=d3ff20bc1a3bb222099ef652c65d494901620908");
+        const url = Config.base_url
+        const response = await fetch(url + "/api/generate_graph/?paper_id=9257779eed46107bcdce9f4dc86298572ff466ce");
         const data = await response.json();
         setGraph(genGraph(data));
     }
@@ -272,14 +276,11 @@ export const Graph: React.FC<{"data": myGraphData}> = (props) => {
             //Playing with the forces on the graph
             //fg.d3Force('center', null);
             //fg.d3Force("link").iterations(1).distance((link:myLinkObject) => link.similarity[0]*5);
-            fg.d3Force("link").iterations(1).distance((link:myLinkObject) => link.similarity.reduce(((x,y) => x + y), 2)*5);
+            fg.d3Force("link").iterations(1).distance((link:myLinkObject) => link.similarity.reduce(((x,y) => x + y), 2));
         },[]);
-    /*
-    ** loadData fetches the graph_Data from the backend and saves the generated Graph in the State Hook graph
-    */
     React.useEffect(() => {
         const fg:any = fgRef.current;
-        fg.d3Force("link").iterations(1).distance((link:myLinkObject) => (link.similarity[0] * firstSliderValue/10 + link.similarity[1] * secondSliderValue/10));//link.similarity.reduce(((x,y) => x + y), 0)*sliderValue));
+        fg.d3Force("link").iterations(1).distance((link:myLinkObject) => (link.similarity[0] * firstSliderValue/10 + link.similarity[1] * secondSliderValue/10 + link.similarity[2] * 5));//link.similarity.reduce(((x,y) => x + y), 0)*sliderValue));
         fg.d3ReheatSimulation();
     },[firstSliderValue, secondSliderValue]);
 
@@ -379,6 +380,7 @@ export const Graph: React.FC<{"data": myGraphData}> = (props) => {
                           }}
                           nodeAutoColorBy="fieldsOfStudy"
                           nodeLabel="title"
+                          linkLabel={(link:any) =>(link.label)}
                           linkWidth="width"
                           linkCurvature="curvature"
                           linkDirectionalArrowLength="arrowLen"
