@@ -1,11 +1,11 @@
 """module encapsulates code for reading files and storing in postgresql database
 """
 
-from django.db import connection
+from django.db import connection, transaction
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 import json
-
-from .models import Paper, Author, FieldOfStudy, PdfUrl
+import time
+from .models import Paper, Author, FieldOfStudy
 
 # responsible for loading data into database
 
@@ -15,27 +15,35 @@ from .models import Paper, Author, FieldOfStudy, PdfUrl
 # file is optimized to work with a Postgresql database 
 # if using another type, querys may have to be modified
 
-PAPER_BATCH = 100000  # batch size of bulk inserts. increase for better performance, decrease for less RAM usage
+PAPER_BATCH = 10000  # batch size of bulk inserts. increase for better performance, decrease for less RAM usage
 VERBOSE_COUNT = 71317  # Frequency of status output
-BREAK_POINT = 1000000  # Use reduced files for debugging. Otherwise set to None
-PATHS = [f'result{i}.json' for i in range(2)]
+BREAK_POINT = None  # Use reduced files for debugging. Otherwise set to None
+PATHS = ['result0.json', 'result4.json']
 
-paper_ids = set()  # do not edit. used for more efficient citation validation
+#paper_ids = set()  # do not edit. used for more efficient citation validation
 
 
 # with large data, this may need a lot of random access memory
 
+@transaction.atomic
 def load_papers():
     """
     loads all papers and fields of study into database
     """
-    paper_ids.clear()  # IDs are saved for citation validation
+    start = time.time() 
+
+    #paper_ids.clear()  # IDs are saved for citation validation
 
     print('Deleting stored papers...')
     cursor = connection.cursor()
 
     cursor.execute('TRUNCATE graphgenerator_fieldofstudy CASCADE;')
     cursor.execute('TRUNCATE graphgenerator_paper CASCADE;')
+    cursor.execute("""
+    DROP INDEX IF EXISTS public.graph_paper_ln_gin_idx;
+    DROP INDEX IF EXISTS public.graphgenera_search__7a75a9_gin;
+    DROP INDEX IF EXISTS public.graphgenerator_paper_id_97052503_like;
+    ALTER TABLE graphgenerator_paper DISABLE TRIGGER ALL;""")
 
     fields = set()
 
@@ -59,7 +67,7 @@ def load_papers():
                     # add any new attributes here
                 )
                 )  # create paper objects.
-                paper_ids.add(data['id'])
+                #paper_ids.add(data['id'])
 
                 for field in data['fieldsOfStudy']:
                     fields.add(field)
@@ -74,9 +82,30 @@ def load_papers():
 
     FieldOfStudy.objects.bulk_create([FieldOfStudy(field=field) for field in fields])
 
+    print('Rebuilding indexes...')
 
-# time for 200000 entries:     
-# start: 14:36:15 ################################
+    cursor.execute("""  CREATE INDEX graph_paper_ln_gin_idx
+                            ON public.graphgenerator_paper USING gin
+                            (title COLLATE pg_catalog."default" gin_trgm_ops)
+                            TABLESPACE pg_default;
+
+                        CREATE INDEX graphgenera_search__7a75a9_gin
+                            ON public.graphgenerator_paper USING gin
+                            (search_vector)
+                            TABLESPACE pg_default;
+
+                        CREATE INDEX graphgenerator_paper_id_97052503_like
+                            ON public.graphgenerator_paper USING btree
+                            (id COLLATE pg_catalog."default" varchar_pattern_ops ASC NULLS LAST)
+                            TABLESPACE pg_default;
+                            
+                        ALTER TABLE graphgenerator_paper ENABLE TRIGGER ALL;""")
+
+    print('Breakpoint:', BREAK_POINT,' - Duration:', 1000 * (time.time() - start))
+
+
+# time for 2000000 entries:     
+# start: 19:17:00 ################################
 # end: 
 
 def load_authors():
@@ -87,6 +116,9 @@ def load_authors():
     print('Deleting stored authors...')
     cursor = connection.cursor()
     cursor.execute('TRUNCATE graphgenerator_author;')
+    cursor.execute("""
+        ALTER TABLE graphgenerator_author DISABLE TRIGGER ALL;
+    """)
     print('Reading authors (saving)...')
 
     for pathid, path in enumerate(PATHS):
@@ -111,6 +143,10 @@ def load_authors():
 
             Author.objects.bulk_create(authors, ignore_conflicts=True)
 
+    cursor.execute("""
+        ALTER TABLE graphgenerator_author ENABLE TRIGGER ALL;
+    """)
+
 
 
 def connect_authors():
@@ -120,6 +156,16 @@ def connect_authors():
     print('Reading authors (connecting)...')
 
     ThroughModel = Paper.authors.through
+
+    cursor = connection.cursor()
+    cursor.execute("""
+    DROP INDEX IF EXISTS public.graphgenerator_paper_authors_author_id_736e7be2;
+    DROP INDEX IF EXISTS public.graphgenerator_paper_authors_paper_id_591aff60;
+    DROP INDEX IF EXISTS public.graphgenerator_paper_authors_paper_id_591aff60_like;
+    ALTER TABLE graphgenerator_author DISABLE TRIGGER ALL;
+    """)
+
+
     for pathid, path in enumerate(PATHS):
         with open(path) as file:
             models = []
@@ -137,12 +183,27 @@ def connect_authors():
                 if idx == BREAK_POINT: break
 
                 if idx % PAPER_BATCH == 0 and idx > 0:
-                    print('Pushing to database...')
                     ThroughModel.objects.bulk_create(models, ignore_conflicts=True)
                     models = []
 
             ThroughModel.objects.bulk_create(models, ignore_conflicts=True)
 
+    cursor.execute("""  CREATE INDEX graphgenerator_paper_authors_author_id_736e7be2
+                            ON public.graphgenerator_paper_authors USING btree
+                            (author_id COLLATE pg_catalog."default" ASC NULLS LAST)
+                            TABLESPACE pg_default;
+
+                        CREATE INDEX graphgenerator_paper_authors_paper_id_591aff60
+                            ON public.graphgenerator_paper_authors USING btree
+                            (paper_id COLLATE pg_catalog."default" ASC NULLS LAST)
+                            TABLESPACE pg_default;
+                        
+                        CREATE INDEX graphgenerator_paper_authors_paper_id_591aff60_like
+                            ON public.graphgenerator_paper_authors USING btree
+                            (paper_id COLLATE pg_catalog."default" varchar_pattern_ops ASC NULLS LAST)
+                            TABLESPACE pg_default;
+                            
+                        ALTER TABLE graphgenerator_author ENABLE TRIGGER ALL;""")
 
 def connect_citations():
     """
@@ -151,7 +212,10 @@ def connect_citations():
     """
 
     print('Reading citations...')
-    
+    cursor = connection.cursor()
+    cursor.execute("""
+        ALTER TABLE "graphgenerator_paper_inCitations" DISABLE TRIGGER ALL;
+    """)
 
     Paper.inCitations.through.objects.all().delete()  # delete previous data
     ThroughModel = Paper.inCitations.through  # through model allows for better performance
@@ -167,30 +231,34 @@ def connect_citations():
                 models.extend([
                     ThroughModel(from_paper_id=data['id'],
                                  to_paper_id=inCitation)
-                    for inCitation in data['inCitations'] if inCitation in paper_ids
+                    for inCitation in data['inCitations'] #if inCitation in paper_ids
                 ])
-                models.extend([
-                    ThroughModel(from_paper_id=outCitation,
-                                 to_paper_id=data['id'])
-                    for outCitation in data['outCitations'] if outCitation in paper_ids
-                ])  # include citations in both directions
+                #models.extend([
+                #    ThroughModel(from_paper_id=outCitation,
+                #                 to_paper_id=data['id'])
+                #    for outCitation in data['outCitations'] if outCitation in paper_ids
+                #])  # include citations in both directions
 
                 if idx == BREAK_POINT: break
 
                 if idx % PAPER_BATCH == 0 and idx > 0:
-                    print('Pushing to database...')
                     ThroughModel.objects.bulk_create(models, ignore_conflicts=True)
                     models = []
 
             ThroughModel.objects.bulk_create(models, ignore_conflicts=True)
 
+    cursor.execute("""
+        ALTER TABLE "graphgenerator_paper_inCitations" ENABLE TRIGGER ALL;
+    """)
+
 
 def create_search_index():
     print('Creating vectors for search index...')
     Paper.objects.update(
-        search_vector=SearchVector('title', 'year', weight='A') + SearchVector('paperAbstract', weight='B'))
+        search_vector=SearchVector('title', 'year')) #+ SearchVector('paperAbstract', weight='B'))
 
 
+@transaction.atomic
 def load():
     load_papers()
     connect_citations()
