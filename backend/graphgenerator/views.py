@@ -114,3 +114,25 @@ def get_paper(request):
         return http.JsonResponse(PaperSerializer(paper).data)
     except:
         return http.HttpResponseBadRequest('Paper not found')
+
+
+
+@api_view(['POST'])
+def get_paper_bulk(request):
+    """
+    returns paper metadata based on list of ids
+
+    request needs to have 'paper_ids':list<str> field in body
+    """
+    
+    data = json.loads(request.body)
+    paper_ids = data.get('paper_ids', None)
+
+    if paper_ids is None:
+        return http.HttpResponseBadRequest('Missing attribute: paper_ids')
+
+    try:
+        papers = Paper.objects.in_bulk(id_list=paper_ids, field_name='id')
+        return http.JsonResponse(PaperSerializer([papers[id] for id in paper_ids], many=True).data, safe=False)
+    except:
+        return http.HttpResponseBadRequest('Paper not found')
