@@ -30,7 +30,6 @@ def load_papers():
     """
     loads all papers and fields of study into database
     """
-    start = time.time() 
 
     #paper_ids.clear()  # IDs are saved for citation validation
 
@@ -100,8 +99,6 @@ def load_papers():
                             TABLESPACE pg_default;
                             
                         ALTER TABLE graphgenerator_paper ENABLE TRIGGER ALL;""")
-
-    print('Breakpoint:', BREAK_POINT,' - Duration:', 1000 * (time.time() - start))
 
 
 # time for 2000000 entries:     
@@ -258,11 +255,20 @@ def create_search_index():
         search_vector=SearchVector('title', 'year')) #+ SearchVector('paperAbstract', weight='B'))
 
 
-@transaction.atomic
 def load():
+    start = time.time() 
     load_papers()
+    print('Loaded papers (s):', (time.time() - start))
+    alt = time.time() 
     connect_citations()
+    print('Connected citations (s):', (time.time() - alt))
+    alt = time.time() 
     load_authors()
+    print('Loaded authors (s):', (time.time() - alt))
+    alt = time.time() 
     connect_authors()
+    print('Connected authors (s):', (time.time() - alt))
+    alt = time.time() 
     create_search_index()
-    return
+    print('Created search index (s):', (time.time() - alt))
+    print('Done (s):', (time.time() - start))
