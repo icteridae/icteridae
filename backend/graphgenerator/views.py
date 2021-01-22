@@ -12,6 +12,7 @@ from .similarity import USING_SIMILARITIES as similarity_function_list
 from .similarity import PairwiseSimilarity
 from .relevance import USING_RELEVANCE
 
+from .documents import PaperDocument
 
 # Create your views here.
 @api_view(['GET'])
@@ -31,16 +32,20 @@ def search(request):
         return http.HttpResponseBadRequest('invalid page size.')
     pagesize = int(pagesize)
 
-    search_query = SearchQuery(query)
 
-    search_result = Paper.objects.filter(search_vector=search_query).annotate(
-        rank=SearchRank(
-            'search_vector',
-            search_query
-        )
-    ).order_by('-rank')
+    ##################################################
+    #search_query = SearchQuery(query)
 
-    max_pages = (search_result.count() - 1) // pagesize
+    #search_result = Paper.objects.filter(search_vector=search_query).annotate(
+    #    rank=SearchRank(
+    #        'search_vector',
+    #        search_query
+    #    )
+    #).order_by('-rank')
+    ##################################################
+
+    #max_pages = (search_result.count() - 1) // pagesize
+    max_pages = (PaperDocument.search().count() - 1) // pagesize
 
     page = request.query_params.get('page', '0')
     if not page.isnumeric() or int(page) > max_pages:
@@ -56,7 +61,9 @@ def search(request):
 
     return http.JsonResponse(
         {
-            'data': PaperSerializer(search_result[pagesize * page: pagesize * (page + 1)],
+            #'data': PaperSerializer(search_result[pagesize * page: pagesize * (page + 1)],
+            #                        many=True).data,
+            'data': PaperSerializer(PaperDocument.search().query('match', title=query)[pagesize * page: pagesize * (page + 1)].to_queryset(),
                                     many=True).data,
             'max_pages': max_pages
         },
