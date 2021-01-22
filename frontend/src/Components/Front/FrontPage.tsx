@@ -1,13 +1,16 @@
-import React, {useEffect, useState} from 'react';
-import {SearchBar} from "../Search/SearchBar/SearchBar";
-import {getRecentPapers, setRecentPapers} from "../../Utils/Webstorage";
-import Config from '../../Utils/Config'
-
+import React, { useEffect, useState } from 'react';
 import './FrontPage.css'
 import logo from '../../icon.png'
-import { SearchResultCard }from '../Search/SearchResult/SearchResultCard';
+
 import { DataInterface } from '../Search/SearchResult/Types';
-import { Loader } from 'rsuite';
+import { getRecentPapers, setRecentPapers } from "../../Utils/Webstorage";
+import { SearchBar } from "../Search/SearchBar/SearchBar";
+import { SearchResultCard } from '../Search/SearchResult/SearchResultCard';
+import Config from '../../Utils/Config'
+
+import { css } from "@emotion/core";
+import SyncLoader from "react-spinners/SyncLoader";
+
 /**
  * Frontpage is shown when the user the Web-Application. If exists it shows the recently opened papers
  * @returns the front/Search page
@@ -42,7 +45,7 @@ export const FrontPage: React.FC = () => {
         // set paperIds and recentlyOpenedPapers once all promises succeed
         Promise.all(promises).then(() => {
             console.log(papers);
-            setPaperIds(paperIDs)
+            setPaperIds(paperIDs);
             setRecentlyOpenedPapers(papers);
         }).catch(() => {
             console.log("Papers couldn't be loaded");
@@ -50,24 +53,23 @@ export const FrontPage: React.FC = () => {
         });
     }, []);
 
-    /**
-     * Temporary function for storing paper_ids
-     */
-    function overwriteRecentPapers() {
-        let testData : Array<string> = ["7303cff26e66f6abcbf65620198f2d368e5d18f1",
-            "5d31c8fe61c6210c26b496ed80d8ed2e57967370",
-            "a005c55622ab40e0b596c7174b28e3f0738804e7",
-            "e9faa7906e35846bfdb78ff813de2e7bc8d3a309"];
-        setPaperIds(testData);
-        setRecentPapers(testData);
-    }
+    const override = css`
+        display: block;
+        margin: 32vh 0 0 2vw;
+        
+    `;
 
     let loaderOrRecentPapers;
     if(recentlyOpenedPapers != null) {
         if(recentlyOpenedPapers.length === 0) {
-            loaderOrRecentPapers = <Loader size="md"/>;
+            loaderOrRecentPapers = <SyncLoader color="#36D7B7" css={override}/>;
         } else {
-            loaderOrRecentPapers = recentlyOpenedPapers?.map((value, index) => <SearchResultCard dataKey={value.id} key={value.id} data={value} raiseStateSelected={()=>null} highlightCard={() => null}/>)       
+            
+            loaderOrRecentPapers = 
+            <>
+                <h3>Recently opened papers:</h3>
+                {recentlyOpenedPapers?.map((value) => <SearchResultCard dataKey={value.id} key={value.id} data={value} raiseStateSelected={()=>null} highlightCard={() => null}/>)}
+            </>;    
         }
     }
 
@@ -79,7 +81,7 @@ export const FrontPage: React.FC = () => {
                 </h1>
                 <SearchBar/>
                 <div className="recent-papers">
-                    <h3>Recently opened papers:</h3>
+                    
                     {loaderOrRecentPapers}
                 </div>
             </div>
