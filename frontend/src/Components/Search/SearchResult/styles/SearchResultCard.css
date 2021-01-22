@@ -5,11 +5,11 @@
     padding: 20px;
     width: 100%;
 
-    border-left: 6px outset #0F131A;
+    border-left: 0.4vw outset #0F131A;
 }
 
 .search-result-card.card-selected {
-    border-left: 6px outset #61847D;
+    border-left: 0.4vw outset #61847D;
 }
 
 .search-result-card .content {
@@ -23,7 +23,7 @@
     font-size: 1.46vw;
     font-weight: lighter;
 
-    line-height: 4.7vh;
+    line-height: 2.1vw;
 }
 
 .search-result-card .date {

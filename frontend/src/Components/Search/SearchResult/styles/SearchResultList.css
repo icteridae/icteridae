@@ -1,7 +1,6 @@
 .result-list {
     display: flex;
     flex-direction: column;
-    width: 50%;
     text-align: left;
     margin-left: 5vh;
     overflow: scroll;

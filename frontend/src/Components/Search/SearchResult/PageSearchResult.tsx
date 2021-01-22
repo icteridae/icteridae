@@ -10,23 +10,21 @@ export const PageSearchResult : React.FC = () => {
     
     return (
         <div className="page-search-result">
-            <div id="query-title">
-                <h2>Showing search results for <b>"{query}"</b>:</h2>
-            </div>
             <div className="wrapper">
+                <div id="query-title">
+                    <h2>Showing search results for <b>"{query}"</b>:</h2>
+                </div>
                 <SearchResultList query={query} raiseStateSelected={setSelected}/>
-                {(selected != null) && <AbstractView selected={selected}/>}
             </div>
+            {(selected != null) && <AbstractView selected={selected}/>}
         </div>
     );
 }
-
 
 const AbstractView : React.FC<{selected: DataInterface}> = (props) => {
     // Effect hook for setting the height of AbstractView when it's rendered for the first time
     useEffect(() => {
         setAbstractViewToListHeight();
-        console.log("AbstractView");
     }, [])
 
     return(

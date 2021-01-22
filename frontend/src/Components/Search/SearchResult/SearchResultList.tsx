@@ -86,7 +86,12 @@ export const SearchResultList : React.FC<ResultListProps> = (props) => {
 export function setAbstractViewToListHeight(list = document.getElementById("search-result-list"), abstractView = document.getElementById("search-result-abstract-view")) {
     // set abstractView to same height as list if both aren't null
     if(abstractView != null && list != null) {
-        const abstractViewMargin = parseInt(window.getComputedStyle(abstractView).marginBottom);
-        abstractView.style.height = (parseInt(list.style.height) - abstractViewMargin) + "px"
+        const abstractViewMargin = parseInt(window.getComputedStyle(abstractView).marginBottom) + parseInt(window.getComputedStyle(abstractView).marginTop);
+        const navbarHeight = document.getElementById("navbar")?.offsetHeight;
+        
+        if(navbarHeight != null) {
+            const pageHeightWithoutNavbar : any = window.innerHeight - navbarHeight;
+            abstractView.style.height = pageHeightWithoutNavbar - abstractViewMargin + "px";
+        }
     }
 }
