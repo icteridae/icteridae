@@ -73,7 +73,7 @@ export const FrontPage: React.FC = () => {
                 }
             </div>
             <footer className="frontpage-footer">
-                <img src={logo} alt="Logo"/> &copy; 2021 Icteridae
+                <img src={logo} alt="Logo"/> &copy; {new Date().getFullYear()} Icteridae
             </footer>
         </div>
     );
