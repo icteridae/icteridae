@@ -44,7 +44,13 @@ class Paper(models.Model):  # Independent
     # s2PdUrl # TODO
     # entities # TODO
 
+    citations = models.IntegerField()  # Used for boosting in search results
     search_vector = SearchVectorField(null=True, blank=True)  # Used for increased search performance. Do not edit
+
+    def get_citations(self):
+        """Function for citation rank_feature in elasticsearch backend. Used to boost search results with high citation counts
+        """
+        return self.citations + 1 # +1 needed as rank_features have to be strictly positive (>0)
 
     class Meta(object):
         indexes = [GinIndex(fields=['search_vector']),
