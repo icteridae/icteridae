@@ -15,11 +15,17 @@
     font-weight: unset;
     font-size: 1.9vw;
     line-height: 5.2vh;
-
-    margin: 20px 0 40px 20px;
+    color: #a4a9b3;
+    margin: 20px 0 0 20px;
 }
 
-
+.page-search-result #query-title .line {
+    border-bottom: 2px #61847D solid;
+    width: 80%;
+    height: 10px;
+    margin-left: 20px;
+    margin-bottom: 2vh;
+}
 
 .page-search-result .abstract-view {
     display: flex;

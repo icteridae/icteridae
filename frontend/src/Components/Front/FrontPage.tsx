@@ -72,6 +72,7 @@ export const FrontPage: React.FC = () => {
             </>;    
         }
     }
+    //loaderOrRecentPapers = <SyncLoader color="#36D7B7" css={override}/>;
 
     return (
         <div className="frontpage">

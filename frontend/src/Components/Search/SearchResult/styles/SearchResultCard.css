@@ -5,11 +5,12 @@
     padding: 20px;
     width: 100%;
 
-    border-left: 0.4vw outset #0F131A;
+    border-left: 0.4vw outset #61847D33;
 }
 
 .search-result-card.card-selected {
     border-left: 0.4vw outset #61847D;
+    border-radius: 20px;
 }
 
 .search-result-card .content {

@@ -13,6 +13,7 @@ export const PageSearchResult : React.FC = () => {
             <div className="wrapper">
                 <div id="query-title">
                     <h2>Showing search results for <b>"{query}"</b>:</h2>
+                    <div className="line"></div>
                 </div>
                 <SearchResultList query={query} raiseStateSelected={setSelected}/>
             </div>
