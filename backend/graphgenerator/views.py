@@ -4,6 +4,8 @@ from django import http
 from django.contrib.postgres.search import SearchQuery, SearchRank  # , SearchVector,TrigramSimilarity
 from rest_framework.decorators import api_view
 
+from elasticsearch_dsl import query as dsl_query
+
 from .models import Paper
 from .serializers import PaperSerializer
 
@@ -13,6 +15,9 @@ from .similarity import PairwiseSimilarity
 from .relevance import USING_RELEVANCE
 
 from .documents import PaperDocument
+
+SATURATION_PIVOT = 100
+BOOST_MAGNITUDE = 2.5
 
 # Create your views here.
 @api_view(['GET'])
@@ -32,19 +37,6 @@ def search(request):
         return http.HttpResponseBadRequest('invalid page size.')
     pagesize = int(pagesize)
 
-
-    ##################################################
-    #search_query = SearchQuery(query)
-
-    #search_result = Paper.objects.filter(search_vector=search_query).annotate(
-    #    rank=SearchRank(
-    #        'search_vector',
-    #        search_query
-    #    )
-    #).order_by('-rank')
-    ##################################################
-
-    #max_pages = (search_result.count() - 1) // pagesize
     max_pages = (PaperDocument.search().count() - 1) // pagesize
 
     page = request.query_params.get('page', '0')
@@ -52,18 +44,14 @@ def search(request):
         return http.HttpResponseBadRequest('invalid page number.')
     page = int(page)
 
-    # search_result = Paper.objects.annotate(
-    #    similarity=TrigramSimilarity('search_vector', query)
-    # ).filter(similarity__gt=0.3).order_by('-similarity')[pagesize * page: pagesize * (page+1)]
+    match_query = dsl_query.Match(title={'query': query})
+    citation_query = dsl_query.RankFeature(field='citations', saturation={'pivot': SATURATION_PIVOT}, boost=BOOST_MAGNITUDE) # Create query to boost results with high citations
 
-    # search_result = Paper.objects.filter(search_vector = search_query)
-    # [pagesize * page: pagesize * (page+1)]
+    full_query = match_query | citation_query # Combine two queries above
 
     return http.JsonResponse(
         {
-            #'data': PaperSerializer(search_result[pagesize * page: pagesize * (page + 1)],
-            #                        many=True).data,
-            'data': PaperSerializer(PaperDocument.search().query('match', title=query)[pagesize * page: pagesize * (page + 1)].to_queryset(),
+            'data': PaperSerializer(PaperDocument.search().query(full_query)[pagesize * page: pagesize * (page + 1)].to_queryset(),
                                     many=True).data,
             'max_pages': max_pages
         },
