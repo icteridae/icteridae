@@ -62,8 +62,10 @@ def load_papers():
                     paperAbstract=data['paperAbstract'],
                     year=data['year'],
                     s2Url=data['s2Url'],
-                    doiUrl=data['doiUrl']
+                    doiUrl=data['doiUrl'],
                     # add any new attributes here
+
+                    citations=len(data['inCitations'])
                 )
                 )  # create paper objects.
                 #paper_ids.add(data['id'])
