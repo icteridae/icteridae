@@ -37,7 +37,7 @@
     padding: 0 20px;
 
     background-color: #0F131A;
-    margin: 3vh 0 3vh 14.2vw;
+    margin: 3vh 0 3vh 11vw;
     overflow-y: scroll;
 
     border-radius: 20px;
@@ -55,6 +55,8 @@
 
 .page-search-result .abstract-view span, .page-search-result .abstract-view h3 {
     color: darkgray;
+    font-size: inherit;
+    line-height: inherit;
 }
 
 .page-search-result .abstract-view span:last-of-type {
