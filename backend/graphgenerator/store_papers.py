@@ -15,7 +15,7 @@ from .models import Paper, Author, FieldOfStudy
 # file is optimized to work with a Postgresql database 
 # if using another type, querys may have to be modified
 
-PAPER_BATCH = 10000  # batch size of bulk inserts. increase for better performance, decrease for less RAM usage
+PAPER_BATCH = 1000  # batch size of bulk inserts. increase for better performance, decrease for less RAM usage
 VERBOSE_COUNT = 71317  # Frequency of status output
 BREAK_POINT = None  # Use reduced files for debugging. Otherwise set to None
 PATHS = ['result0.json', 'result4.json']
@@ -65,7 +65,8 @@ def load_papers():
                     doiUrl=data['doiUrl'],
                     # add any new attributes here
 
-                    citations=len(data['inCitations'])
+                    citations=len(data['inCitations']),
+                    references=len(data['outCitations'])
                 )
                 )  # create paper objects.
                 #paper_ids.add(data['id'])

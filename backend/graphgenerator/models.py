@@ -45,6 +45,7 @@ class Paper(models.Model):  # Independent
     # entities # TODO
 
     citations = models.IntegerField()  # Used for boosting in search results
+    references = models.IntegerField()
     search_vector = SearchVectorField(null=True, blank=True)  # Used for increased search performance. Do not edit
 
     def get_citations(self):
