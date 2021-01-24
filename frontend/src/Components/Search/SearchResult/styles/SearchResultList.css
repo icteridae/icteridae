@@ -1,18 +1,28 @@
-.resultList {
+.result-list {
     display: flex;
     flex-direction: column;
-    width: 50%;
     text-align: left;
     margin-left: 5vh;
     overflow: scroll;
     scrollbar-width: none;     /*remove scrollbar in Firefox*/
 }
 
-.resultList::-webkit-scrollbar {
+.result-list::-webkit-scrollbar {
     display: none;
 }
 
-.resultList > div {
+.result-list > div {
     margin-bottom: 20px;
+    border-left: 0.4vw outset #61847D33;
+}
+
+#test {
+    align-self: center;
+    border-bottom: 3px solid #96d4bc;
+    margin-bottom: 20px;
+}
+
+#test .rs-pagination-btn-active > a {
+    color: #96d4bc;
 }
 

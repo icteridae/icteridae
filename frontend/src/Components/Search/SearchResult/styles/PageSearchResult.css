@@ -1,63 +1,89 @@
-.pageSearchResult {
+.page-search-result {
     display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-
+    flex-direction: row;
     width: 100%;
     background-color: #0F131A;
 }
 
-#queryTitle h2 {
-    font-weight: unset;
-
-    margin: 20px 0 40px 20px;
-}
-
-.wrapper {
+.page-search-result .wrapper {
     display: flex;
+    flex-direction: column;
+    width: 50%;
+}
+
+.page-search-result #query-title h2 {
+    font-weight: unset;
+    font-size: 1.9vw;
+    line-height: 5.2vh;
+    color: #a4a9b3;
+    margin: 20px 0 0 20px;
+}
+
+.page-search-result #query-title .line {
+    border-bottom: 2px #61847D solid;
+    width: 80%;
+    height: 10px;
+    margin-left: 20px;
+    margin-bottom: 2vh;
+}
+
+.wrapper-2 {
+    display: flex;
+    flex: 1;
 }
 
 
-.abstractView {
+.page-search-result .abstract-view {
     display: flex;
     flex-direction: column;
     flex: 1;
 
     text-align: left;
-    font-size: 30px;
+    font-size: 1.4vw;
     padding: 0 20px;
 
     background-color: #0F131A;
-    height: 78vh;
-    margin-left: 28vh;
+    margin: 5vh 0 3vh 11vw;
     overflow-y: scroll;
 
     border-radius: 20px;
-    border-left: 6px outset #61847D;
+    border-left: 0.4vw outset #61847D;
 }
 
-.abstractView h1 {
+.page-search-result .abstract-view h1 {
     font-family: "Segoe UI",Arial,sans-serif;
     font-weight: lighter;
     color: #96d4bc;
-    font-size: 40px;
+    
     line-height: inherit;
 }
 
-.abstractView h3 {
+
+.page-search-result .abstract-view span, .page-search-result .abstract-view h3 {
     color: darkgray;
+    font-size: 1.2vw;
+    line-height: inherit;
 }
 
-.abstractView span {
-    color: darkgray;
-}
-
-.abstractView span:last-of-type {
+.page-search-result .abstract-view span:last-of-type {
     margin-bottom: 0.8em;
 }
 
-.abstractView > * {
+.page-search-result .abstract-view > * {
     font-weight: lighter;
+}
+
+
+@media only screen and (max-width: 1200px) {
+    .page-search-result .abstract-view h1 {
+        font-size: 2.4vw;
+    }
+}
+
+@media only screen and (min-width: 1201px) {
+    .page-search-result .abstract-view h1 {
+        font-size: 1.8vw;
+    }
 }
 
 

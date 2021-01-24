@@ -1,18 +1,22 @@
-import React, {useEffect, useState} from 'react';
-
-import {Card, CardProps} from "./Card/Card";
-import {SearchBar} from "../Search/SearchBar/SearchBar";
-import {getRecentPapers, setRecentPapers} from "../../Utils/Webstorage";
-import Config from '../../Utils/Config'
-
+import React, { useEffect, useState } from 'react';
 import './FrontPage.css'
 import logo from '../../icon.png'
+
+import { DataInterface } from '../Search/SearchResult/Types';
+import { getRecentPapers, setRecentPapers } from "../../Utils/Webstorage";
+import { SearchBar } from "../Search/SearchBar/SearchBar";
+import { SearchResultCard } from '../Search/SearchResult/SearchResultCard';
+import Config from '../../Utils/Config'
+
+import { css } from "@emotion/core";
+import SyncLoader from "react-spinners/SyncLoader";
+
 /**
  * Frontpage is shown when the user the Web-Application. If exists it shows the recently opened papers
  * @returns the front/Search page
  */
 export const FrontPage: React.FC = () => {
-    const [recentlyOpenedPapers, setRecentlyOpenedPapers] = useState<Array<PaperData>>([]);
+    const [recentlyOpenedPapers, setRecentlyOpenedPapers] = useState<Array<DataInterface> | null>([]);
     const [paperIds, setPaperIds] = useState<Array<string>>(getRecentPapers());
 
     /**
@@ -25,7 +29,7 @@ export const FrontPage: React.FC = () => {
         
         //capped at 10 papers max, if paperIds == null, zero papers will be loaded
         const numberOfPapers : number = (paperIDs == null) ? 0 : Math.min(paperIds.length, 10);
-        let papers: Array<PaperData> = new Array<PaperData>(numberOfPapers);
+        let papers: Array<DataInterface> = new Array<DataInterface>(numberOfPapers);
         
         // fetch all papers
         let promises = [];
@@ -40,54 +44,51 @@ export const FrontPage: React.FC = () => {
         
         // set paperIds and recentlyOpenedPapers once all promises succeed
         Promise.all(promises).then(() => {
-            setPaperIds(paperIDs)
+            console.log(papers);
+            setPaperIds(paperIDs);
             setRecentlyOpenedPapers(papers);
+        }).catch(() => {
+            console.log("Papers couldn't be loaded");
+            setRecentlyOpenedPapers(null);
         });
-    } ,[paperIds]);
+    }, []);
 
-    /**
-     * Temporary function for storing paper_ids
-     */
-    function overwriteRecentPapers() {
-        let testData : Array<string> = ["7303cff26e66f6abcbf65620198f2d368e5d18f1",
-            "5d31c8fe61c6210c26b496ed80d8ed2e57967370",
-            "a005c55622ab40e0b596c7174b28e3f0738804e7",
-            "e9faa7906e35846bfdb78ff813de2e7bc8d3a309"];
-        setPaperIds(testData);
-        setRecentPapers(testData);
+    const override = css`
+        display: block;
+        margin: 32vh 0 0 2vw;
+        
+    `;
+
+    let loaderOrRecentPapers;
+    if(recentlyOpenedPapers != null) {
+        if(recentlyOpenedPapers.length === 0) {
+            loaderOrRecentPapers = <SyncLoader color="#36D7B7" css={override}/>;
+        } else {
+            
+            loaderOrRecentPapers = 
+            <>
+                <h3>Recently opened papers:</h3>
+                {recentlyOpenedPapers?.map((value) => <SearchResultCard dataKey={value.id} key={value.id} data={value} raiseStateSelected={()=>null} highlightCard={() => null}/>)}
+            </>;    
+        }
     }
+    //loaderOrRecentPapers = <SyncLoader color="#36D7B7" css={override}/>;
 
     return (
         <div className="frontpage">
-            <h1 className="frontpage-header">
-                Welcome to Icteridae!
-            </h1>
             <div className="frontpage-content">
-                <div className="frontpage-searchbar">
-                    <SearchBar placeholder="Search for your Papers!"/>
+                <h1>
+                    Welcome to Icteridae!
+                </h1>
+                <SearchBar/>
+                <div className="recent-papers">
+                    
+                    {loaderOrRecentPapers}
                 </div>
-                {/* Temprorary Button for the temp function*/}
-                <button onClick={() => overwriteRecentPapers()}>Ich bin nen Knopf </button>
-                {/* If there couldn't be loaded any recent paper or there aren't recent Paper the Suggestion class is not rendered*/}
-                {(recentlyOpenedPapers) &&
-                    <div className="suggestions">
-                        <div className="frontpage-title">Recently opened Papers:</div>
-                        {recentlyOpenedPapers?.map((value, index) => <Card key={value.id} title={value.title} year={value.year} authors={value.authors} link={'/graph'}/>)}
-                    </div>
-                }
             </div>
-            <footer className="imprint">
-                <img src={logo} alt="Logo"/> &copy; 2021 Icteridae
+            <footer className="frontpage-footer">
+                <img src={logo} alt="Logo"/> &copy; {new Date().getFullYear()} Icteridae
             </footer>
         </div>
     );
 }
-
-interface PaperData {
-    id: string,
-    title: string;
-    year: string;
-    authors: Array<string>;
-    link: string
-}
-

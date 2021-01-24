@@ -1,64 +1,49 @@
-*{
-    -ms-overflow-style: none;
-}
 ::-webkit-scrollbar {
     display: none;
 }
 
 .frontpage {
-    text-align: center;
     display: flex;
     flex-direction: column;
-    background-color: #282c34;
     align-items: center;
-    justify-content: center;
-    align-content: stretch;
-    flex:1;
-    font-family: Roboto;
-}
+    flex: 1;
 
-.frontpage-header {
-    padding: 20px;
-    font-size: 30px;
-    order:1;
-    min-height: 15vh;
+    background-color: #0F131A;
 }
 
 .frontpage-content {
-    order:2;
-    width:50%;
-    min-height: 65vh;
-    background-color: #282c34;
-}
-
-.frontpage-searchbar {
-    min-width: 350px;
-}
-
-.suggestions{
-    padding: 4vh;
-    display: grid;
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-evenly;
-    grid-row-gap: 10px;
-    align-self:center;
+    flex: 1;
+    font-family: "Segoe UI",Arial,sans-serif;
+
 }
 
-.frontpage-title {
-    font-size:20px;
-    text-decoration: underline;
+.frontpage-content h1 {
+    font-weight: lighter;
+    margin-top: 17vh;
+    margin-bottom: 2vh;
 }
 
-.imprint {
-    background-color: #0f131a;
-    flex:1;
-    order:3;
+.recent-papers {
+    width: 50vw;
+}
+
+.recent-papers > h3 {
+    font-weight: lighter;
+    margin-top: 30vh;
+    margin-bottom: 2vh;
+}
+
+
+.frontpage-footer {
+    background-color: #161C27;
     height: 10vh;
     min-width: 100%;
     padding:2vh;
 }
 
-img {
+.frontpage-footer img {
     height: 6vh;
 }
