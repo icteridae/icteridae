@@ -248,7 +248,7 @@ export const GraphFetch: React.FC = () => {
     /*
     ** useState Hook to save the graphData 
     */
-    const [graph, setGraph] = React.useState<myGraphData>({nodes:[], links:[]});
+    const [graph, setGraph] = React.useState<papersAndSimilarities>({tensor: [[[]]], paper: [], similarities: []});
 
     /*
     ** EffectHook for the initial Load of the graph
@@ -260,11 +260,11 @@ export const GraphFetch: React.FC = () => {
     /*
     ** loadData fetches the graph_Data from the backend and saves the generated Graph in the State Hook graph
     */
-    const loadData = async () => {
-        const url = Config.base_url
-        const response = await fetch(url + "/api/generate_graph/?paper_id=1ae8584e12459279ee915f4cda5c552c14697b07");
-        const data = await response.json();
-        setGraph(genGraph(data));
+    const loadData = () => {
+        fetch(Config.base_url + "/api/generate_graph/?paper_id=1ae8584e12459279ee915f4cda5c552c14697b07")
+            .then(res => res.json())
+            .then(res => {setGraph(res);
+                            return res});
     }
 
     return (
@@ -304,7 +304,7 @@ const initNode = {
  * main Method for generating the Graph
  * @returns everything that is displayed under the Graph Tab
  */
-export const Graph: React.FC<{"data": myGraphData}> = (props) => {
+export const Graph: React.FC<{"data": papersAndSimilarities}> = (props) => {
     /**
     ** Reference to the Graph used for TODO: insert Usage
     */
@@ -349,7 +349,9 @@ export const Graph: React.FC<{"data": myGraphData}> = (props) => {
         fg.d3ReheatSimulation();
     },[firstSliderValue, secondSliderValue]);
 
-    console.log(props.data);
+    //console.log(props.data);
+
+    const myGraphData = (props.data.paper.length == 0)? ({nodes : [], links : []}) : genGraph(props.data);
 
     return(
         <div>
@@ -431,7 +433,7 @@ export const Graph: React.FC<{"data": myGraphData}> = (props) => {
              * For information on the attributes, pls visit: https://github.com/vasturiano/react-force-graph
              */}
             <ForceGraph2D ref = {fgRef}
-                          graphData={props.data}
+                          graphData={myGraphData}
                           onNodeClick={(node, e) => {
                               e.preventDefault();
                               if (node.id === selectedNode.id) {
