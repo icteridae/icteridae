@@ -47,7 +47,7 @@ def search(request):
     match_query = dsl_query.Match(title={'query': query})
     citation_query = dsl_query.RankFeature(field='citations', saturation={'pivot': SATURATION_PIVOT}, boost=BOOST_MAGNITUDE) # Create query to boost results with high citations
 
-    full_query = match_query | citation_query # Combine two queries above
+    full_query = match_query & citation_query # Combine two queries above
 
     return http.JsonResponse(
         {
