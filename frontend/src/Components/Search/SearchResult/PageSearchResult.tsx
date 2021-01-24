@@ -1,8 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import './styles/PageSearchResult.css';
-import { SearchResultList, setAbstractViewToListHeight} from './SearchResultList';
+
 import { DataInterface } from './Types';
+import { SearchResultList, setAbstractViewToListHeight } from './SearchResultList';
+
 import { useParams } from 'react-router-dom';
+
+import './styles/PageSearchResult.css';
+
 
 export const PageSearchResult : React.FC = () => {
     let {query} = useParams<{query: string}>(); 
