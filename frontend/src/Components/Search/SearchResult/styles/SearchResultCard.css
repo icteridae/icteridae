@@ -4,8 +4,6 @@
     border-radius: 6px;
     padding: 20px;
     width: 100%;
-
-    border-left: 0.4vw outset #61847D33;
 }
 
 .search-result-card.card-selected {

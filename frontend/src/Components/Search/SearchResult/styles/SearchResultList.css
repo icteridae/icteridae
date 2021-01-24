@@ -13,5 +13,6 @@
 
 .result-list > div {
     margin-bottom: 20px;
+    border-left: 0.4vw outset #61847D33;
 }
 

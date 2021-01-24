@@ -33,11 +33,11 @@
     flex: 1;
 
     text-align: left;
-    font-size: 1.55vw;
+    font-size: 1.4vw;
     padding: 0 20px;
 
     background-color: #0F131A;
-    margin: 3vh 0 3vh 11vw;
+    margin: 5vh 0 3vh 11vw;
     overflow-y: scroll;
 
     border-radius: 20px;
@@ -55,7 +55,7 @@
 
 .page-search-result .abstract-view span, .page-search-result .abstract-view h3 {
     color: darkgray;
-    font-size: inherit;
+    font-size: 1.2vw;
     line-height: inherit;
 }
 
