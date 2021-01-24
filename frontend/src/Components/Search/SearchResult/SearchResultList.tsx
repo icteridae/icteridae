@@ -3,6 +3,7 @@ import './styles/SearchResultList.css';
 import { SearchResultCard } from "./SearchResultCard";
 import { DataInterface } from './Types';
 import Config from '../../../Utils/Config';
+import { Pagination } from 'rsuite';
 
 interface ResultListProps {
     query: string,
@@ -37,18 +38,17 @@ export const SearchResultList : React.FC<ResultListProps> = (props) => {
             const navbarHeight : number | undefined = document.getElementById("navbar")?.offsetHeight;
             const queryTitleHeight : number | undefined = document.getElementById("query-title")?.offsetHeight;
             const list : HTMLElement | null = document.getElementById("search-result-list");
-            const abstractView : HTMLElement | null = document.getElementById("search-result-abstract-view")
 
             // only set height if none of these is null or undefined
-            if(navbarHeight != null && queryTitleHeight != null && list != null)
+            if(navbarHeight != null && queryTitleHeight != null && list != null) {
                 list.style.height = (windowHeight - navbarHeight - queryTitleHeight) + "px";
 
-            (abstractView != null) && setAbstractViewToListHeight(list, abstractView);
+                setAbstractViewToCorrectHeight();
+            }
         }
 
         setListToRemainingHeight();
         window.addEventListener('resize', setListToRemainingHeight);
-
         // Cleanup: Remove EventListener when component will unmount
         return () => {
             window.removeEventListener('resize', setListToRemainingHeight);
@@ -72,6 +72,10 @@ export const SearchResultList : React.FC<ResultListProps> = (props) => {
                 (searchResults != null) && searchResults.map((entry: DataInterface, index: number) => {
                     return <SearchResultCard highlightCard={highlightCard} raiseStateSelected={props.raiseStateSelected} key={entry.id} dataKey={index} data={entry}/>
                 })
+                
+            }
+            {
+                (searchResults != null) && <Pagination size='md' id='test' activePage={1} pages={10} maxButtons={3} ellipsis boundaryLinks/>
             }
         </div>
     );
@@ -79,19 +83,16 @@ export const SearchResultList : React.FC<ResultListProps> = (props) => {
 
 /**
  * Sets the height of the DOM-Element with the id "search-result-abstract-view" to the computed height of the DOM-Element with the id "search-result-list"
- * 
- * @param list DOM element with id "search-result-list", default value uses  document.getElementById to find the element
- * @param abstractView DOM element with id "search-result-abstract-view", default value uses  document.getElementById to find the element
  */
-export function setAbstractViewToListHeight(list = document.getElementById("search-result-list"), abstractView = document.getElementById("search-result-abstract-view")) {
-    // set abstractView to same height as list if both aren't null
-    if(abstractView != null && list != null) {
-        const abstractViewMargin = parseInt(window.getComputedStyle(abstractView).marginBottom) + parseInt(window.getComputedStyle(abstractView).marginTop);
-        const navbarHeight = document.getElementById("navbar")?.offsetHeight;
-        
-        if(navbarHeight != null) {
-            const pageHeightWithoutNavbar : any = window.innerHeight - navbarHeight;
-            abstractView.style.height = pageHeightWithoutNavbar - abstractViewMargin + "px";
-        }
+export function setAbstractViewToCorrectHeight() {
+    const queryTitle = document.getElementById("query-title");
+    const list = document.getElementById('search-result-list');
+    const wrapper2 = document.getElementById('search-result-wrapper-2');
+    const abstractView = document.getElementById('search-result-abstract-view');
+
+    if(queryTitle != null && list != null && wrapper2 != null && abstractView != null) {
+        wrapper2.style.height = queryTitle.offsetHeight + list.offsetHeight + "px";
+        const abstractViewVerticalMargin : number = parseInt(window.getComputedStyle(abstractView).marginTop) + parseInt(window.getComputedStyle(abstractView).marginBottom)
+        abstractView.style.height = parseInt(wrapper2.style.height) - abstractViewVerticalMargin + "px";
     }
 }
