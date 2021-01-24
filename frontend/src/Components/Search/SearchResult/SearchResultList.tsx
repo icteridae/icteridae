@@ -15,6 +15,8 @@ interface ResultListProps {
 export const SearchResultList : React.FC<ResultListProps> = (props) => {
     const [searchResults, setSearchResults] = useState<DataInterface[]>();
     const [lastHighlighted, setLastHighlighted] = useState<number>();
+    const [activePage, setActivePage] = useState<number>(1);
+    const [maxPages, setMaxPages] = useState<number>();
 
     /**
      * Highlight a card with the given key and unhighlight the card that was last highlighted
@@ -57,12 +59,15 @@ export const SearchResultList : React.FC<ResultListProps> = (props) => {
 
     // Effect hook for fetching query data from search API
     useEffect(() => {
-        let requestURL = Config.base_url + '/api/search/?query=' + props.query;
+        let requestURL = Config.base_url + '/api/search/?query=' + props.query + '&page=' + activePage;
 
         fetch(requestURL)
             .then(res => res.json())
-            .then(result => setSearchResults(result.data)).catch(() => console.log("Can't access " + requestURL));
-    }, [props.query]);
+            .then(result => {
+                setSearchResults(result.data);
+                setMaxPages(result.max_pages);
+            }).catch(() => console.log("Can't access " + requestURL));
+    }, [props.query, activePage]);
 
     
     return (
@@ -75,7 +80,19 @@ export const SearchResultList : React.FC<ResultListProps> = (props) => {
                 
             }
             {
-                (searchResults != null) && <Pagination size='md' id='test' activePage={1} pages={10} maxButtons={3} ellipsis boundaryLinks/>
+                (maxPages != null) && 
+                    <Pagination 
+                        size='md' 
+                        id='test' 
+                        activePage={activePage} 
+                        pages={maxPages} 
+                        maxButtons={3} 
+                        ellipsis 
+                        boundaryLinks 
+                        onSelect={(eventKey) => {
+                            setActivePage(eventKey);
+                            document.getElementById('search-result-list')?.scrollTo(0, 0)}
+                        }/>
             }
         </div>
     );
