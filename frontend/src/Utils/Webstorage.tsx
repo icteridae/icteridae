@@ -15,7 +15,6 @@ export function setRecentPapers(papers: Array<string>){
     if(typeof(papers) !== "undefined") {
         localStorage.removeItem("papers");
         localStorage.setItem("papers", JSON.stringify(papers));
-        alert("saved successfully");
     }
     return;
 }
@@ -29,7 +28,6 @@ export function setSavedPapers(savedPapers: any)
     if(typeof(savedPapers) !== "undefined") {
         localStorage.removeItem("saved");
         localStorage.setItem("saved", JSON.stringify(savedPapers));
-        alert("saved successfully");
     }
     return;
 }
