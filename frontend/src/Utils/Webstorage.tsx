@@ -20,7 +20,11 @@ export function setRecentPapers(papers: Array<string>){
 }
 
 export function getSavedPapers() {
-    return JSON.parse(localStorage.getItem("saved") as string);
+    let savedPaperTree = JSON.parse(localStorage.getItem("saved") as string);
+    if (!savedPaperTree)
+        return [];
+    return savedPaperTree;
+
 }
 
 export function setSavedPapers(savedPapers: any)

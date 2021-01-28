@@ -60,13 +60,7 @@ const fixTree = (tree: any): Array<TreeInterface> => {
     ].concat(...tree.children.map(fixTree));
 };
 
-const createPaperTreeData = (
-    tree: Array<TreeInterface>,
-    promises: Array<Promise<string | void>>,
-    FolderIds: Array<Number>,
-    name: string,
-    id: string
-): Array<TreeInterface> => {
+const createPaperTreeData = (tree: Array<TreeInterface>, promises: Array<Promise<string | void>>, FolderIds: Array<Number>, name: string, id: string ): Array<TreeInterface> => {
     for (let item in tree) {
         if (tree[item].value.charAt(0) === "p") {
             const baseURL: string = Config.base_url;
@@ -93,13 +87,7 @@ const createPaperTreeData = (
                     </div>
                 );
             }
-            tree[item].children = createPaperTreeData(
-                tree[item].children!,
-                promises,
-                FolderIds,
-                name,
-                id
-            );
+            tree[item].children = createPaperTreeData(tree[item].children!, promises, FolderIds, name, id );
         }
     }
     return tree;
@@ -108,7 +96,7 @@ const createPaperTreeData = (
 const DeletePaperTreeData = (data: Array<TreeInterface>, shouldDelete: boolean, toDelete : string) => {
     let temp: Array<TreeInterface> = [];
     for (let item in data) {
-        if(data[item].value === toDelete) {
+        if(shouldDelete && data[item].value === toDelete) {
             continue;
         }
         if (data[item].value.charAt(0) === "p") {
@@ -129,48 +117,31 @@ const DeletePaperTreeData = (data: Array<TreeInterface>, shouldDelete: boolean, 
 
 
 
-const PaperTree: React.FC<{
-    choosePaper: Function;
-    height: number;
-    name: string;
-    id: string;
-    toDelete: string;
-}> = (props) => {
+const PaperTree: React.FC<{choosePaper: Function; height: number; name: string; id: string; toDelete: string;}> = (props) => {
     let [treeData, setTreeData] = React.useState(getSavedPapers);
     let [folderIds, setFolderIds] = React.useState([] as Array<Number>);
 
     useEffect(() => {
-        let promises: Array<Promise<string | void>> = [];
-        let data = JSON.parse(JSON.stringify(treeData)) as Array<TreeInterface>;
-        let Ids: Array<Number> = [];
-        createPaperTreeData(data, promises, Ids, props.name, props.id);
-        console.log("Rendering with name:" + props.name + " and id:" + props.id);
-        setFolderIds(Ids);
-        console.log(Ids);
-
-        //MakeTreeSaveFriendly is called in case a folder gets a new name
-        Promise.all(promises).then(() => {
-            setTreeData(data);
-            MakeTreeSaveFriendly(data);
-        });
+        helperFunction(false);
     }, [props.name]);
 
-
     useEffect(() => {
-        console.log("Ich delete jetzt" + props.toDelete);
+        helperFunction(true);
+    }, [props.toDelete]);
+
+    const helperFunction = (shouldDelete: boolean) => {
         let data = JSON.parse(JSON.stringify(treeData)) as Array<TreeInterface>;
         let ids: Array<Number> = [];
         let promises: Array<Promise<string | void>> = [];
-        data = DeletePaperTreeData(data, true, props.toDelete);
+        data = DeletePaperTreeData(data, shouldDelete, props.toDelete);
 
-        createPaperTreeData(data, promises, ids, "", "");
+        createPaperTreeData(data, promises, ids, props.name, props.id);
         Promise.all(promises).then(() => {
             setTreeData(data);
             MakeTreeSaveFriendly(data);
         });
         setFolderIds(ids);
-    }, [props.toDelete]);
-
+    }
 
     const MakeTreeSaveFriendly = (c: Array<TreeInterface>) => {
         let tree: Array<TreeInterface>;
@@ -193,6 +164,7 @@ const PaperTree: React.FC<{
         createPaperTreeData(data, promises, ids, "", "");
         Promise.all(promises).then(() => {
             setTreeData(data);
+            MakeTreeSaveFriendly(data);
         });
         setFolderIds(ids);
     };

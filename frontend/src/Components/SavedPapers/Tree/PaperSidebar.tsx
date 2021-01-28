@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Icon } from 'rsuite';
+import { Button, Icon, Input } from 'rsuite';
 
 const PaperSidebar = (props : any) => {
     let [newName, setNewName] = React.useState("");
@@ -16,9 +16,11 @@ const PaperSidebar = (props : any) => {
         <div>
             <h2>Folder</h2>
             Insert Edit folder name <br/>
-            <input type="text" name="newName" onChange={handleChange}></input>
-            <Button appearance='primary' onClick= {() => {props.newFolderName(newName, props.paper.value)}}>Rename Folder</Button>
+            <form>
+            <Input type="text" name="newName" onChange={(e : string) => setNewName(e)}></Input>
+            <Button appearance='primary' type="reset" onClick= {() => {props.newFolderName(newName, props.paper.value);  }}>Rename Folder</Button>
             <Button appearance='primary' onClick= {() => {props.Delete(props.paper.value)}}>Delete Folder</Button>
+            </form>
         </div>);
     return (
         <div>
