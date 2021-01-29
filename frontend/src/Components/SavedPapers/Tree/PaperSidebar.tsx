@@ -1,12 +1,15 @@
 import * as React from 'react';
-import { Button, Icon, Input } from 'rsuite';
 
-const PaperSidebar = (props : any) => {
+import { Button, Input } from 'rsuite';
+import { TreeInterface } from './PaperTree';
+
+/**
+ * The PaperSideBar Displays options for the choosen Object. If the Object is a folder it can be renamed or deleted
+ * If the object is a paper it can be deleted or the graph can be generated
+ * @param props 
+ */
+export const PaperSidebar : React.FC<{paper : TreeInterface | undefined, newFolderName : Function, delete : Function}>= (props) => {
     let [newName, setNewName] = React.useState("");
-
-    function handleChange(event : React.ChangeEvent<HTMLInputElement>) {
-        setNewName(event?.target.value)
-    }
 
 
     if (!props.paper) return (
@@ -18,8 +21,8 @@ const PaperSidebar = (props : any) => {
             Insert Edit folder name <br/>
             <form>
             <Input type="text" name="newName" onChange={(e : string) => setNewName(e)}></Input>
-            <Button appearance='primary' type="reset" onClick= {() => {props.newFolderName(newName, props.paper.value);  }}>Rename Folder</Button>
-            <Button appearance='primary' onClick= {() => {props.Delete(props.paper.value)}}>Delete Folder</Button>
+            <Button appearance='primary' type="reset" onClick= {() => {props.newFolderName(newName, props.paper?.value);  }}>Rename Folder</Button>
+            <Button appearance='primary' onClick= {() => {props.delete(props.paper?.value)}}>Delete Folder</Button>
             </form>
         </div>);
     return (
@@ -30,9 +33,7 @@ const PaperSidebar = (props : any) => {
                 Here is some metadata about the paper <br/>
             </p>
             <Button appearance='primary'>Generate Graph</Button>
-            <Button appearance='primary' onClick= {() => {props.Delete(props.paper.value)}}>Delete Paper</Button>
+            <Button appearance='primary' onClick= {() => {props.delete(props.paper?.value)}}>Delete Paper</Button>
         </div>
     )
 };
-
-export default PaperSidebar;
