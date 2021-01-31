@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import ForceGraph2D, {GraphData, LinkObject, NodeObject} from 'react-force-graph-2d';
 import { forceRadial, forceLink } from "d3-force-3d";
 import {Button, Drawer, Row, Col, Slider, InputNumber} from "rsuite";
@@ -128,7 +128,7 @@ let selectedPaper = "0";
  * @param data contains all papers, similarities and similarities between papers
  * @returns a GraphData object consisting of nodes[] and links[]
  */
-const genGraph = (data:papersAndSimilarities):myGraphData =>{
+const generateGraph = (data : papersAndSimilarities) : myGraphData =>{
     var i,j,s;
     var links = [];
     var nodes = [];
@@ -150,9 +150,9 @@ const genGraph = (data:papersAndSimilarities):myGraphData =>{
         }
         simMat[i] = tempArray;
     }
-    console.log(simMat);
+    //console.log(simMat);
     var boundary = find_boundary(simMat);
-    console.log(boundary);
+    //console.log(boundary);
     for (i = 0; i < data.paper.length; i++){
         for (j = i+1; j < data.paper.length; j++){
             //if(i == 0){
@@ -169,7 +169,7 @@ const genGraph = (data:papersAndSimilarities):myGraphData =>{
         var id = data.paper[i];
         nodes.push({
             id: id.id,
-            title: id.title,//"Number of o´s in Name: " + (id.title.split("o").length-1) + "\nNumber of s in Name: " + (id.title.split("s").length-1),
+            title: id.title,
             paperAbstract: id.paperAbstract,
             authors: id.authors,
             inCitations: id.inCitations,
@@ -204,9 +204,14 @@ const genGraph = (data:papersAndSimilarities):myGraphData =>{
     );
 }
 
-const check_connections = (mat:number[][], thr:number) => {
+/**
+ * Returns true if the provided threshold for Link Generation results in a fully connected Graph. In other Words, that no node ends up without a link
+ * @param mat contains the Link-value for each Pair of Nodes
+ * @param thr is the threshold to determine if the link will be included in the graph or not
+ */
+const check_connections = (mat : number[][], thr : number) => {
     var mat_c = JSON.parse(JSON.stringify(mat));
-    mat_c = mat_c.map((x:number[]) => x.map(z => z>thr ? z : -1));
+    mat_c = mat_c.map((x : number[]) => x.map(z => z>thr ? z : -1));
     let x:Set<number> = new Set();
     x.add(0);
     for (let i = 0; i<mat_c.length; i++) {
@@ -224,9 +229,12 @@ const check_connections = (mat:number[][], thr:number) => {
     return false
  };
  
-const  find_boundary = (mat:number[][]) => {
+ /**
+  * Function to determine the smallest threshhold for Link Generation so that every Node ist still connected.
+  */
+const  find_boundary = (mat : number[][]) => {
    var mat_c2 = JSON.parse(JSON.stringify(mat));
-   var max_m = Math.max(...mat_c2.map((x:number[]) => Math.max(...x)))
+   var max_m = Math.max(...mat_c2.map((x : number[]) => Math.max(...x)))
  
    let v_top = max_m
    let v_bottom = 0
@@ -244,6 +252,9 @@ const  find_boundary = (mat:number[][]) => {
    return v_bottom
 }
 
+/**
+ * Helperfunction to fetch Graph Data during Development. Will be deleted in later Versions
+ */
 export const GraphFetch: React.FC = () => {
     /*
     ** useState Hook to save the graphData 
@@ -304,7 +315,7 @@ const initNode = {
  * main Method for generating the Graph
  * @returns everything that is displayed under the Graph Tab
  */
-export const Graph: React.FC<{"data": papersAndSimilarities}> = (props) => {
+export const Graph: React.FC<{"data" : papersAndSimilarities}> = (props) => {
     /**
     ** Reference to the Graph used for TODO: insert Usage
     */
@@ -326,10 +337,10 @@ export const Graph: React.FC<{"data": papersAndSimilarities}> = (props) => {
     */
     const[selectedNode, setNode] = React.useState(initNode);
     /*
-    ** EffectHook for the initial Load of the graph
+    ** EffectHook for playing with forces
     */
     React.useEffect(() => {
-            const fg:any = fgRef.current;
+            const fg : any = fgRef.current;
             //Playing with the forces on the graph
             //fg.d3Force('center', null);
             //fg.d3Force('link', null);
@@ -340,18 +351,23 @@ export const Graph: React.FC<{"data": papersAndSimilarities}> = (props) => {
             //console.log(props.data.links.filter((link:myLinkObject) => ((link.source as NodeObject).id != props.data.nodes[0].id)));
             //let links = props.data.links.filter((link:myLinkObject) => ((link.source as NodeObject).id != props.data.nodes[0].id));
             //fg.d3Force('link').iterations(1).links(props.data.links.filter((link:myLinkObject) => ((link.source as NodeObject).id != props.data.nodes[0].id)));
-            fg.d3Force('link').iterations(1).distance((link:myLinkObject) => link.similarity *5);
-            fg.d3Force('link').iterations(1).strength((link:myLinkObject) => 1/ link.similarity);
+            fg.d3Force('link').iterations(1).distance((link : myLinkObject) => link.similarity *5);
+            fg.d3Force('link').iterations(1).strength((link : myLinkObject) => 1/ link.similarity);
         },[]);
+
+    /**
+     * EffectHook for rerendering upon slider changes
+     */
     React.useEffect(() => {
-        const fg:any = fgRef.current;
+        const fg : any = fgRef.current;
         //fg.d3Force("link").iterations(1).distance((link:myLinkObject) => (link.similarity[0] * firstSliderValue/10 + link.similarity[1] * secondSliderValue/10 + link.similarity[2] * 5));//link.similarity.reduce(((x,y) => x + y), 0)*sliderValue));
         fg.d3ReheatSimulation();
     },[firstSliderValue, secondSliderValue]);
 
     //console.log(props.data);
 
-    const myGraphData = (props.data.paper.length == 0)? ({nodes : [], links : []}) : genGraph(props.data);
+    //Load an empty Graph until the real Data is fetched
+    const myGraphData = (props.data.paper.length == 0)? ({nodes : [], links : []}) : generateGraph(props.data);
 
     return(
         <div>
@@ -449,8 +465,8 @@ export const Graph: React.FC<{"data": papersAndSimilarities}> = (props) => {
                           }}
                           nodeAutoColorBy="fieldsOfStudy"
                           nodeLabel="title"
-                          linkLabel={(link:any) =>(link.label)}
-                          linkWidth={(link:any) =>(link.similarity/5)}
+                          linkLabel={(link : any) =>(link.label)}
+                          linkWidth={(link : any) =>(link.similarity/5)}
                           linkCurvature="curvature"
                           linkDirectionalArrowLength="arrowLen"
                           linkDirectionalParticles="dirParticles"
