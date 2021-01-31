@@ -22,7 +22,7 @@ export const NavBarInstance: React.FC<NavbarProps> = (props) => {
                 <Navbar.Body>
                     <Nav onSelect={handleSelect} activeKey={activeKey}>
                         <Nav.Item componentClass={Link} to='/' eventKey="search" icon={<Icon icon="search" />}>Search</Nav.Item>
-                        <Nav.Item componentClass={Link} to='/author' eventKey="author" icon={<Icon icon="search" />}>Author</Nav.Item>
+                        <Nav.Item componentClass={Link} to='/author' eventKey="author" icon={<Icon icon="search-peoples" />}>Author</Nav.Item>
                         <Nav.Item componentClass={Link} to='/papers/' eventKey="mypapers" icon={<Icon icon="bookmark" /> }>My Papers</Nav.Item>
                         <Nav.Item componentClass={Link} to='/graph/' eventKey="graph" icon={<Icon icon="circle-thin" /> }>Graph</Nav.Item>
                         <Nav.Item componentClass={Link} to='/privacy/' eventKey="privacy" icon={<Icon icon="circle-thin" />}>Privacy</Nav.Item>

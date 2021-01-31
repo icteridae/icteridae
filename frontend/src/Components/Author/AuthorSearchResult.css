@@ -1,4 +1,4 @@
-.author-search-result {
+.wrapper {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -7,10 +7,39 @@
     background-color: #0F131A;
 }
 
-.author-search-result #query-title h2 {
-    font-weight: unset;
-    font-size: 1.9vw;
-    line-height: 5.2vh;
+.wrapper .search-bar {
+    margin: 30px auto 0 auto;
+}
 
-    margin: 20px 0 40px 20px;
+.author-search-result {
+    display: flex;
+}
+
+.author-details {
+    width: 50%;
+    margin-left: 5vh;
+
+    font-family: "Segoe UI",Arial,sans-serif;
+    font-size: 1.46vw;
+    font-weight: lighter;
+
+    line-height: 6.7vh;
+}
+
+.author-name {
+    font-size: 3.5vw;
+    line-height: 16vh;
+    color: #96d4bc;
+}
+
+.paper-list {
+    margin-top: 6vh;
+}
+
+.paper-list .publications {
+    font-family: "Segoe UI",Arial,sans-serif;
+    font-size: 1.46vw;
+    font-weight: lighter;
+    margin-left: 1.46vw;
+    line-height: 4.7vh;
 }

@@ -17,7 +17,8 @@ import {AuthorSearchResult} from "../Author/AuthorSearchResult";
           <Route exact path='/privacy' component={Privacy}/>
           <Route exact path='/graph' component={GraphFetch}/>
           <Route exact path='/results/paper/:id' component={Default}/>
-          <Route exact path='/author/:query' component={AuthorSearchResult}/>
+          <Route exact path='/author/:id' component={AuthorSearchResult}/>
+          <Route exact path='/author' component={AuthorSearchResult}/>
           {/* TODO: insert other routes. See paths in Navbar.tsx */}
       </Switch>
     </BrowserRouter>
