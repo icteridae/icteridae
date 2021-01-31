@@ -155,15 +155,26 @@ const generateGraph = (data : papersAndSimilarities) : myGraphData =>{
     //console.log(boundary);
     for (i = 0; i < data.paper.length; i++){
         for (j = i+1; j < data.paper.length; j++){
-            //if(i == 0){
-            if(simMat[i][j] > boundary){ //Threshhold for generating Links
+            if(i == 0){
+            //if(simMat[i][j] > boundary){ //Threshhold for generating Links
                 links.push({
                     source: data.paper[i].id,
                     target: data.paper[j].id,
                     color: "#FFFFFF",
                     similarity: simMat[i][j],
-                    label: simMat[i][j].toString(),
+                    label: (1000/simMat[i][j]).toString(),
             })/*}*/}
+            else{
+                if(simMat[i][j] > 27.5){
+                    links.push({
+                        source: data.paper[i].id,
+                        target: data.paper[j].id,
+                        color: "#FFFFFF",
+                        similarity: simMat[i][j],
+                        label: simMat[i][j].toString(),
+                    })
+                }
+            }
         }
         //Create Nodes for every Paper in data.paper
         var id = data.paper[i];
@@ -190,7 +201,7 @@ const generateGraph = (data : papersAndSimilarities) : myGraphData =>{
             s2PdfUrl: id.s2PdfUrl,
             entities: id.entities,
             color: "",
-            originSim: data.tensor[0][0][i],
+            originSim: simMat[0][i],
         })
     }
     // Fix Position of the selected Paper in the center of the canvas
@@ -336,23 +347,30 @@ export const Graph: React.FC<{"data" : papersAndSimilarities}> = (props) => {
     ** selected Node to display on drawer
     */
     const[selectedNode, setNode] = React.useState(initNode);
+
+    //Load an empty Graph until the real Data is fetched
+    const myGraphData = (props.data.paper.length == 0)? ({nodes : [], links : []}) : generateGraph(props.data);
+
     /*
     ** EffectHook for playing with forces
     */
     React.useEffect(() => {
             const fg : any = fgRef.current;
             //Playing with the forces on the graph
-            //fg.d3Force('center', null);
-            //fg.d3Force('link', null);
+            fg.d3Force('link', null);
             //fg.d3Force('charge', null);
-            fg.d3Force('center', null);
-            //fg.d3Force('radial', forceRadial(30));
-            //fg.d3Force('radial').radius((node:paper) => (node.originSim)*10);
+            //fg.d3Force('center', null);
+            fg.d3Force('charge').strength((node : NodeObject) => -3);
+            fg.d3Force('radial', forceRadial(30));
+            fg.d3Force('radial').radius((node : paper) => 1000/(node.originSim));
             //console.log(props.data.links.filter((link:myLinkObject) => ((link.source as NodeObject).id != props.data.nodes[0].id)));
-            //let links = props.data.links.filter((link:myLinkObject) => ((link.source as NodeObject).id != props.data.nodes[0].id));
-            //fg.d3Force('link').iterations(1).links(props.data.links.filter((link:myLinkObject) => ((link.source as NodeObject).id != props.data.nodes[0].id)));
-            fg.d3Force('link').iterations(1).distance((link : myLinkObject) => link.similarity *5);
-            fg.d3Force('link').iterations(1).strength((link : myLinkObject) => 1/ link.similarity);
+            //let links = myGraphData.links.filter((link : myLinkObject) => (link.source != myGraphData.nodes[0].id));
+            //fg.d3Force('link').links(links);
+            //{console.log(link.source);
+              //  console.log(myGraphData.nodes[0].id);
+                //return (link.source != myGraphData.nodes[0].id)}));
+            //fg.d3Force('link').iterations(1).distance((link : myLinkObject) => link.similarity *5);
+            //fg.d3Force('link').iterations(1).strength((link : myLinkObject) => 1/ link.similarity);
         },[]);
 
     /**
@@ -365,9 +383,6 @@ export const Graph: React.FC<{"data" : papersAndSimilarities}> = (props) => {
     },[firstSliderValue, secondSliderValue]);
 
     //console.log(props.data);
-
-    //Load an empty Graph until the real Data is fetched
-    const myGraphData = (props.data.paper.length == 0)? ({nodes : [], links : []}) : generateGraph(props.data);
 
     return(
         <div>
