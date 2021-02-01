@@ -1,6 +1,8 @@
 import * as React from 'react';
 import ForceGraph2D, {GraphData, LinkObject, NodeObject} from 'react-force-graph-2d';
+import { forceRadial, forceLink } from "d3-force-3d";
 import {Button, Drawer, Row, Col, Slider, InputNumber} from "rsuite";
+import Config from '../../Utils/Config';
 import './Graph.css'
 
 /**
@@ -71,7 +73,10 @@ interface paper extends NodeObject{
     entities : string[],
 
     /** The color of the node */
-    color: string
+    color: string,
+
+    /** Paper Similarity to selected Paper/Graph Origin */
+    originSim: number,
 }
 
 /**
@@ -103,7 +108,8 @@ interface papersAndSimilarities{
  * This interface adds the similarity attribute to LinkObjects. Is only used if we include our own Link Force
  */
 interface myLinkObject extends LinkObject{
-    similarity: number[];
+    similarity: number,
+    label: string,
 }
 
 /**
@@ -122,65 +128,71 @@ let selectedPaper = "0";
  * @param data contains all papers, similarities and similarities between papers
  * @returns a GraphData object consisting of nodes[] and links[]
  */
-const genGraph = (data:papersAndSimilarities) =>{
+const genGraph = (data:papersAndSimilarities):myGraphData =>{
     var i,j,s;
     var links = [];
-    var paper1:paper;
+    var nodes = [];
+    var simMat:number[][] = new Array(data.paper.length);
     selectedPaper = data.paper[0].id;
+    data.tensor = data.tensor.map((x) => x.map((y) => y.map((z) => (z < 0)? 0 : z)));
     // For now we only use the very first similarity tensor[0] 
     // Iterate over all Papers
-    for (i = 0; i < data.paper.length-1; i++){
-        paper1 = data.paper[i];
+    for (i = 0; i < data.paper.length; i++){
+        let tempArray = [];
         // Iterate over all other Papers so that every pair will be looked at once.
-        for (j = i+1; j < data.paper.length; j++){
+        for (j = 0; j < data.paper.length; j++){
             // Include only similarities that pass a certain threshhold
-            let sim = [];
+            let sim = 0;
             for (s = 0; s < data.tensor.length; s++){
-                sim.push(data.tensor[s][i][j]);
+                sim = sim + data.tensor[s][i][j];
             }
-            //if(sim.reduce((x, y) => x + y) > 10){
+            tempArray.push(sim);
+        }
+        simMat[i] = tempArray;
+    }
+    console.log(simMat);
+    var boundary = find_boundary(simMat);
+    console.log(boundary);
+    for (i = 0; i < data.paper.length; i++){
+        for (j = i+1; j < data.paper.length; j++){
+            //if(i == 0){
+            if(simMat[i][j] > boundary){ //Threshhold for generating Links
                 links.push({
-                    source: paper1.id,
+                    source: data.paper[i].id,
                     target: data.paper[j].id,
                     color: "#FFFFFF",
-                    similarity: sim,
-            })/*}*/
+                    similarity: simMat[i][j],
+                    label: simMat[i][j].toString(),
+            })/*}*/}
         }
-    }
-    var nodes = data.paper.map(id => ({
-        id: id.id,
-        title: "Number of o´s in Name: " + (id.title.split("o").length-1) + "\nNumber of s in Name: " + (id.title.split("s").length-1),
-        paperAbstract: id.paperAbstract,
-        authors: id.authors,
-        inCitations: id.inCitations,
-        outCitations: id.outCitations,
-        year: id.year,
-        s2Url: id.s2Url,
-        sources: id.sources,
-        pdfUrls: id.pdfUrls,
-        venue:id.venue,
-        journalName: id.journalName,
-        journalVolume: id.journalVolume,
-        journalPages: id.journalPages,
-        doi: id.doi,
-        doiUrl: id.doiUrl,
-        pmid: id.pmid,
-        fieldsOfStudy: id.fieldsOfStudy,
-        magId:id.magId,
-        s2PdfUrl: id.s2PdfUrl,
-        entities: id.entities,
-        //name: "Number of o´s in Name: " + (id.title.split("o").length-1),
-
-        color: ""
-    }));
-    // TODO: Delete when above method works correctly
-    /*for (i = 0; i < data.paper.length; i++){
+        //Create Nodes for every Paper in data.paper
+        var id = data.paper[i];
         nodes.push({
-            id: data.paper[i].id,
-            name: "Number of o´s in Name: " + (data.paper[i].title.split("o").length-1),
-            color: (data.paper[i].id == selectedPaper) ? "#861a22" : "#96d4bc",
+            id: id.id,
+            title: id.title,//"Number of o´s in Name: " + (id.title.split("o").length-1) + "\nNumber of s in Name: " + (id.title.split("s").length-1),
+            paperAbstract: id.paperAbstract,
+            authors: id.authors,
+            inCitations: id.inCitations,
+            outCitations: id.outCitations,
+            year: id.year,
+            s2Url: id.s2Url,
+            sources: id.sources,
+            pdfUrls: id.pdfUrls,
+            venue:id.venue,
+            journalName: id.journalName,
+            journalVolume: id.journalVolume,
+            journalPages: id.journalPages,
+            doi: id.doi,
+            doiUrl: id.doiUrl,
+            pmid: id.pmid,
+            fieldsOfStudy: id.fieldsOfStudy,
+            magId:id.magId,
+            s2PdfUrl: id.s2PdfUrl,
+            entities: id.entities,
+            color: "",
+            originSim: data.tensor[0][0][i],
         })
-    }*/
+    }
     // Fix Position of the selected Paper in the center of the canvas
     (nodes[0] as NodeObject).fx = 0;
     (nodes[0] as NodeObject).fy = 0;
@@ -192,11 +204,51 @@ const genGraph = (data:papersAndSimilarities) =>{
     );
 }
 
+const check_connections = (mat:number[][], thr:number) => {
+    var mat_c = JSON.parse(JSON.stringify(mat));
+    mat_c = mat_c.map((x:number[]) => x.map(z => z>thr ? z : -1));
+    let x:Set<number> = new Set();
+    x.add(0);
+    for (let i = 0; i<mat_c.length; i++) {
+      for (let val of [...Array.from(x)]) {
+        for (let k = 0; k < mat_c.length; k++) {
+          if (mat_c[val][k] > -1) {
+            x.add(k)
+            if (x.size == mat_c.length) {
+              return true
+            }
+          }
+        }
+      }
+    }
+    return false
+ };
+ 
+const  find_boundary = (mat:number[][]) => {
+   var mat_c2 = JSON.parse(JSON.stringify(mat));
+   var max_m = Math.max(...mat_c2.map((x:number[]) => Math.max(...x)))
+ 
+   let v_top = max_m
+   let v_bottom = 0
+ 
+   for (let i = 0; i < 10; i++) {
+     let mid = (v_top + v_bottom) / 2
+     let bo = check_connections(mat, mid)
+     if (bo) {
+       v_bottom = mid
+     } else {
+       v_top = mid
+     }
+   }
+   
+   return v_bottom
+}
+
 export const GraphFetch: React.FC = () => {
     /*
     ** useState Hook to save the graphData 
     */
-    const [graph, setGraph] = React.useState<myGraphData>({nodes:[], links:[]});
+    const [graph, setGraph] = React.useState<papersAndSimilarities>({tensor: [[[]]], paper: [], similarities: []});
 
     /*
     ** EffectHook for the initial Load of the graph
@@ -208,10 +260,11 @@ export const GraphFetch: React.FC = () => {
     /*
     ** loadData fetches the graph_Data from the backend and saves the generated Graph in the State Hook graph
     */
-    const loadData = async () => {
-        const response = await fetch("http://127.0.0.1:8000/api/generate_graph/?paper_id=d3ff20bc1a3bb222099ef652c65d494901620908");
-        const data = await response.json();
-        setGraph(genGraph(data));
+    const loadData = () => {
+        fetch(Config.base_url + "/api/generate_graph/?paper_id=1ae8584e12459279ee915f4cda5c552c14697b07")
+            .then(res => res.json())
+            .then(res => {setGraph(res);
+                            return res});
     }
 
     return (
@@ -251,7 +304,7 @@ const initNode = {
  * main Method for generating the Graph
  * @returns everything that is displayed under the Graph Tab
  */
-export const Graph: React.FC<{"data": myGraphData}> = (props) => {
+export const Graph: React.FC<{"data": papersAndSimilarities}> = (props) => {
     /**
     ** Reference to the Graph used for TODO: insert Usage
     */
@@ -267,7 +320,7 @@ export const Graph: React.FC<{"data": myGraphData}> = (props) => {
     /*
     ** set whether the drawer is shown or hidden
     */
-    const[drawer, setDrawer] = React.useState(false);
+    const[drawer, setDrawer] = React.useState(true);
     /*
     ** selected Node to display on drawer
     */
@@ -279,23 +332,32 @@ export const Graph: React.FC<{"data": myGraphData}> = (props) => {
             const fg:any = fgRef.current;
             //Playing with the forces on the graph
             //fg.d3Force('center', null);
-            //fg.d3Force("link").iterations(1).distance((link:myLinkObject) => link.similarity[0]*5);
-            fg.d3Force("link").iterations(1).distance((link:myLinkObject) => link.similarity.reduce(((x,y) => x + y), 2)*5);
+            //fg.d3Force('link', null);
+            //fg.d3Force('charge', null);
+            fg.d3Force('center', null);
+            //fg.d3Force('radial', forceRadial(30));
+            //fg.d3Force('radial').radius((node:paper) => (node.originSim)*10);
+            //console.log(props.data.links.filter((link:myLinkObject) => ((link.source as NodeObject).id != props.data.nodes[0].id)));
+            //let links = props.data.links.filter((link:myLinkObject) => ((link.source as NodeObject).id != props.data.nodes[0].id));
+            //fg.d3Force('link').iterations(1).links(props.data.links.filter((link:myLinkObject) => ((link.source as NodeObject).id != props.data.nodes[0].id)));
+            fg.d3Force('link').iterations(1).distance((link:myLinkObject) => link.similarity *5);
+            fg.d3Force('link').iterations(1).strength((link:myLinkObject) => 1/ link.similarity);
         },[]);
-    /*
-    ** loadData fetches the graph_Data from the backend and saves the generated Graph in the State Hook graph
-    */
     React.useEffect(() => {
         const fg:any = fgRef.current;
-        fg.d3Force("link").iterations(1).distance((link:myLinkObject) => (link.similarity[0] * firstSliderValue/10 + link.similarity[1] * secondSliderValue/10));//link.similarity.reduce(((x,y) => x + y), 0)*sliderValue));
+        //fg.d3Force("link").iterations(1).distance((link:myLinkObject) => (link.similarity[0] * firstSliderValue/10 + link.similarity[1] * secondSliderValue/10 + link.similarity[2] * 5));//link.similarity.reduce(((x,y) => x + y), 0)*sliderValue));
         fg.d3ReheatSimulation();
     },[firstSliderValue, secondSliderValue]);
+
+    //console.log(props.data);
+
+    const myGraphData = (props.data.paper.length == 0)? ({nodes : [], links : []}) : genGraph(props.data);
 
     return(
         <div>
             <Row>
                 <Col md={10}>
-                    <Slider
+                    <Slider 
                         progress
                         style={{ marginTop: 16, marginLeft: 50 }}
                         value={firstSliderValue}
@@ -371,7 +433,7 @@ export const Graph: React.FC<{"data": myGraphData}> = (props) => {
              * For information on the attributes, pls visit: https://github.com/vasturiano/react-force-graph
              */}
             <ForceGraph2D ref = {fgRef}
-                          graphData={props.data}
+                          graphData={myGraphData}
                           onNodeClick={(node, e) => {
                               e.preventDefault();
                               if (node.id === selectedNode.id) {
@@ -387,15 +449,16 @@ export const Graph: React.FC<{"data": myGraphData}> = (props) => {
                           }}
                           nodeAutoColorBy="fieldsOfStudy"
                           nodeLabel="title"
-                          linkWidth="width"
+                          linkLabel={(link:any) =>(link.label)}
+                          linkWidth={(link:any) =>(link.similarity/5)}
                           linkCurvature="curvature"
                           linkDirectionalArrowLength="arrowLen"
                           linkDirectionalParticles="dirParticles"
                           //Add this line together with the initialising and instantiating of selectedPaper to show only Links connected to the selectetPaper
-                          linkVisibility={(link:LinkObject) => ((link.source as NodeObject).id == selectedPaper)}
+                          //linkVisibility={(link:LinkObject) => ((link.source as NodeObject).id == selectedPaper)}
                           d3VelocityDecay={0.4}
                           cooldownTicks={100}
-                          onEngineStop={() => (fgRef.current as any).zoomToFit(400, 100)}
+                          //onEngineStop={() => (fgRef.current as any).zoomToFit(400, 100)}
                           />
         </div>
     )

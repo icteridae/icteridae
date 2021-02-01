@@ -35,11 +35,13 @@
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
     "@types/react-router-dom": "^5.1.6",
+    "d3-force-3d": "^2.2.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-force-graph-2d": "^1.18.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
+    "react-spinners": "^0.10.4",
     "rsuite": "^4.8.6",
     "typescript": "^4.0.3",
     "web-vitals": "^0.2.4"
@@ -69,6 +71,5 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }
