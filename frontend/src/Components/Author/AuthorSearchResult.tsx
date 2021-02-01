@@ -16,16 +16,15 @@ interface AuthorResultProps {
 export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
     let {id} = useParams<{id: string}>();
 
-    const [authorPapers, setAuthorsPapers] = useState<DataInterface[]>();
+    const [input, setInput] = useState('');
     const [authorList, setAuthorList] = useState<AuthorInterface[]>();
     const [selectedAuthor, setSelectedAuthor] = useState<AuthorInterface>()
-    const [input, setInput] = useState('');
+    const [authorPapers, setAuthorPapers] = useState<DataInterface[]>();
 
 
     // Effect hook for fetching author list from search API
     useEffect(() => {
         let requestURL = Config.base_url + '/api/search_author/?query=' + input;
-        //requestURL = 'http://192.168.0.174:8000/api/search_author/?query=josep m su'
 
         fetch(requestURL)
             .then(res => res.json())
@@ -38,17 +37,39 @@ export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
 
         fetch(requestURLAuthor)
             .then(res => res.json())
-            .then(result => setSelectedAuthor(result.data)).catch(() => console.log("Can't access " + requestURLAuthor));
+            .then(result => setSelectedAuthor(result.data[0])).catch(() => console.log("Can't access " + requestURLAuthor));
 
-        let requestURLAuthorPapers = Config.base_url + '/api/paper/?author_id=' + id;
+        let requestURLAuthorPapers = Config.base_url + '/api/authorpapers/?author_id=' + id;
 
         fetch(requestURLAuthorPapers)
             .then(res => res.json())
-            .then(result => setAuthorsPapers(result.data)).catch(() => console.log("Can't access " + requestURLAuthorPapers));
+            .then(result => setAuthorPapers(result.data)).catch(() => console.log("Can't access " + requestURLAuthorPapers));
     }, [id]);
 
-    return (
 
+    // displayed data if author is selected
+    let authorData
+    if (selectedAuthor != null) {
+        authorData =
+            <div className="author-search-result">
+                <div className="author-details">
+                    <div className="author-name">{selectedAuthor.name}</div>
+                    <div><b>Publications: </b>{authorPapers != null && authorPapers.length}</div>
+                    <div><b>Citations:</b> TODO</div>
+                </div>
+                <div className="paper-list">
+                    <div className="publications">Publications</div>
+                    {
+                        (authorPapers != null) && authorPapers.map((entry, index) => {
+                            return <SearchResultCard highlightCard={() => null} raiseStateSelected={() => null} key={entry.id} dataKey={index} data={entry}/>
+                        })
+                    }
+                </div>
+            </div>;
+    }
+
+
+    return (
         <div className="wrapper">
             <div className="search-bar">
                 {props.text? <><div className='text'>{props.text} </div> <br /></> : null}
@@ -61,21 +82,7 @@ export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
                     </InputGroup>
                 </form>
             </div>
-            <div className="author-search-result">
-                <div className="author-details">
-                    <div className="author-name">{selectedAuthor != null && selectedAuthor.name}</div>
-                    <div><b>Publications: </b>{authorPapers != null && authorPapers.length}</div>
-                    <div><b>Citations:</b> TODO</div>
-                </div>
-                <div className="paper-list">
-                    <div className="publications">Publications</div>
-                    {
-                        (authorPapers != null) && authorPapers.map((entry, index) => {
-                            return <SearchResultCard highlightCard={() => null} raiseStateSelected={() => null} key={entry.id} dataKey={index} data={entry}/>
-                        })
-                    }
-                </div>
-            </div>
+            {authorData}
         </div>
     )
 }
