@@ -132,10 +132,10 @@ let selectedPaper = '0';
  * @returns a GraphData object consisting of nodes[] and links[]
  */
 const generateGraph = (data : PapersAndSimilarities) : MyGraphData =>{
-    var i,j,s;
-    var links = [];
-    var nodes = [];
-    var simMat : number[][] = new Array(data.paper.length);
+    let i,j,s;
+    let links = [];
+    let nodes = [];
+    let similarityMatrix : number[][] = new Array(data.paper.length);
     selectedPaper = data.paper[0].id;
     data.tensor = data.tensor.map((x) => x.map((y) => y.map((z) => (z < 0)? 0 : z)));
     // For now we only use the very first similarity tensor[0] 
@@ -151,33 +151,35 @@ const generateGraph = (data : PapersAndSimilarities) : MyGraphData =>{
             }
             tempArray.push(sim);
         }
-        simMat[i] = tempArray;
+        similarityMatrix[i] = tempArray;
     }
-    //console.log(simMat);
-    const boundary = FindBoundary(simMat);
+    let minMaxTuple = GetMinAndMaxFromMatrix(similarityMatrix);
+    similarityMatrix = Normalize(similarityMatrix, minMaxTuple[0], minMaxTuple[1]);
+    //console.log(similarityMatrix);
+    const boundary = FindBoundary(similarityMatrix);
     //console.log(boundary);
     for (i = 0; i < data.paper.length; i++){
         for (j = i+1; j < data.paper.length; j++){
-            if(i == 0){
-            //if(simMat[i][j] > boundary){ //Threshhold for generating Links
+            //if(i == 0){
+            //if(similarityMatrix[i][j] > boundary){ //Threshhold for generating Links
                 links.push({
                     source: data.paper[i].id,
                     target: data.paper[j].id,
-                    color: '#FFFFFF',
-                    similarity: simMat[i][j],
-                    label: (1000/simMat[i][j]).toString(),
-            })/*}*/}
-            else{
-                if(simMat[i][j] > 27.5){
+                    color: `rgba(150,150,150,${similarityMatrix[i][j]})`,
+                    similarity: similarityMatrix[i][j],
+                    label: (150 / (similarityMatrix[i][j] + 0.01)).toString(),
+            //})/*}*/}
+            /*else{
+                if(similarityMatrix[i][j] > 27.5){
                     links.push({
                         source: data.paper[i].id,
                         target: data.paper[j].id,
                         color: '#FFFFFF',
-                        similarity: simMat[i][j],
-                        label: simMat[i][j].toString(),
+                        similarity: similarityMatrix[i][j],
+                        label: similarityMatrix[i][j].toString(),
                     })
-                }
-            }
+                }*/
+            })
         }
         //Create Nodes for every Paper in data.paper
         const id = data.paper[i];
@@ -204,7 +206,7 @@ const generateGraph = (data : PapersAndSimilarities) : MyGraphData =>{
             s2PdfUrl: id.s2PdfUrl,
             entities: id.entities,
             color: '',
-            originSim: simMat[0][i],
+            originSim: similarityMatrix[0][i],
         });
     }
     // Fix Position of the selected Paper in the center of the canvas
@@ -218,13 +220,33 @@ const generateGraph = (data : PapersAndSimilarities) : MyGraphData =>{
     );
 }
 
+const GetMinAndMaxFromMatrix = (matrix : number[][]) => {
+    let min = matrix[0][0];
+    let max = 0;
+    for (let i = 0; i < matrix.length; i++){
+        for (let j = 0; j < matrix[0].length; j++){
+            if (matrix[i][j] < min){
+                min = matrix[i][j];
+            }
+            if (matrix[i][j] > max){
+                max = matrix[i][j];
+            }
+        }
+    }
+    return [min, max];
+}
+
+const Normalize = (matrix : number[][], min : number, max : number) => {
+   return matrix.map((row : number[]) => row.map((n : number) => (n - min) / (max - min)));
+}
+
 /**
  * Returns true if the provided threshold for Link Generation results in a fully connected Graph. In other Words, that no node ends up without a link
  * @param mat contains the Link-value for each Pair of Nodes
  * @param thr is the threshold to determine if the link will be included in the graph or not
  */
 const CheckConnections = (matrix : number[][], threshold : number) => {
-    var matrix_c = JSON.parse(JSON.stringify(matrix));
+    let matrix_c = JSON.parse(JSON.stringify(matrix));
     matrix_c = matrix_c.map((x : number[]) => x.map(z => z>threshold ? z : -1));
     let x : Set<number> = new Set();
     x.add(0);
@@ -247,7 +269,7 @@ const CheckConnections = (matrix : number[][], threshold : number) => {
   * Function to determine the smallest threshhold for Link Generation so that every Node ist still connected.
   */
 const  FindBoundary = (matrix : number[][]) => {
-   var matrixC2 = JSON.parse(JSON.stringify(matrix));
+   let matrixC2 = JSON.parse(JSON.stringify(matrix));
    const maxOfMatrix = Math.max(...matrixC2.map((x : number[]) => Math.max(...x)));
  
    let upperBound = maxOfMatrix;
@@ -359,20 +381,20 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
     React.useEffect(() => {
             const fg : any = fgRef.current;
             //Playing with the forces on the graph
-            fg.d3Force('link', null);
+            //fg.d3Force('link', null);
             //fg.d3Force('charge', null);
             //fg.d3Force('center', null);
-            fg.d3Force('charge').strength((node : NodeObject) => -3);
-            fg.d3Force('radial', forceRadial(30));
-            fg.d3Force('radial').radius((node : Paper) => 1000/(node.originSim));
-            //console.log(props.data.links.filter((link:myLinkObject) => ((link.source as NodeObject).id != props.data.nodes[0].id)));
+            //fg.d3Force('charge').strength((node : NodeObject) => -3);
+            //fg.d3Force('radial', forceRadial(30));
+            //fg.d3Force('radial').radius((node : Paper) => 1000/(node.originSim));
+            //console.log(props.data.links.filter((link : myLinkObject) => ((link.source as NodeObject).id != props.data.nodes[0].id)));
             //let links = myGraphData.links.filter((link : myLinkObject) => (link.source != myGraphData.nodes[0].id));
             //fg.d3Force('link').links(links);
             //{console.log(link.source);
               //  console.log(myGraphData.nodes[0].id);
                 //return (link.source != myGraphData.nodes[0].id)}));
-            //fg.d3Force('link').iterations(1).distance((link : myLinkObject) => link.similarity *5);
-            //fg.d3Force('link').iterations(1).strength((link : myLinkObject) => 1/ link.similarity);
+            fg.d3Force('link').distance((link : MyLinkObject) => 150 / (link.similarity + 0.01));
+            fg.d3Force('link').strength((link : MyLinkObject) => link.similarity);
         },[]);
 
     /**
@@ -483,7 +505,7 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                           nodeAutoColorBy='fieldsOfStudy'
                           nodeLabel='title'
                           linkLabel={(link) =>((link as MyLinkObject).label)}
-                          linkWidth={(link) =>((link as MyLinkObject).similarity/5)}
+                          linkWidth={(link) =>((link as MyLinkObject).similarity)*3}
                           linkCurvature='curvature'
                           linkDirectionalArrowLength='arrowLen'
                           linkDirectionalParticles='dirParticles'
