@@ -4,7 +4,7 @@
 export interface DataInterface {
     id: number;
     title: string;
-    authors: {name: string, ids:number[]}[];
+    authors: {name: string, id:number}[];
     year: number;
     fieldsOfStudy: Array<string>;
     inCitations: Array<string>;

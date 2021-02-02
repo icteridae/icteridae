@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 
 import { DataInterface } from './Types';
 import { SearchResultList, setAbstractViewToCorrectHeight } from './SearchResultList';
-import { Pagination } from 'rsuite';
 
 import { useParams } from 'react-router-dom';
 
@@ -37,7 +36,7 @@ const AbstractView : React.FC<{selected: DataInterface}> = (props) => {
         <div className='wrapper-2' id='search-result-wrapper-2'>
             <div id='search-result-abstract-view' className='abstract-view'>
                 {(props.selected != null) && <h1>{props.selected.title}</h1>}
-                <h3>{props.selected.authors.map(obj => obj.name).join(", ")}</h3>
+                <h3>{props.selected.authors.map<React.ReactNode>(obj => (<a href={`http://127.0.0.1:3000/author/${obj.id}`}>{obj.name}</a>)).reduce((prev, curr) => [prev, ', ', curr])}</h3>
                 <span className='fields-of-study'>{props.selected.fieldsOfStudy.join(' ,')}</span>
                 <span className='year'>{props.selected.year}</span>
                 <span className='citations'>{'Citations: ' + props.selected.inCitations.length + ', References: ' + props.selected.outCitations.length}</span>
