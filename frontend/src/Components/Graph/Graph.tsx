@@ -302,7 +302,7 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                           linkDirectionalParticles='dirParticles'
                           //Add this line together with the initialising and instantiating of selectedPaper to show only Links connected to the selectetPaper
                           //linkVisibility={(link:LinkObject) => ((link.source as NodeObject).id == selectedPaper)}
-                          d3VelocityDecay={0.4}
+                          d3VelocityDecay={0.9}
                           cooldownTicks={100}
                           //onEngineStop={() => (fgRef.current as any).zoomToFit(400, 100)}
                           />
