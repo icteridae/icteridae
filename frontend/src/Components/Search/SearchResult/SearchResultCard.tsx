@@ -24,7 +24,7 @@ export const SearchResultCard : React.FC<SearchResultCardProps> = (props) => {
                 <h3 className="title">
                     <Link to={`paper/${props.data.id}`}>{props.data.title}</Link>
                 </h3>
-                <span className="author">{props.data.authors.map<React.ReactNode>(obj => (<a href={`http://127.0.0.1:3000/author/${obj.id}`}>{obj.name}</a>)).reduce((prev, curr) => [prev, ', ', curr])}</span>
+                <span className="author">{props.data.authors.map<React.ReactNode>(obj => (<Link to={`/author/${obj.id}`}>{obj.name}</Link>)).reduce((prev, curr) => [prev, ', ', curr])}</span>
                 <span>{props.data.fieldsOfStudy.join(" ,")}</span>
                 <span className="date">{props.data.year}</span>
                 <span className="preview-text">{(props.data.paperAbstract === "") ? "no Abstract available" : (props.data.paperAbstract.substr(0, 320) + "...")}</span>

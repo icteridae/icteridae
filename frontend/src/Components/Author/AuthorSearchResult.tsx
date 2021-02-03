@@ -16,9 +16,13 @@ interface AuthorResultProps {
 export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
     let {id} = useParams<{id: string}>();
 
+    // Searchbar input
     const [input, setInput] = useState('');
-    const [authorList, setAuthorList] = useState<AuthorInterface[]>();
+    // Searchbar autocomplete data
+    const [authorAutocompleteList, setAuthorAutocompleteList] = useState<AuthorInterface[]>();
+    // Currently displayed author
     const [selectedAuthor, setSelectedAuthor] = useState<AuthorInterface>()
+    // Papers depending on selected author
     const [authorPapers, setAuthorPapers] = useState<DataInterface[]>();
 
 
@@ -28,7 +32,7 @@ export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
 
         fetch(requestURL)
             .then(res => res.json())
-            .then(result => setAuthorList(result.data)).catch(() => console.log("Can't access " + requestURL));
+            .then(result => setAuthorAutocompleteList(result.data)).catch(() => console.log("Can't access " + requestURL));
     }, [input]);
 
     // Effect hook for setting author and fetching paper data from search API
@@ -47,7 +51,7 @@ export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
     }, [id]);
 
 
-    // displayed data only if author is selected
+    // Display data only if author is selected
     let authorData
     if (selectedAuthor != null) {
         authorData =
@@ -75,7 +79,7 @@ export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
                 {props.text? <><div className='text'>{props.text} </div> <br /></> : null}
                 <form>
                     <InputGroup id="search-bar-group">
-                        <AutoComplete placeholder={props.placeholder} data={authorList?.map((author) => author.name)} value={input} onChange={(e) => setInput(e)}/>
+                        <AutoComplete placeholder={props.placeholder} data={authorAutocompleteList?.map((author) => author.name)} value={input} onChange={(e) => setInput(e)}/>
                         <InputGroup.Button type="submit" onClick={() => window.location.href = '/author/' + selectedAuthor?.id}>
                             <Icon icon="search" />
                         </InputGroup.Button>
