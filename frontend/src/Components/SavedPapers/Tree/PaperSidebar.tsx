@@ -17,11 +17,11 @@ export const PaperSidebar : React.FC<{paper : TreeInterface | undefined, newFold
     )
     if (props.paper.value.charAt(0) == 'd') return (
         <div>
-            <h2>Folder</h2>
+            <h2>{props.paper.name}</h2>
             Insert Edit folder name <br/>
-            <form>
-            <Input type="text" name="newName" onChange={(e : string) => setNewName(e)}></Input>
-            <Button appearance='primary' type="reset" onClick= {() => {props.newFolderName(newName, props.paper?.value);  }}>Rename Folder</Button>
+            <form onSubmit={(e) => {e.preventDefault(); props.newFolderName(newName, props.paper?.value);}}>
+            <Input id="newName" placeholder={props.paper.name} onChange={(e : string) => setNewName(e)}  /> 
+            <Button appearance='primary' type="reset" onClick= {() => {props.newFolderName(newName, props.paper?.value); }}>Rename Folder</Button>
             <Button appearance='primary' onClick= {() => {props.delete(props.paper?.value)}}>Delete Folder</Button>
             </form>
         </div>);

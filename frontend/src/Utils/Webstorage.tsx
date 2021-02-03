@@ -39,7 +39,6 @@ export function getSavedPapers() {
 export function setSavedPapers(savedPapers: Array<TreeInterface>)
 {
     if(typeof(savedPapers) !== "undefined") {
-        console.log("SAVED!")
         localStorage.removeItem("saved");
         localStorage.setItem("saved", JSON.stringify(savedPapers));
     }
@@ -56,11 +55,9 @@ export function addPaper(id : string)
     const ids = GetPaperIds(savedPapers);
     let value = Math.floor(Math.random() * 10000);
     while (ids.includes(value)) value = Math.floor(Math.random() * 10000);
-    console.log(id + "  " + value);
 
     savedPapers.push({ value: "p" + value.toString(), id: id });
 
-    console.log(savedPapers);
     setSavedPapers(savedPapers);
 }
 

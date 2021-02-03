@@ -72,10 +72,9 @@ const fixTree = (tree: TreeInterface): ConcatArray<TreeInterface> => {
  * fetching paper name from the server, adding folder icons, renaming folders, getting an Array of Folderids
  * @param tree: Array of TreeInterface representing the raw tree-data
  * @param promises: Array of Promises to store the fetched data for reloading the tree when fetching is done
- * @param FolderIds: Array of Numbers, stores the ids of the folders
  * @param name: String, if not '', Folder with the value @param id is renamed to name 
  */
-const createPaperTreeData = (tree: Array<TreeInterface>, promises: Array<Promise<string | void>>, FolderIds: Array<Number>, name: string, id: string ): Array<TreeInterface> => {
+const createPaperTreeData = (tree: Array<TreeInterface>, promises: Array<Promise<string | void>>, name: string, id: string ): Array<TreeInterface> => {
     for (let item in tree) {
         if (tree[item].value.charAt(0) === 'p') {
             const baseURL: string = Config.base_url;
@@ -87,7 +86,6 @@ const createPaperTreeData = (tree: Array<TreeInterface>, promises: Array<Promise
                     })
             );
         } else if (tree[item].value.charAt(0) === 'd') {
-            FolderIds.push(parseInt(tree[item].value.substring(1)));
             //Renaming a folder
             if (tree[item].value === id) {
                 tree[item].label = (
@@ -103,7 +101,7 @@ const createPaperTreeData = (tree: Array<TreeInterface>, promises: Array<Promise
                     </div>
                 );
             }
-            tree[item].children = createPaperTreeData(tree[item].children!, promises, FolderIds, name, id );
+            tree[item].children = createPaperTreeData(tree[item].children!, promises, name, id );
         }
     }
     return tree;
@@ -141,7 +139,7 @@ const DeletePaperTreeData = (tree: Array<TreeInterface>, shouldDelete: boolean, 
      * Saves the tree to the webstorage
      * @param treeData the treeData to store the tree 
      */
-    const SaveTree = (treeData: Array<TreeInterface>) => {
+    export const saveTree = (treeData: Array<TreeInterface>) => {
         let tree: Array<TreeInterface>;
         tree = DeletePaperTreeData(treeData, false, '');
         setSavedPapers(tree);
@@ -152,65 +150,40 @@ const DeletePaperTreeData = (tree: Array<TreeInterface>, shouldDelete: boolean, 
  * @param props representing the properties needed for the tree such as choosePaper, if a paper is clicked on, the height of the Element, the name of a folder to rename it, the id of a folder to rename it and
  * the folderid to delete a paper(toDelete)
  */
-export const PaperTree: React.FC<{choosePaper: Function; height: number; name: string; id: string; toDelete: string;}> = (props) => {
-    const [treeData, setTreeData] = React.useState(getSavedPapers());
-    const [folderIds, setFolderIds] = React.useState([] as Array<Number>);
+export const PaperTree: React.FC<{choosePaper: Function; height: number; name: string; id: string; toDelete: string; tree: Array<TreeInterface>}> = (props) => {
+    const [treeData, setTreeData] = React.useState(props.tree);
 
     /**
      * Effect hook when a folder gets a new name
      */
     useEffect(() => {
-        helperFunction(false);
-    }, [props.name]);
+        helperFunction(false, props.tree);        
+    }, [props.name, props.tree]);
 
+    
     /**
      * Effect hook when a folder or paper should be deleted
      */
     useEffect(() => {
-        helperFunction(true);
+        helperFunction(true, treeData);
     }, [props.toDelete]);
 
     /**
      * A function for manipulating the tree data (renaming a folder or deleting a paper or folder)
      * @param shouldDelete if the function is called to delete a folder
      */
-    const helperFunction = (shouldDelete: boolean) => {
-        let data = JSON.parse(JSON.stringify(treeData)) as Array<TreeInterface>;
-        let ids: Array<Number> = [];
+    const helperFunction = (shouldDelete: boolean, tree:Array<TreeInterface>) => {
         let promises: Array<Promise<string | void>> = [];
-        data = DeletePaperTreeData(data, shouldDelete, props.toDelete);
+        tree = DeletePaperTreeData(tree, shouldDelete, props.toDelete);
 
-        createPaperTreeData(data, promises, ids, props.name, props.id);
+        createPaperTreeData(tree, promises, props.name, props.id);
         Promise.all(promises).then(() => {
-            setTreeData(data);
-            SaveTree(data);
+            setTreeData(tree);
+            saveTree(tree);
         });
-        setFolderIds(ids);
     }
 
-   /**
-    * A function the add Folder to the Tree
-    * @param name is the name of the folder
-    */
-    const AddFolder = (name: string) => {
-        let tree = JSON.parse(JSON.stringify(treeData)) as Array<TreeInterface>;
-        let id = Math.floor(Math.random() * 10000);
-        while (folderIds.includes(id)) id = Math.floor(Math.random() * 10000);
-        tree.push({ value: 'd' + id.toString(), name: name, children: [] });
-
-        tree = DeletePaperTreeData(tree, false, '');
-
-        let promises: Array<Promise<string | void>> = [];
-        let data = JSON.parse(JSON.stringify(tree)) as Array<TreeInterface>;
-        let ids: Array<Number> = [];
-        createPaperTreeData(data, promises, ids, '', '');
-        Promise.all(promises).then(() => {
-            setTreeData(data);
-            SaveTree(data);
-        });
-        setFolderIds(ids);
-    };
-
+   
     return (
         <div>
             <Tree
@@ -225,20 +198,12 @@ export const PaperTree: React.FC<{choosePaper: Function; height: number; name: s
                     const v = createUpdateDataFunction(treeData);
                     const c = fixTree({ value: 'd', children: v })[0].children;
                     setTreeData(c!);
-                    SaveTree(c!);
+                    saveTree(c!);
                 }}
                 onSelect={(active, value, event) => props.choosePaper(active)}
                 height={props.height}
             />
-            <Button
-                appearance = 'primary'
-                onClick={() => {
-                    console.log(treeData);
-                    AddFolder('New Folder');
-                }}
-            >
-                Create new Folder
-            </Button>
+           
         </div>
     );
 };
