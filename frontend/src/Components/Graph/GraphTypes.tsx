@@ -103,7 +103,7 @@ export interface PapersAndSimilarities{
  * This interface adds the similarity attribute to LinkObjects. Is only used if we include our own Link Force
  */
 export interface MyLinkObject extends LinkObject{
-    similarity: number,
+    similarity: number[],
     label: string,
 }
 

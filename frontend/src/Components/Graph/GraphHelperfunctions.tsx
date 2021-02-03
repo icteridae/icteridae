@@ -89,7 +89,7 @@ export const GraphFetch: React.FC = () => {
     /*
     ** useState Hook to save the graphData 
     */
-    const [graph, setGraph] = React.useState<PapersAndSimilarities>({tensor: [[[]]], paper: [], similarities: []});
+    const [graph, setGraph] = React.useState<PapersAndSimilarities>({tensor: [], paper: [], similarities: []});
 
     /*
     ** EffectHook for the initial Load of the graph
