@@ -154,8 +154,9 @@ const generateGraph = (data : PapersAndSimilarities) : MyGraphData =>{
         similarityMatrix[i] = tempArray;
     }
     let minMaxTuple = GetMinAndMaxFromMatrix(similarityMatrix);
+    console.log(minMaxTuple)
     similarityMatrix = Normalize(similarityMatrix, minMaxTuple[0], minMaxTuple[1]);
-    //console.log(similarityMatrix);
+    console.log(similarityMatrix);
     const boundary = FindBoundary(similarityMatrix);
     //console.log(boundary);
     for (i = 0; i < data.paper.length; i++){
@@ -167,7 +168,7 @@ const generateGraph = (data : PapersAndSimilarities) : MyGraphData =>{
                     target: data.paper[j].id,
                     color: `rgba(150,150,150,${similarityMatrix[i][j]})`,
                     similarity: similarityMatrix[i][j],
-                    label: (150 / (similarityMatrix[i][j] + 0.01)).toString(),
+                    label: similarityMatrix[i][j].toString(),//(100 / (similarityMatrix[i][j] + 0.01)).toString(),
             //})/*}*/}
             /*else{
                 if(similarityMatrix[i][j] > 27.5){
@@ -210,8 +211,8 @@ const generateGraph = (data : PapersAndSimilarities) : MyGraphData =>{
         });
     }
     // Fix Position of the selected Paper in the center of the canvas
-    (nodes[0] as Paper).fx = 0;
-    (nodes[0] as Paper).fy = 0;
+    //(nodes[0] as Paper).fx = 0;
+    //(nodes[0] as Paper).fy = 0;
     
     return ({    
             nodes: nodes,
@@ -307,7 +308,7 @@ export const GraphFetch: React.FC = () => {
     ** loadData fetches the graph_Data from the backend and saves the generated Graph in the State Hook graph
     */
     const loadData = () => {
-        fetch(Config.base_url + '/api/generate_graph/?paper_id=1ae8584e12459279ee915f4cda5c552c14697b07')
+        fetch(Config.base_url + '/api/generate_graph/?paper_id=204e3073870fae3d05bcbc2f6a8e263d9b72e776')
             .then(res => res.json())
             .then(res => {setGraph(res);
                             return res});
@@ -393,7 +394,7 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
             //{console.log(link.source);
               //  console.log(myGraphData.nodes[0].id);
                 //return (link.source != myGraphData.nodes[0].id)}));
-            fg.d3Force('link').distance((link : MyLinkObject) => 150 / (link.similarity + 0.01));
+            fg.d3Force('link').distance((link : MyLinkObject) => 100 / (link.similarity + 0.01));
             fg.d3Force('link').strength((link : MyLinkObject) => link.similarity);
         },[]);
 
@@ -402,7 +403,7 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
      */
     React.useEffect(() => {
         const fg : any = fgRef.current;
-        //fg.d3Force("link").iterations(1).distance((link:myLinkObject) => (link.similarity[0] * firstSliderValue/10 + link.similarity[1] * secondSliderValue/10 + link.similarity[2] * 5));//link.similarity.reduce(((x,y) => x + y), 0)*sliderValue));
+        //fg.d3Force("link").distance((link : MyLinkObject) => (link.similarity[0] * firstSliderValue/10 + link.similarity[1] * secondSliderValue/10 + link.similarity[2] * 5));//link.similarity.reduce(((x,y) => x + y), 0)*sliderValue));
         fg.d3ReheatSimulation();
     },[firstSliderValue, secondSliderValue]);
 
