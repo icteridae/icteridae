@@ -1,14 +1,37 @@
 @import '../../../../node_modules/rsuite/dist/styles/rsuite-dark.css';
 
 .navbar-brand {
-       padding: 18px 20px;
-       display: inline-block;
-       text-align: center;
-       vertical-align: middle;
-       font-size: 15px;
-       font-weight: 900;
+   padding: 18px 20px;
+   display: inline-block;
+   text-align: center;
+   vertical-align: middle;
+   font-size: 15px;
+   font-weight: 900;
 }
 
 #navbar {
-       background-color: #161C27;
+    width: 100%;
+    height: 60px;
+    display: flex;
+    background-color: #161C27;
+}
+
+.navbar-frontpage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.3s;
+   
+}
+
+.navbar-frontpage span {
+    margin: 0 22px;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-weight: lighter;
+    font-size: 22px;
+}
+
+.navbar-frontpage:hover {
+    opacity: 70%;
+    cursor: pointer;
 }
