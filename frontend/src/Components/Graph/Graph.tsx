@@ -1,127 +1,14 @@
 import React from 'react';
 
-import Config from '../../Utils/Config';
-
-import ForceGraph2D, {GraphData, LinkObject, NodeObject} from 'react-force-graph-2d';
+import ForceGraph2D from 'react-force-graph-2d';
 import { forceRadial, forceLink } from 'd3-force-3d';
-import {Button, Drawer, Row, Col, Slider, InputNumber} from 'rsuite';
+import { Button, Drawer, Row, Col, Slider, InputNumber } from 'rsuite';
+
+import Config from '../../Utils/Config';
+import { Paper, PapersAndSimilarities, MyGraphData, MyLinkObject } from './GraphTypes';
+import { GetMinAndMaxFromMatrix, Normalize, CheckConnections, FindBoundary } from './GraphHelperfunctions';
 
 import './Graph.css'
-
-/**
- * This interface characterizes a single Paper
- */
-interface Paper extends NodeObject{
-    /** The unique ID of the paper */
-    id : string,
-
-    /** The name of the paper */
-    title : string,
-
-    /** Abstract */
-    paperAbstract : string,
-
-    /** The authors of the paper */
-    authors : {name: string, ids : string[]}[],
-
-    /** IDs of all the papers this paper was cited in */
-    inCitations : string[],
-
-    /** IDs of all the papers this paper cites */
-    outCitations : string[],
-
-    /** The year this paper was published */
-    year : number,
-
-    /** Semantic Scholar URL */
-    s2Url : string,
-
-    /** Identifies papers sourced from DBLP or Medline */
-    sources : string[],
-
-    /** pdf URLs */
-    pdfUrls : string[],
-
-    /** Extracted publication venue for this paper, TODO: Edit */
-    venue : string,
-
-    /** Name of the journal that published this paper */
-    journalName : string,
-
-    /** The volume of the journal where this paper was published */
-    journalVolume : string,
-
-    /** The pages of the journal where this paper was published */
-    journalPages : string,
-
-    /** Digital object identifier */
-    doi : string,
-
-    /** Digital object identifier URL */
-    doiUrl : string,
-
-    /** Unique identifiers used by PubMed */
-    pmid : string,
-
-    /** Fields of study */
-    fieldsOfStudy : string[],
-
-    /** Unique identifiers used by Microsoft Academic Graph */
-    magId : string,
-
-    /** Semantic Scholar PDF URL */
-    s2PdfUrl : string,
-
-    /** Extracted entities (deprecated on 2019-09-17) */
-    entities : string[],
-
-    /** The color of the node */
-    color: string,
-
-    /** Paper Similarity to selected Paper/Graph Origin */
-    originSim: number,
-}
-
-/**
- * This interface describes a similarity
- */
-interface Similarity{
-    /** The Name of the Similarity */
-    name: string,
-
-    /** A Description for the Similarity */
-    description: string,
-}
-
-/**
- * Json structure of the Response from /api/generate_graph/
- */
-interface PapersAndSimilarities{
-    /** Tensor of all similarities for every pair of papers */
-    tensor: number[][][],
-
-    /** List of all papers that are relevant for the graph including the requested paper*/
-    paper: Paper[],
-
-    /** List of all similarities used in this tensor */
-    similarities: Similarity[]
-}
-
-/**
- * This interface adds the similarity attribute to LinkObjects. Is only used if we include our own Link Force
- */
-interface MyLinkObject extends LinkObject{
-    similarity: number,
-    label: string,
-}
-
-/**
- * This interface adjust the nodes and links of the graph to contain enough information
- */
-interface MyGraphData extends GraphData{
-    nodes: Paper[],
-    links: MyLinkObject[],
-}
 
 // Variable used to identify the ID of the selected Paper
 let selectedPaper = '0';
@@ -137,7 +24,7 @@ const generateGraph = (data : PapersAndSimilarities) : MyGraphData =>{
     let nodes = [];
     let similarityMatrix : number[][] = new Array(data.paper.length);
     selectedPaper = data.paper[0].id;
-    data.tensor = data.tensor.map((x) => x.map((y) => y.map((z) => (z < 0)? 0 : z)));
+    // data.tensor = data.tensor.map((x) => x.map((y) => y.map((z) => (z < 0)? 0 : z))); 
     // For now we only use the very first similarity tensor[0] 
     // Iterate over all Papers
     for (i = 0; i < data.paper.length; i++){
@@ -168,7 +55,7 @@ const generateGraph = (data : PapersAndSimilarities) : MyGraphData =>{
                     target: data.paper[j].id,
                     color: `rgba(150,150,150,${similarityMatrix[i][j]})`,
                     similarity: similarityMatrix[i][j],
-                    label: similarityMatrix[i][j].toString(),//(100 / (similarityMatrix[i][j] + 0.01)).toString(),
+                    label: similarityMatrix[i][j].toString(),//(50 / (similarityMatrix[i][j] + 0.01)).toString(),
             //})/*}*/}
             /*else{
                 if(similarityMatrix[i][j] > 27.5){
@@ -221,103 +108,6 @@ const generateGraph = (data : PapersAndSimilarities) : MyGraphData =>{
     );
 }
 
-const GetMinAndMaxFromMatrix = (matrix : number[][]) => {
-    let min = matrix[0][0];
-    let max = 0;
-    for (let i = 0; i < matrix.length; i++){
-        for (let j = 0; j < matrix[0].length; j++){
-            if (matrix[i][j] < min){
-                min = matrix[i][j];
-            }
-            if (matrix[i][j] > max){
-                max = matrix[i][j];
-            }
-        }
-    }
-    return [min, max];
-}
-
-const Normalize = (matrix : number[][], min : number, max : number) => {
-   return matrix.map((row : number[]) => row.map((n : number) => (n - min) / (max - min)));
-}
-
-/**
- * Returns true if the provided threshold for Link Generation results in a fully connected Graph. In other Words, that no node ends up without a link
- * @param mat contains the Link-value for each Pair of Nodes
- * @param thr is the threshold to determine if the link will be included in the graph or not
- */
-const CheckConnections = (matrix : number[][], threshold : number) => {
-    let matrix_c = JSON.parse(JSON.stringify(matrix));
-    matrix_c = matrix_c.map((x : number[]) => x.map(z => z>threshold ? z : -1));
-    let x : Set<number> = new Set();
-    x.add(0);
-    for (let i = 0; i<matrix_c.length; i++) {
-      for (let val of [...Array.from(x)]) {
-        for (let k = 0; k < matrix_c.length; k++) {
-          if (matrix_c[val][k] > -1) {
-            x.add(k);
-            if (x.size == matrix_c.length) {
-              return true;
-            }
-          }
-        }
-      }
-    }
-    return false;
- };
- 
- /**
-  * Function to determine the smallest threshhold for Link Generation so that every Node ist still connected.
-  */
-const  FindBoundary = (matrix : number[][]) => {
-   let matrixC2 = JSON.parse(JSON.stringify(matrix));
-   const maxOfMatrix = Math.max(...matrixC2.map((x : number[]) => Math.max(...x)));
- 
-   let upperBound = maxOfMatrix;
-   let lowerBound = 0;
- 
-   for (let i = 0; i < 10; i++) {
-     let mid = (upperBound + lowerBound) / 2;
-     let bo = CheckConnections(matrix, mid);
-     if (bo) {
-        lowerBound = mid;
-     } else {
-        upperBound = mid;
-     }
-   }
-   return lowerBound;
-}
-
-/**
- * Helperfunction to fetch Graph Data during Development. Will be deleted in later Versions
- */
-export const GraphFetch: React.FC = () => {
-    /*
-    ** useState Hook to save the graphData 
-    */
-    const [graph, setGraph] = React.useState<PapersAndSimilarities>({tensor: [[[]]], paper: [], similarities: []});
-
-    /*
-    ** EffectHook for the initial Load of the graph
-    */
-    React.useEffect(() => {
-        loadData();
-    },[]);
-
-    /*
-    ** loadData fetches the graph_Data from the backend and saves the generated Graph in the State Hook graph
-    */
-    const loadData = () => {
-        fetch(Config.base_url + '/api/generate_graph/?paper_id=204e3073870fae3d05bcbc2f6a8e263d9b72e776')
-            .then(res => res.json())
-            .then(res => {setGraph(res);
-                            return res});
-    };
-
-    return (
-        <Graph data={graph}/>
-    );
-}
 /**
  * TODO: delete + set correct origin node
  */
@@ -394,7 +184,7 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
             //{console.log(link.source);
               //  console.log(myGraphData.nodes[0].id);
                 //return (link.source != myGraphData.nodes[0].id)}));
-            fg.d3Force('link').distance((link : MyLinkObject) => 100 / (link.similarity + 0.01));
+            fg.d3Force('link').distance((link : MyLinkObject) => 50 / (link.similarity + 0.01));
             fg.d3Force('link').strength((link : MyLinkObject) => link.similarity);
         },[]);
 
