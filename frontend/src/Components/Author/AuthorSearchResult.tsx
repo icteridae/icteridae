@@ -47,7 +47,7 @@ export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
     }, [id]);
 
 
-    // displayed data if author is selected
+    // displayed data only if author is selected
     let authorData
     if (selectedAuthor != null) {
         authorData =
