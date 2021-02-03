@@ -9,6 +9,7 @@ import { GetMinAndMaxFromMatrix, Normalize } from './GraphHelperfunctions';
 import './Graph.css'
 
 const totalSliderValue: number = 100;
+const squish: number = 0.5;
 
 /**
  * This method generates the graph for the provided graphsAndSimilarities Object
@@ -118,8 +119,8 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
     React.useEffect(() => {
         const fg : any = fgRef.current;
         if (fg) {
-            fg.d3Force('link').distance((link : MyLinkObject) => 50 / (link.similarity.map((element, index) => element * sliders[index] / 100).reduce((x,y) => x+y) + 0.01));
-            fg.d3Force('link').strength((link : MyLinkObject) => (link.similarity.map((element, index) => element * sliders[index] / 100).reduce((x,y) => x+y) + 0.01));
+            fg.d3Force('link').distance((link : MyLinkObject) => 50 / (link.similarity.map((element, index) => element * sliders[index] / 100).reduce((x,y) => x+y) + squish));
+            fg.d3Force('link').strength((link : MyLinkObject) => (link.similarity.map((element, index) => element * sliders[index] / 100).reduce((x,y) => x+y) + squish));
         }
         }, [sliders]);
 
