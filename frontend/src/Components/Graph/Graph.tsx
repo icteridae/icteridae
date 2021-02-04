@@ -9,9 +9,13 @@ import { GetMinAndMaxFromMatrix, Normalize } from './GraphHelperfunctions';
 import './Graph.css'
 
 const totalSliderValue: number = 100;
+<<<<<<< HEAD
 const squish: number = 0.2;
 const logBulk: number = 2;
 const nodeBaseSize: number = 4;
+=======
+const squish: number = 0.5;
+>>>>>>> 77fd97d335d0f5f0eb41af215c406f608921345b
 
 /**
  * This method generates the graph for the provided graphsAndSimilarities Object
@@ -54,7 +58,10 @@ const generateGraph = (data : PapersAndSimilarities) : PaperGraphData =>{
 }
 
 const changeSlider = (index: number, val: number, oldValues: number[]) => {
-    return oldValues.map((x, i) => i === index ? val : oldValues[index] === totalSliderValue ? 0 : (totalSliderValue - val) * x / (totalSliderValue - oldValues[index]));
+    if (oldValues.filter((x, i) => x === 0.1 || i === index).length === oldValues.length ) {
+        return oldValues.map((x,i) => i===index ? val : (totalSliderValue-val)/(oldValues.length-1))
+    }
+    return oldValues.map((x, i) => i === index ? val : oldValues[index] === totalSliderValue ? 1 : (totalSliderValue - val) * x / (totalSliderValue - oldValues[index]));
 }
 
 /**
@@ -122,10 +129,15 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
     React.useEffect(() => {
         const fg : any = fgRef.current;
         if (fg) {
+<<<<<<< HEAD
             fg.d3Force('charge').strength(-100);
             fg.d3Force('charge').distanceMin(20);
             fg.d3Force('link').distance((link : SimilarityLinkObject) => 50 / (link.similarity.map((element, index) => element * sliders[index] / 100).reduce((x,y) => x+y) + squish));
             fg.d3Force('link').strength((link : SimilarityLinkObject) => (link.similarity.map((element, index) => element * sliders[index] / 100).reduce((x,y) => x+y) + squish));
+=======
+            fg.d3Force('link').distance((link : MyLinkObject) => 50 / (link.similarity.map((element, index) => element * sliders[index] / 100).reduce((x,y) => x+y) + squish));
+            fg.d3Force('link').strength((link : MyLinkObject) => (link.similarity.map((element, index) => element * sliders[index] / 100).reduce((x,y) => x+y) + squish));
+>>>>>>> 77fd97d335d0f5f0eb41af215c406f608921345b
         }
         }, [sliders]);
 
@@ -143,6 +155,7 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                 <Row key={index}>
                     <Col md={10}>
                         <Slider 
+                            step= {0.1}
                             progress
                             style={{ marginTop: 16, marginLeft: 50 }}
                             value={sliderVal}
