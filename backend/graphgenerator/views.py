@@ -37,26 +37,27 @@ def search(request):
         return http.HttpResponseBadRequest('invalid page size.')
     pagesize = int(pagesize)
 
-    max_pages = (PaperDocument.search().count() - 1) // pagesize
-
-    page = request.query_params.get('page', '0')
-    if not page.isnumeric() or int(page) > max_pages:
-        return http.HttpResponseBadRequest('invalid page number.')
-    page = int(page)
-
     match_query = dsl_query.Match(title={'query': query})
     citation_query = dsl_query.RankFeature(field='citations', saturation={'pivot': SATURATION_PIVOT}, boost=BOOST_MAGNITUDE) # Create query to boost results with high citations
 
     full_query = match_query & citation_query # Combine two queries above
 
+    result = PaperDocument.search().query(full_query)
+
+    max_pages = (result.count() - 1) // pagesize + 1
+
+    page = request.query_params.get('page', '1')
+    if not page.isnumeric() or int(page) > max_pages:
+        return http.HttpResponseBadRequest('invalid page number.')
+    page = int(page)
+
     return http.JsonResponse(
         {
-            'data': PaperSerializer(PaperDocument.search().query(full_query)[pagesize * page: pagesize * (page + 1)].to_queryset(),
+            'data': PaperSerializer(result[pagesize * (page - 1): pagesize * page].to_queryset(),
                                     many=True).data,
             'max_pages': max_pages
         },
         safe=False)
-
 
 @api_view(['GET'])
 def generate_graph(request):
