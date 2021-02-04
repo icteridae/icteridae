@@ -1,21 +1,24 @@
 import React from 'react';
 
-import ForceGraph2D, { GraphData } from 'react-force-graph-2d';
+import ForceGraph2D from 'react-force-graph-2d';
 import { Button, Drawer, Row, Col, Slider, InputNumber, Loader } from 'rsuite';
 
-import { Paper, PapersAndSimilarities, MyGraphData, MyLinkObject } from './GraphTypes';
+import { Paper, PapersAndSimilarities, PaperGraphData, SimilarityLinkObject } from './GraphTypes';
 import { GetMinAndMaxFromMatrix, Normalize } from './GraphHelperfunctions';
 
 import './Graph.css'
 
 const totalSliderValue: number = 100;
+const squish: number = 0.2;
+const logBulk: number = 2;
+const nodeBaseSize: number = 4;
 
 /**
  * This method generates the graph for the provided graphsAndSimilarities Object
  * @param data contains all papers, similarities and similarities between papers
  * @returns a GraphData object consisting of nodes[] and links[]
  */
-const generateGraph = (data : PapersAndSimilarities) : MyGraphData =>{
+const generateGraph = (data : PapersAndSimilarities) : PaperGraphData =>{
     let similarityMatrix : number[][] = new Array(data.paper.length);
 
     const normalized_tensor = data.tensor.map(matrix => {
@@ -41,6 +44,7 @@ const generateGraph = (data : PapersAndSimilarities) : MyGraphData =>{
         ...paper,
         color: '',
         originSim: similarityMatrix[0][index],
+        val: Math.log(paper.inCitations.length + logBulk) * nodeBaseSize,
     }));
 
     return ({    
@@ -103,7 +107,7 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
     const [selectedNode, setNode] = React.useState(initNode);
 
     // load an empty Graph until the real Data is fetched
-    const [graphData, setGraphData] = React.useState<GraphData>({nodes : [], links : []})
+    const [graphData, setGraphData] = React.useState<PaperGraphData>({nodes : [], links : []})
 
     React.useEffect(() => {
         setSliders(Array(sliderCount).fill(totalSliderValue / sliderCount))
@@ -118,8 +122,10 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
     React.useEffect(() => {
         const fg : any = fgRef.current;
         if (fg) {
-            fg.d3Force('link').distance((link : MyLinkObject) => 50 / (link.similarity.map((element, index) => element * sliders[index] / 100).reduce((x,y) => x+y) + 0.01));
-            fg.d3Force('link').strength((link : MyLinkObject) => (link.similarity.map((element, index) => element * sliders[index] / 100).reduce((x,y) => x+y) + 0.01));
+            fg.d3Force('charge').strength(-100);
+            fg.d3Force('charge').distanceMin(20);
+            fg.d3Force('link').distance((link : SimilarityLinkObject) => 50 / (link.similarity.map((element, index) => element * sliders[index] / 100).reduce((x,y) => x+y) + squish));
+            fg.d3Force('link').strength((link : SimilarityLinkObject) => (link.similarity.map((element, index) => element * sliders[index] / 100).reduce((x,y) => x+y) + squish));
         }
         }, [sliders]);
 
@@ -211,13 +217,13 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                                 }}
                                 nodeAutoColorBy='fieldsOfStudy'
                                 nodeLabel='title'
-                                linkLabel={(link) =>((link as MyLinkObject).label)}
-                                linkWidth={(link) => ((link as MyLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y)*3)}
+                                linkLabel={(link) =>((link as SimilarityLinkObject).label)}
+                                linkWidth={(link) => ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y)*3)}
                                 linkCurvature='curvature'
                                 linkDirectionalArrowLength='arrowLen'
                                 linkDirectionalParticles='dirParticles'
                                 //Add this line together with the initialising and instantiating of selectedPaper to show only Links connected to the selectetPaper
-                                //linkVisibility={(link:LinkObject) => ((link.source as NodeObject).id == selectedPaper)}
+                                //linkVisibility={(link : SimilarityLinkObject) => ((link as SimilarityLinkObject).similarity.reduce((x, y) => x + y) > 0.2)}
                                 d3VelocityDecay={0.95}
                                 cooldownTicks={100}
                                 //onEngineStop={() => (fgRef.current as any).zoomToFit(400, 100)}
