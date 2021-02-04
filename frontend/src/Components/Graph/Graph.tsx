@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ForceGraph2D from 'react-force-graph-2d';
+import ForceGraph2D, { LinkObject } from 'react-force-graph-2d';
 import { Button, Drawer, Row, Col, Slider, InputNumber, Loader } from 'rsuite';
 
 import { Paper, PapersAndSimilarities, PaperGraphData, SimilarityLinkObject } from './GraphTypes';
@@ -222,12 +222,12 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                                 nodeAutoColorBy='fieldsOfStudy'
                                 nodeLabel='title'
                                 linkLabel={(link) =>((link as SimilarityLinkObject).label)}
-                                linkWidth={(link) => ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y)*3)}
+                                linkWidth={(link) => ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y)*6)}
                                 linkCurvature='curvature'
                                 linkDirectionalArrowLength='arrowLen'
                                 linkDirectionalParticles='dirParticles'
                                 //Add this line together with the initialising and instantiating of selectedPaper to show only Links connected to the selectetPaper
-                                //linkVisibility={(link : SimilarityLinkObject) => ((link as SimilarityLinkObject).similarity.reduce((x, y) => x + y) > 0.2)}
+                                linkVisibility={(link : LinkObject) => ((link as SimilarityLinkObject).similarity.reduce((x, y) => x + y) > 0.1)}
                                 d3VelocityDecay={0.95}
                                 cooldownTicks={100}
                                 //onEngineStop={() => (fgRef.current as any).zoomToFit(400, 100)}
