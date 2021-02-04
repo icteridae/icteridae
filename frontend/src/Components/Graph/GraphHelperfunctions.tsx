@@ -102,7 +102,7 @@ export const GraphFetch: React.FC = () => {
     ** loadData fetches the graph_Data from the backend and saves the generated Graph in the State Hook graph
     */
     const loadData = () => {
-        fetch(Config.base_url + '/api/generate_graph/?paper_id=204e3073870fae3d05bcbc2f6a8e263d9b72e776')
+        fetch(Config.base_url + '/api/generate_graph/?paper_id=8e1c7055ee7f45581fb19934d5aef2b48b931802')//204e3073870fae3d05bcbc2f6a8e263d9b72e776')
             .then(res => res.json())
             .then(res => {setGraph(res);
                             return res});
