@@ -51,7 +51,10 @@ const generateGraph = (data : PapersAndSimilarities) : MyGraphData =>{
 }
 
 const changeSlider = (index: number, val: number, oldValues: number[]) => {
-    return oldValues.map((x, i) => i === index ? val : oldValues[index] === totalSliderValue ? 0 : (totalSliderValue - val) * x / (totalSliderValue - oldValues[index]));
+    if (oldValues.filter((x, i) => x === 0.1 || i === index).length === oldValues.length ) {
+        return oldValues.map((x,i) => i===index ? val : (totalSliderValue-val)/(oldValues.length-1))
+    }
+    return oldValues.map((x, i) => i === index ? val : oldValues[index] === totalSliderValue ? 1 : (totalSliderValue - val) * x / (totalSliderValue - oldValues[index]));
 }
 
 /**
@@ -138,6 +141,7 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                 <Row key={index}>
                     <Col md={10}>
                         <Slider 
+                            step= {0.1}
                             progress
                             style={{ marginTop: 16, marginLeft: 50 }}
                             value={sliderVal}
