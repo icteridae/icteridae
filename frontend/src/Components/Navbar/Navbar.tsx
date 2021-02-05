@@ -1,5 +1,6 @@
 import * as React from "react";
-import {  NavbarProps, Icon} from 'rsuite';
+import {Icon} from 'rsuite';
+import { NavbarItem } from './NavbarItem';
 import './styles/Navbar.css'
 
 /**
@@ -7,7 +8,7 @@ import './styles/Navbar.css'
  * @param props are the standard NabrbarProps from ruite
  * @returns the navbar with links to the Search-, My Papers-, Graph-, Privacy- and Aboutpages and a link to Github and to the settings
  */
-export const NavBarInstance: React.FC<NavbarProps> = (props) => {
+export const NavBar: React.FC = (props) => {
     return (
         <div id="navbar">
             <div className="navbar-left">
@@ -20,20 +21,9 @@ export const NavBarInstance: React.FC<NavbarProps> = (props) => {
                         <Icon icon='search'/>
                         <input type="search" placeholder="Search"></input>
                     </form>
-                    
                 </div>
-                <div className="navbar-my-papers navbar-item">
-                    <span> 
-                        <Icon icon="bookmark" style={{paddingRight: "5px", fontSize: "15px"}}/>
-                        My Papers
-                    </span>
-                </div>
-                <div className="navbar-about navbar-item">
-                    <span>
-                        <Icon icon="info" style={{paddingRight: "5px", fontSize: "15px"}}/>
-                        About
-                    </span>
-                </div>
+                <NavbarItem icon="bookmark" label="My Papers" className="navbar-my-papers"/>
+                <NavbarItem icon="info" label="About" className="navbar-about"/>
             </div>
             <div className="navbar-right">
 
