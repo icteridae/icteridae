@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Icon } from 'rsuite';
-import { useHistory } from 'react-router-dom'
 import { NavbarItem } from './NavbarItem';
 import './styles/Navbar.css'
 
@@ -10,15 +9,10 @@ import './styles/Navbar.css'
  * @returns the navbar with links to the Search-, My Papers-, Graph-, Privacy- and Aboutpages and a link to Github and to the settings
  */
 export const NavBar: React.FC = (props) => {
-    let history = useHistory();
-
     return (
         <div id="navbar">
             <div className="navbar-left">
-                <div className="navbar-home" onClick={() => history.push("/")}>
-                    <span>Icteridae</span>
-                    <div className='navbar-current'></div>
-                </div>
+                <NavbarItem label="Icteridae" path="/" className="navbar-home"/>
                 <div className="navbar-search navbar-item">
                     <form id="navbar-search-form">
                         <Icon icon='search'/>
@@ -26,7 +20,7 @@ export const NavBar: React.FC = (props) => {
                     </form>
                 </div>
                 <NavbarItem icon="bookmark" label="My Papers" path="/papers" className="navbar-my-papers"/>
-                <NavbarItem icon="info" label="About" path="/about" className="navbar-about"/>
+                <NavbarItem icon="info" label="About" path="/privacy" className="navbar-about"/>
             </div>
             <div className="navbar-right">
                 <NavbarItem extern icon="github" label="Github" path="https://github.com/icteridae/icteridae/" className="navbar-github"/>
