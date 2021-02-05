@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Icon } from 'rsuite';
 import { NavbarItem } from './NavbarItem';
+import { NavbarSearch } from "./NavbarSearch";
 import './styles/Navbar.css'
 
 /**
@@ -13,12 +14,7 @@ export const NavBar: React.FC = (props) => {
         <div id="navbar">
             <div className="navbar-left">
                 <NavbarItem label="Icteridae" path="/" className="navbar-home"/>
-                <div className="navbar-search navbar-item">
-                    <form id="navbar-search-form">
-                        <Icon icon='search'/>
-                        <input type="search" placeholder="Search"></input>
-                    </form>
-                </div>
+                <NavbarSearch/>
                 <NavbarItem icon="bookmark" label="My Papers" path="/papers" className="navbar-my-papers"/>
                 <NavbarItem icon="info" label="About" path="/privacy" className="navbar-about"/>
             </div>
