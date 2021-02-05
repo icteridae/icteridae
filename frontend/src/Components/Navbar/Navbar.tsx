@@ -26,7 +26,7 @@ export const NavBar: React.FC = (props) => {
                 <NavbarItem icon="info" label="About" className="navbar-about"/>
             </div>
             <div className="navbar-right">
-
+                <NavbarItem icon="github" label="Github" className="navbar-github"/>
             </div>
             
         </div>

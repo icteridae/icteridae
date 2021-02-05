@@ -33,7 +33,14 @@
     transition: 0.5s;
 }
 
-.navbar-left > div:not(:first-child):hover {
+.navbar-right {
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+    align-content: center;
+    justify-content: right;
+}
+
+.navbar-left > div:not(:first-child):hover, .navbar-right > div:hover {
     background-color: #61847D22;
 }
 
