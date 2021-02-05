@@ -1,6 +1,7 @@
 @import '../../../../node_modules/rsuite/dist/styles/rsuite-dark.css';
 
 .navbar-current {
+    display: none;
     position: absolute;
     top: 1px;
     height: 50px;
