@@ -1,5 +1,5 @@
 import React from 'react';
-import {NavBarInstance} from '../Navbar/Navbar';
+import {NavBar} from '../Navbar/Navbar';
 import {FrontPage} from '../Front/FrontPage';
 import {Privacy} from '../Privacy/Privacy';
 import {GraphFetch} from '../Graph/Graph';
@@ -10,7 +10,7 @@ import { Default } from '../Default/Default';
 
  export const App: React.FC = () => (
     <BrowserRouter>
-      <NavBarInstance appearance="subtle"/>
+      <NavBar/>
       <Switch>
           <Route exact path='/' component={FrontPage}/>
           <Route exact path='/results/:query' component={PageSearchResult}/>
