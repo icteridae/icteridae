@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavBarInstance } from '../Navbar/Navbar';
 import { FrontPage } from '../Front/FrontPage';
-import { Privacy } from '../Privacy/Privacy';
+import { PageImprint } from '../Privacy/PageImprint';
 import { GraphFetch } from '../Graph/GraphHelperfunctions';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { PageSearchResult } from '../Search/SearchResult/PageSearchResult'; 
@@ -14,7 +14,7 @@ import { Default } from '../Default/Default';
       <Switch>
           <Route exact path='/' component={FrontPage}/>
           <Route exact path='/results/:query' component={PageSearchResult}/>
-          <Route exact path='/privacy' component={Privacy}/>
+          <Route exact path='/privacy' component={PageImprint}/>
           <Route exact path='/graph' component={GraphFetch}/>
           <Route exact path='/results/paper/:id' component={Default}/>
           {/* TODO: insert other routes. See paths in Navbar.tsx */}
