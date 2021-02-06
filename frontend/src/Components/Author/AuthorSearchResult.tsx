@@ -79,7 +79,7 @@ export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
                 {props.text? <><div className='text'>{props.text} </div> <br /></> : null}
                 <form>
                     <InputGroup id="search-bar-group">
-                        <AutoComplete placeholder={props.placeholder} data={authorAutocompleteList?.map((author) => author.name)} value={input} onChange={(e) => setInput(e)}/>
+                        <AutoComplete placeholder={props.placeholder} data={authorAutocompleteList?.map((author) => {return {label: author.name, value: author.id}})} value={input} onChange={(e) => setInput(e)} onSelect={(e) => window.location.href=`/author/${e.value}`}/>
                         <InputGroup.Button type="submit" onClick={() => window.location.href = '/author/' + selectedAuthor?.id}>
                             <Icon icon="search" />
                         </InputGroup.Button>
