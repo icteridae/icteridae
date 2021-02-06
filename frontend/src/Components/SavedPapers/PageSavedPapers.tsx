@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 
 import { Button, FlexboxGrid } from 'rsuite';
 
-import { PaperTree, TreeInterface, saveTree } from './Tree/PaperTree';
+import { PaperTree, TreeNode, saveTree } from './Tree/PaperTree';
 import { PaperSidebar } from './Tree/PaperSidebar';
 import { getSavedPapers } from '../../Utils/Webstorage';
 
@@ -10,7 +10,7 @@ import { getSavedPapers } from '../../Utils/Webstorage';
  * The Page displaying the Papertree and the Sidebar 
  */
 export const PageSavedPapers : React.FC = () => {
-    const [selectedElement , setSelectedElement]  = useState<TreeInterface>();
+    const [selectedElement , setSelectedElement]  = useState<TreeNode>();
     const [renameFolderTo, setRenameFolderTo] = useState({folderId: '', newName: ''});
     const [elementToDelete, setElementToDelete] = useState('');
     const [treeHeight, setTreeHeight] = useState<number>(calculateTreeHeight(getSavedPapers()));
@@ -20,7 +20,7 @@ export const PageSavedPapers : React.FC = () => {
      * @param tree to search for folderIds
      * @param folderIds Array to store folderIds in
      */
-    function getFolderIds(tree: Array<TreeInterface>, folderIds : Array<number>) {
+    function getFolderIds(tree: Array<TreeNode>, folderIds : Array<number>) {
         for(let item in tree) {
             if(tree[item].value.charAt(0) === 'd') {
                 folderIds.push(parseInt(tree[item].value.substr(1)));
@@ -33,13 +33,13 @@ export const PageSavedPapers : React.FC = () => {
      * calculates the height of the tree for rendering
      * @param tree to get the height from
      */
-    function calculateTreeHeight(tree : Array<TreeInterface>) : number {
+    function calculateTreeHeight(tree : Array<TreeNode>) : number {
         let size : number = 0;
         for(let item of tree) {
             if (item.value.charAt(0) === 'd') {
                 size += calculateTreeHeight(item.children!);
             }
-            size++; 
+            size++;
         }
         return size;
     }
@@ -56,10 +56,10 @@ export const PageSavedPapers : React.FC = () => {
         getFolderIds(tree, folderIds);
         while (folderIds.includes(id)) id = Math.floor(Math.random() * 10000);
 
-        tree.push({value: 'd' + id.toString(), name: folderName, children: []});
+        tree.push({value: 'd' + id.toString(), folderName: folderName, children: []});
         
         saveTree(tree);
-        setTreeHeight(calculateTreeHeight(tree));   
+        setTreeHeight(calculateTreeHeight(tree));
     }
 
     /**
@@ -74,12 +74,11 @@ export const PageSavedPapers : React.FC = () => {
     return (
         <FlexboxGrid justify='center'>
             <FlexboxGrid.Item colspan={10}>
-                <PaperTree 
-                    choosePaper={setSelectedElement} 
-                    height={45*treeHeight} 
-                    name={renameFolderTo.newName} 
-                    id={renameFolderTo.folderId} 
-                    toDelete={elementToDelete} 
+                <PaperTree
+                    selectPaper={setSelectedElement}
+                    treeHeight={45*treeHeight}
+                    folderRename={renameFolderTo}
+                    elementToDelete={elementToDelete}
                     tree={getSavedPapers()}
                 />
             </FlexboxGrid.Item>
@@ -89,6 +88,7 @@ export const PageSavedPapers : React.FC = () => {
                     Create new Folder
                 </Button>
             </FlexboxGrid.Item>
+            {console.log(selectedElement)}
         </FlexboxGrid>
     );
 }

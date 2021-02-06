@@ -1,85 +1,67 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 
-import { getSavedPapers, setSavedPapers } from '../../../Utils/Webstorage';
+import { Tree, Icon } from 'rsuite';
+
+import { setSavedPapers } from '../../../Utils/Webstorage';
+
 import Config from '../../../Utils/Config';
 
-import { Tree, Icon, Button } from 'rsuite';
-import { useEffect } from 'react';
-
-/*
-Recursive Type to descripe a Tree Object. The children-attribute is only used by folders, id by papers
-*/
-export interface TreeInterface { label?: any;
+/**
+ * Recursive type describing a tree node. The children-attribute is only used by folders, id by papers
+ * @param label For Papers: Title of paper, For folders: Icon and name of folder
+ * @param value Internal ID for papers and folders, folder ids start with a d(irectory) and paper ids with a p(aper), needs to be named value because rsuite
+ * @param children The children of a Treenode
+ * @param paperID The external ID of a paper, used to get information about papers through backend requests
+ * @param name The Name of a folder
+ */
+export interface TreeNode { 
+    label?: any;
     value: string;
-    children?: TreeInterface[];
-    id?: string;
-    name?: string
+    children?: TreeNode[];
+    paperID?: string;
+    folderName?: string;
 }
 
-/*temporrary Treedata as an example */
-const data: TreeInterface[] = [
-    {
-        name: "Folder 1",
-        value: "d1",
-        children: [],
-    },
-    {
-        id: "ebe84b47c84537f3d536aed004955799c2f212a0",
-        value: "p2",
-    },
-    {
-        name: "Folder 3",
-        value: "d3",
-        children: [
-            {
-                id: "5b5df4500756561e3d15a8a10958d6575ab3bc28",
-                value: "p4",
-            },
-            {
-                id: "0c70c3a504a3c8b46cc02d1c290d93bfe84f7651",
-                value: "p5",
-            },
-        ],
-    },
-];
-
 /**
- * fix the tree after changing the position of an TreeInterface Object
+ * Fix the tree after changing the position of a TreeNode Object
  * @param tree, the tree to fix
  */
-const fixTree = (tree: TreeInterface): ConcatArray<TreeInterface> => {
+const fixTree = (tree: TreeNode): ConcatArray<TreeNode> => {
     const isFolder = tree.value.charAt(0) === 'd';
     if (!tree.children) return [tree];
-    if (isFolder)
+    if (isFolder) {
         return [
             {
-                name: tree.name,
+                folderName: tree.folderName,
                 label: tree.label,
                 value: tree.value,
-                children: ([] as Array<TreeInterface>).concat(...tree.children.map(fixTree)) as Array<TreeInterface>,
+                children: ([] as Array<TreeNode>).concat(...tree.children.map(fixTree)) as Array<TreeNode>,
             },
         ];
+    }
+        
     return ([
         {
             label: tree.label,
             value: tree.value,
-            id: tree.id,
-        },
-    ] as Array<TreeInterface> ).concat(...tree.children.map(fixTree));
+            paperID: tree.paperID,
+        }
+    ] as Array<TreeNode>).concat(...tree.children.map(fixTree));
 };
 
 /**
- * fetching paper name from the server, adding folder icons, renaming folders, getting an Array of Folderids
- * @param tree: Array of TreeInterface representing the raw tree-data
+ * Fetch paper name from the server, add folder icons, rename folders, get an Array of folderIds
+ * @param tree: Array of TreeNodes representing the raw tree-data
  * @param promises: Array of Promises to store the fetched data for reloading the tree when fetching is done
- * @param name: String, if not '', Folder with the value @param id is renamed to name 
+ * @param renameFolderTo: String, if not '', Folder with the common ID of folderId is renamed to name
+ * @param folderId: Common ID of the folder to be renamed
  */
-const createPaperTreeData = (tree: Array<TreeInterface>, promises: Array<Promise<string | void>>, name: string, id: string ): Array<TreeInterface> => {
+const createPaperTreeData = (tree: Array<TreeNode>, promises: Array<Promise<string | void>>, renameFolderTo: string, folderId: string ): Array<TreeNode> => {
     for (let item in tree) {
         if (tree[item].value.charAt(0) === 'p') {
             const baseURL: string = Config.base_url;
             promises.push(
-                fetch(baseURL + '/api/paper/?paper_id=' + tree[item].id)
+                fetch(baseURL + '/api/paper/?paper_id=' + tree[item].paperID)
                     .then((res) => res.json())
                     .then((res) => {
                         tree[item].label = res.title;
@@ -87,47 +69,47 @@ const createPaperTreeData = (tree: Array<TreeInterface>, promises: Array<Promise
             );
         } else if (tree[item].value.charAt(0) === 'd') {
             //Renaming a folder
-            if (tree[item].value === id) {
+            if (tree[item].value === folderId) {
                 tree[item].label = (
                     <div>
-                        <Icon icon='folder'></Icon> {name}
+                        <Icon icon='folder'></Icon> {renameFolderTo}
                     </div>
                 );
-                tree[item].name = name;
+                tree[item].folderName = renameFolderTo;
             } else {
                 tree[item].label = (
                     <div>
-                        <Icon icon='folder'></Icon> {tree[item].name}
+                        <Icon icon='folder'></Icon> {tree[item].folderName}
                     </div>
                 );
             }
-            tree[item].children = createPaperTreeData(tree[item].children!, promises, name, id );
+            tree[item].children = createPaperTreeData(tree[item].children!, promises, renameFolderTo, folderId);
         }
     }
     return tree;
 };
 
 /**
- * Deletes unnecessary data to storage from tree. Also deletes folder and paper
+ * Delete unnecessary data to storage from tree. Also deletes folder and paper
  * @param tree represents the tree data
  * @param shouldDelete if a folder or paper should be deleted the value is true
  * @param toDelete is the value of the paper or folder which should be deleted
  */
-const DeletePaperTreeData = (tree: Array<TreeInterface>, shouldDelete: boolean, toDelete : string) => {
-    let temp: Array<TreeInterface> = [];
+const deletePaperTreeData = (tree: Array<TreeNode>, shouldDelete: boolean, toDelete : string) => {
+    let temp: Array<TreeNode> = [];
     for (let item in tree) {
         if(shouldDelete && tree[item].value === toDelete) {
             continue;
         }
         if (tree[item].value.charAt(0) === 'p') {
-            temp.push({ id: tree[item].id, value: tree[item].value });
+            temp.push({ paperID: tree[item].paperID, value: tree[item].value });
         } else if (tree[item].value.charAt(0) === 'd') {
-            let children: Array<TreeInterface> = [];
+            let children: Array<TreeNode> = [];
             if (!(typeof tree[item].children == 'undefined'))
-                children = DeletePaperTreeData(tree[item].children!, shouldDelete, toDelete);
+                children = deletePaperTreeData(tree[item].children!, shouldDelete, toDelete);
             temp.push({
                 value: tree[item].value,
-                name: tree[item].name,
+                folderName: tree[item].folderName,
                 children: children,
             });
         }
@@ -135,54 +117,66 @@ const DeletePaperTreeData = (tree: Array<TreeInterface>, shouldDelete: boolean, 
     return temp;
 };
 
- /**
-     * Saves the tree to the webstorage
-     * @param treeData the treeData to store the tree 
-     */
-    export const saveTree = (treeData: Array<TreeInterface>) => {
-        let tree: Array<TreeInterface>;
-        tree = DeletePaperTreeData(treeData, false, '');
-        setSavedPapers(tree);
-    };
+/**
+ * Saves the tree to the webstorage
+ * @param treeData the treeData to store the tree 
+ */
+export const saveTree = (treeData: Array<TreeNode>) => {
+    let tree: Array<TreeNode>;
+    tree = deletePaperTreeData(treeData, false, '');
+    setSavedPapers(tree);
+};
+
+/**
+ * @param selectPaper Function receiving the currently selected element
+ * @param treeHeight The height of the tree
+ * @param newFolderName The name of a folder to be renamed to,
+ * @param folderId The id of a folder to be renamed
+ * @param elementToDelete The id of a element to be deleted from the tree
+ * @param tree The tree to be displayed
+ */
+interface PaperTreeProps {
+    selectPaper: Function;
+    treeHeight: number;
+    elementToDelete: string;
+    tree: Array<TreeNode>
+    folderRename: {folderId: string, newName: string}
+}
 
 /**
  * React component to show the folder-structure of the saved papers
- * @param props representing the properties needed for the tree such as choosePaper, if a paper is clicked on, the height of the Element, the name of a folder to rename it, the id of a folder to rename it and
- * the folderid to delete a paper(toDelete)
  */
-export const PaperTree: React.FC<{choosePaper: Function; height: number; name: string; id: string; toDelete: string; tree: Array<TreeInterface>}> = (props) => {
+export const PaperTree: React.FC<PaperTreeProps> = (props) => {
     const [treeData, setTreeData] = React.useState(props.tree);
 
     /**
      * Effect hook when a folder gets a new name
      */
     useEffect(() => {
-        helperFunction(false, props.tree);        
-    }, [props.name, props.tree]);
+        helperFunction(false, props.tree);     
+    }, [props.folderRename, props.tree]);
 
-    
     /**
      * Effect hook when a folder or paper should be deleted
      */
     useEffect(() => {
         helperFunction(true, treeData);
-    }, [props.toDelete]);
+    }, [props.elementToDelete]);
 
     /**
      * A function for manipulating the tree data (renaming a folder or deleting a paper or folder)
-     * @param shouldDelete if the function is called to delete a folder
+     * @param shouldDelete if true, deletes the element in the three that represents props.elementToDelete
      */
-    const helperFunction = (shouldDelete: boolean, tree:Array<TreeInterface>) => {
+    const helperFunction = (shouldDelete: boolean, tree:Array<TreeNode>) => {
         let promises: Array<Promise<string | void>> = [];
-        tree = DeletePaperTreeData(tree, shouldDelete, props.toDelete);
+        tree = deletePaperTreeData(tree, shouldDelete, props.elementToDelete);
 
-        createPaperTreeData(tree, promises, props.name, props.id);
+        createPaperTreeData(tree, promises, props.folderRename.newName, props.folderRename.folderId);
         Promise.all(promises).then(() => {
             setTreeData(tree);
             saveTree(tree);
         });
     }
-
    
     return (
         <div>
@@ -195,15 +189,13 @@ export const PaperTree: React.FC<{choosePaper: Function; height: number; name: s
                     { dropNode, dropNodePosition, createUpdateDataFunction }: any,
                     event: any
                 ) => {
-                    const v = createUpdateDataFunction(treeData);
-                    const c = fixTree({ value: 'd', children: v })[0].children;
-                    setTreeData(c!);
-                    saveTree(c!);
+                    const fixedTree = fixTree({value: 'd', children: createUpdateDataFunction(treeData)})[0].children;
+                    setTreeData(fixedTree!);
+                    saveTree(fixedTree!);
                 }}
-                onSelect={(active, value, event) => props.choosePaper(active)}
-                height={props.height}
+                onSelect={(active, value, event) => props.selectPaper(active)}
+                height={props.treeHeight}
             />
-           
         </div>
     );
 };

@@ -1,4 +1,4 @@
-import { TreeInterface } from "../Components/SavedPapers/Tree/PaperTree";
+import { TreeNode } from "../Components/SavedPapers/Tree/PaperTree";
 
 /**
  * Loads the recent papers from the web-storage
@@ -36,7 +36,7 @@ export function getSavedPapers() {
  * stores a new savedPaperTree to the webstorage
  * @param savedPapers is stored to the webstorage
  */
-export function setSavedPapers(savedPapers: Array<TreeInterface>)
+export function setSavedPapers(savedPapers: Array<TreeNode>)
 {
     if(typeof(savedPapers) !== "undefined") {
         localStorage.removeItem("saved");
@@ -65,7 +65,7 @@ export function addPaper(id : string)
  * local function to get an array of the stored paperIds
  * @param tree to search ids in
  */
-function GetPaperIds(tree : Array<TreeInterface>) {
+function GetPaperIds(tree : Array<TreeNode>) {
     let ids = [];
     for(let item in tree) {
         if(tree[item].value.charAt(0) == 'p') {
