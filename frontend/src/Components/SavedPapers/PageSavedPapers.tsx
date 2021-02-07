@@ -83,7 +83,7 @@ export const PageSavedPapers : React.FC = () => {
                 />
             </FlexboxGrid.Item>
             <FlexboxGrid.Item colspan={4}>
-                <PaperSidebar paper={selectedElement} newFolderName={renameFolder} delete={setElementToDelete}/>
+                <PaperSidebar treeNode={selectedElement} renameFolder={renameFolder} deleteTreeNode={setElementToDelete}/>
                 <Button appearance = 'primary' onClick={() => addFolder('New Folder')}>
                     Create new Folder
                 </Button>
