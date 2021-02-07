@@ -80,8 +80,8 @@ export const PageImprint : React.FC = () => {
                         Art und Weise und zu dem zuvor benannten Zweck einverstanden.
                 </p><br/>
             </div>
-            <footer className="frontpage-footer">
-                <img src={'../../icon.png'} alt="Logo"/> &copy; {new Date().getFullYear()} Icteridae
+            <footer className='frontpage-footer'>
+                <img src={'../../icon.png'} alt='Logo'/> &copy; {new Date().getFullYear()} Icteridae
             </footer> 
         </div>
     );
