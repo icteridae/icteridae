@@ -23,7 +23,16 @@ export const PaperSidebar : React.FC<{treeNode : TreeNode | undefined, renameFol
                 Insert Edit folder name <br/>
                 <form onSubmit={(e) => {e.preventDefault(); props.renameFolder(newFolderNameInput, props.treeNode?.value);}}>
                     <Input id='new-folder-name' placeholder={props.treeNode.folderName} onChange={(e : string) => setNewFolderNameInput(e)}/> 
-                    <Button appearance='primary' type='reset' onClick= {() => {props.renameFolder(newFolderNameInput, props.treeNode?.value);}}>Rename Folder</Button>
+                    <Button 
+                        appearance='primary' 
+                        type='reset' 
+                        onClick= {() => {
+                            (props.treeNode) && (props.treeNode.folderName = newFolderNameInput);
+                            props.renameFolder(newFolderNameInput, props.treeNode?.value);
+                        }}
+                    >
+                        Rename Folder
+                    </Button>
                     <Button appearance='primary' onClick= {() => props.deleteTreeNode(props.treeNode?.value)}>Delete Folder</Button>
                 </form>
             </div>
