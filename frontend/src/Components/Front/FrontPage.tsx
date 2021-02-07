@@ -3,7 +3,7 @@ import './FrontPage.css'
 import logo from '../../icon.png'
 
 import { DataInterface } from '../Search/SearchResult/Types';
-import { getRecentPapers, setRecentPapers } from "../../Utils/Webstorage";
+import { getRecentPapers} from "../../Utils/Webstorage";
 import { SearchBar } from "../Search/SearchBar/SearchBar";
 import { SearchResultCard } from '../Search/SearchResult/SearchResultCard';
 import Config from '../../Utils/Config'
