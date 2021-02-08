@@ -26,9 +26,15 @@ export const FrontPage: React.FC = () => {
     useEffect(() => {
         const baseURL : string = Config.base_url;
         const paperIDs = getRecentPapers();
+
+        //if there are no papers to fetch, set recentlyOpenedPapers to null to stop the loading animation
+        if(paperIDs == null) {
+            setRecentlyOpenedPapers(null);
+            return;
+        }
         
-        //capped at 10 papers max, if paperIds == null, zero papers will be loaded
-        const numberOfPapers : number = (paperIDs == null) ? 0 : Math.min(paperIds.length, 10);
+        //capped at 10 papers max
+        const numberOfPapers : number = Math.min(paperIds.length, 10);
         let papers: Array<DataInterface> = new Array<DataInterface>(numberOfPapers);
         
         // fetch all papers
@@ -59,6 +65,7 @@ export const FrontPage: React.FC = () => {
         
     `;
 
+    console.log(recentlyOpenedPapers);
     let loaderOrRecentPapers;
     if(recentlyOpenedPapers != null) {
         if(recentlyOpenedPapers.length === 0) {
@@ -72,7 +79,6 @@ export const FrontPage: React.FC = () => {
             </>;    
         }
     }
-    //loaderOrRecentPapers = <SyncLoader color="#36D7B7" css={override}/>;
 
     return (
         <div className="frontpage">
