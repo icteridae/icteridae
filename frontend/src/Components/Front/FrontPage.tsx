@@ -3,7 +3,7 @@ import './FrontPage.css'
 import logo from '../../icon.png'
 
 import { DataInterface } from '../Search/SearchResult/Types';
-import { getRecentPapers, setRecentPapers } from "../../Utils/Webstorage";
+import { getRecentPapers} from "../../Utils/Webstorage";
 import { SearchBar } from "../Search/SearchBar/SearchBar";
 import { SearchResultCard } from '../Search/SearchResult/SearchResultCard';
 import Config from '../../Utils/Config'
@@ -17,7 +17,7 @@ import SyncLoader from "react-spinners/SyncLoader";
  */
 export const FrontPage: React.FC = () => {
     const [recentlyOpenedPapers, setRecentlyOpenedPapers] = useState<Array<DataInterface> | null>([]);
-    const [paperIds, setPaperIds] = useState<Array<string>>(getRecentPapers());
+    const [recentPaperIds, setPaperIds] = useState<Array<string>>(getRecentPapers());
 
     /**
      * Initial effect hook for loading the recently open papers from the localstorage.
@@ -25,16 +25,22 @@ export const FrontPage: React.FC = () => {
      */
     useEffect(() => {
         const baseURL : string = Config.base_url;
-        const paperIDs = getRecentPapers();
+        const paperIds = getRecentPapers();
+
+        //if there are no papers to fetch, set recentlyOpenedPapers to null to stop the loading animation
+        if(paperIds == null) {
+            setRecentlyOpenedPapers(null);
+            return;
+        }
         
-        //capped at 10 papers max, if paperIds == null, zero papers will be loaded
-        const numberOfPapers : number = (paperIDs == null) ? 0 : Math.min(paperIds.length, 10);
+        //capped at 10 papers max
+        const numberOfPapers : number = Math.min(recentPaperIds.length, 10);
         let papers: Array<DataInterface> = new Array<DataInterface>(numberOfPapers);
         
         // fetch all papers
         let promises = [];
         for (let i = numberOfPapers-1; i > -1; i--) {
-            promises.push(fetch(baseURL +"/api/paper/?paper_id=" + paperIDs[i])
+            promises.push(fetch(baseURL +"/api/paper/?paper_id=" + paperIds[i])
                 .then(res => res.json())
                 .then(res => {
                     papers[i] = {...res, link: "/graph"};
@@ -45,7 +51,7 @@ export const FrontPage: React.FC = () => {
         // set paperIds and recentlyOpenedPapers once all promises succeed
         Promise.all(promises).then(() => {
             console.log(papers);
-            setPaperIds(paperIDs);
+            setPaperIds(paperIds);
             setRecentlyOpenedPapers(papers);
         }).catch(() => {
             console.log("Papers couldn't be loaded");
@@ -59,6 +65,7 @@ export const FrontPage: React.FC = () => {
         
     `;
 
+    console.log(recentlyOpenedPapers);
     let loaderOrRecentPapers;
     if(recentlyOpenedPapers != null) {
         if(recentlyOpenedPapers.length === 0) {
@@ -72,7 +79,6 @@ export const FrontPage: React.FC = () => {
             </>;    
         }
     }
-    //loaderOrRecentPapers = <SyncLoader color="#36D7B7" css={override}/>;
 
     return (
         <div className="frontpage">

@@ -17,8 +17,8 @@ from .models import Paper, Author, FieldOfStudy
 
 PAPER_BATCH = 1000  # batch size of bulk inserts. increase for better performance, decrease for less RAM usage
 VERBOSE_COUNT = 71317  # Frequency of status output
-BREAK_POINT = None  # Use reduced files for debugging. Otherwise set to None
-PATHS = ['result0.json', 'result4.json']
+BREAK_POINT = 700000  # Use reduced files for debugging. Otherwise set to None
+PATHS = ['result4.json']
 
 #paper_ids = set()  # do not edit. used for more efficient citation validation
 
@@ -90,12 +90,10 @@ def load_papers():
                             ON public.graphgenerator_paper USING gin
                             (title COLLATE pg_catalog."default" gin_trgm_ops)
                             TABLESPACE pg_default;
-
                         CREATE INDEX graphgenera_search__7a75a9_gin
                             ON public.graphgenerator_paper USING gin
                             (search_vector)
                             TABLESPACE pg_default;
-
                         CREATE INDEX graphgenerator_paper_id_97052503_like
                             ON public.graphgenerator_paper USING btree
                             (id COLLATE pg_catalog."default" varchar_pattern_ops ASC NULLS LAST)

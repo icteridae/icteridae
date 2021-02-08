@@ -37,6 +37,7 @@ def search(request):
         return http.HttpResponseBadRequest('invalid page size.')
     pagesize = int(pagesize)
 
+
     match_query = dsl_query.Match(title={'query': query})
     citation_query = dsl_query.RankFeature(field='citations', saturation={'pivot': SATURATION_PIVOT}, boost=BOOST_MAGNITUDE) # Create query to boost results with high citations
 
@@ -50,6 +51,7 @@ def search(request):
     if not page.isnumeric() or int(page) > max_pages:
         return http.HttpResponseBadRequest('invalid page number.')
     page = int(page)
+
 
     return http.JsonResponse(
         {
