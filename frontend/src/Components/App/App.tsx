@@ -5,8 +5,7 @@ import { PageImprint } from '../Privacy/PageImprint';
 import { GraphFetch } from '../Graph/GraphHelperfunctions';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { PageSavedPapers } from '../SavedPapers/PageSavedPapers';
-import { PageSearchResult } from '../Search/SearchResult/PageSearchResult'; 
-import { Default } from '../Default/Default';
+import { PageSearchResult } from '../Search/SearchResult/PageSearchResult';
 
  export const App: React.FC = () => (
     <BrowserRouter>
