@@ -11,14 +11,14 @@ import Config from '../../../Utils/Config';
  * @param label For Papers: Title of paper, For folders: Icon and name of folder
  * @param value Internal ID for papers and folders, folder ids start with a d(irectory) and paper ids with a p(aper), needs to be named value because rsuite
  * @param children The children of a Treenode
- * @param paperID The external ID of a paper, used to get information about papers through backend requests
+ * @param paperId The external ID of a paper, used to get information about papers through backend requests
  * @param name The Name of a folder
  */
 export interface TreeNode { 
     label?: any;
     value: string;
     children?: TreeNode[];
-    paperID?: string;
+    paperId?: string;
     folderName?: string;
 }
 
@@ -44,7 +44,7 @@ const fixTree = (tree: TreeNode): ConcatArray<TreeNode> => {
         {
             label: tree.label,
             value: tree.value,
-            paperID: tree.paperID,
+            paperId: tree.paperId,
         }
     ] as Array<TreeNode>).concat(...tree.children.map(fixTree));
 };
@@ -61,7 +61,7 @@ const createPaperTreeData = (tree: Array<TreeNode>, promises: Array<Promise<stri
         if (tree[item].value.charAt(0) === 'p') {
             const baseURL: string = Config.base_url;
             promises.push(
-                fetch(baseURL + '/api/paper/?paper_id=' + tree[item].paperID)
+                fetch(baseURL + '/api/paper/?paper_id=' + tree[item].paperId)
                     .then((res) => res.json())
                     .then((res) => {
                         tree[item].label = res.title;
@@ -102,7 +102,7 @@ const deletePaperTreeData = (tree: Array<TreeNode>, shouldDelete: boolean, toDel
             continue;
         }
         if (tree[item].value.charAt(0) === 'p') {
-            temp.push({ paperID: tree[item].paperID, value: tree[item].value });
+            temp.push({ paperId: tree[item].paperId, value: tree[item].value });
         } else if (tree[item].value.charAt(0) === 'd') {
             let children: Array<TreeNode> = [];
             if (!(typeof tree[item].children == 'undefined'))

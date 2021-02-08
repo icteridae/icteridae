@@ -17,7 +17,7 @@ import SyncLoader from "react-spinners/SyncLoader";
  */
 export const FrontPage: React.FC = () => {
     const [recentlyOpenedPapers, setRecentlyOpenedPapers] = useState<Array<DataInterface> | null>([]);
-    const [paperIds, setPaperIds] = useState<Array<string>>(getRecentPapers());
+    const [recentPaperIds, setPaperIds] = useState<Array<string>>(getRecentPapers());
 
     /**
      * Initial effect hook for loading the recently open papers from the localstorage.
@@ -25,22 +25,22 @@ export const FrontPage: React.FC = () => {
      */
     useEffect(() => {
         const baseURL : string = Config.base_url;
-        const paperIDs = getRecentPapers();
+        const paperIds = getRecentPapers();
 
         //if there are no papers to fetch, set recentlyOpenedPapers to null to stop the loading animation
-        if(paperIDs == null) {
+        if(paperIds == null) {
             setRecentlyOpenedPapers(null);
             return;
         }
         
         //capped at 10 papers max
-        const numberOfPapers : number = Math.min(paperIds.length, 10);
+        const numberOfPapers : number = Math.min(recentPaperIds.length, 10);
         let papers: Array<DataInterface> = new Array<DataInterface>(numberOfPapers);
         
         // fetch all papers
         let promises = [];
         for (let i = numberOfPapers-1; i > -1; i--) {
-            promises.push(fetch(baseURL +"/api/paper/?paper_id=" + paperIDs[i])
+            promises.push(fetch(baseURL +"/api/paper/?paper_id=" + paperIds[i])
                 .then(res => res.json())
                 .then(res => {
                     papers[i] = {...res, link: "/graph"};
@@ -51,7 +51,7 @@ export const FrontPage: React.FC = () => {
         // set paperIds and recentlyOpenedPapers once all promises succeed
         Promise.all(promises).then(() => {
             console.log(papers);
-            setPaperIds(paperIDs);
+            setPaperIds(paperIds);
             setRecentlyOpenedPapers(papers);
         }).catch(() => {
             console.log("Papers couldn't be loaded");
