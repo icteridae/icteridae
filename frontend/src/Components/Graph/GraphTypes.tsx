@@ -105,6 +105,7 @@ export interface PapersAndSimilarities{
 export interface SimilarityLinkObject extends LinkObject{
     similarity: number[],
     label: string,
+    color: string,
 }
 
 /**

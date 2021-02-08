@@ -22,7 +22,7 @@ const generateGraph = (data : PapersAndSimilarities) : PaperGraphData =>{
     let similarityMatrix : number[][] = new Array(data.paper.length);
 
     const normalized_tensor = data.tensor.map(matrix => {
-        const bounds = GetMinAndMaxFromMatrix(matrix)
+        const bounds = GetMinAndMaxFromMatrix(matrix);
         return Normalize(matrix, bounds[0], bounds[1])
     });
 
@@ -38,8 +38,9 @@ const generateGraph = (data : PapersAndSimilarities) : PaperGraphData =>{
         color: `rgba(150,150,150,${similarityMatrix[x][y]})`,
         similarity: data.similarities.map((similiarity, index) => normalized_tensor[index][x][y]),
         label: data.similarities.map((similiarity, index) => normalized_tensor[index][x][y]).toString(),
+        width: 0,
     })))).flat();
-
+    console.log(links)
     const nodes = data.paper.map((paper, index) => ({
         ...paper,
         color: '',
@@ -126,8 +127,8 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
         const fg : any = fgRef.current;
         if (fg) {
             fg.d3Force('charge').strength(-100);
-            fg.d3Force('charge').distanceMin(20);
-            fg.d3Force('link').distance((link : SimilarityLinkObject) => 50 / (link.similarity.map((element, index) => element * sliders[index] / 100).reduce((x,y) => x+y) + squish));
+            fg.d3Force('charge').distanceMin(10);
+            fg.d3Force('link').distance((link : SimilarityLinkObject) => 100 / (link.similarity.map((element, index) => element * sliders[index] / 100).reduce((x,y) => x+y) + squish));
             fg.d3Force('link').strength((link : SimilarityLinkObject) => (link.similarity.map((element, index) => element * sliders[index] / 100).reduce((x,y) => x+y) + squish));
         }
         }, [sliders]);
@@ -219,15 +220,25 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                                     e.preventDefault()
                                     setDrawer(false)
                                 }}
+                                onLinkHover={(link, prevlink) => {
+                                    if(!(prevlink === null)){
+                                        (prevlink as SimilarityLinkObject).color = `rgba(150,150,150,${(prevlink as SimilarityLinkObject).similarity.reduce((x, y) => x + y)})`;
+                                    }
+                                    if(!(link === null)){
+                                        (link as SimilarityLinkObject).color = 'rgba(150,150,150,1)';
+                                    }
+                                            //setGraphData({ nodes: [...graphData.nodes], links: [...graphData.links.filter((graphLink) => !(link === graphLink)), ]});
+                                            //(link as SimilarityLinkObject).width = 1.2;
+                                }}
                                 nodeAutoColorBy='fieldsOfStudy'
                                 nodeLabel='title'
-                                linkLabel={(link) =>((link as SimilarityLinkObject).label)}
-                                linkWidth={(link) => ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y)*6)}
+                                linkLabel={(link) => (link as SimilarityLinkObject).label}
+                                linkWidth={(link) => (link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y)*6}
                                 linkCurvature='curvature'
                                 linkDirectionalArrowLength='arrowLen'
                                 linkDirectionalParticles='dirParticles'
                                 //Add this line together with the initialising and instantiating of selectedPaper to show only Links connected to the selectetPaper
-                                linkVisibility={(link : LinkObject) => ((link as SimilarityLinkObject).similarity.reduce((x, y) => x + y) > 0.1)}
+                                //linkVisibility={(link : LinkObject) => ((link as SimilarityLinkObject).similarity.reduce((x, y) => x + y) >= 0)}
                                 d3VelocityDecay={0.95}
                                 cooldownTicks={100}
                                 //onEngineStop={() => (fgRef.current as any).zoomToFit(400, 100)}
