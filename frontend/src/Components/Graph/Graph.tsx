@@ -105,7 +105,7 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
     const [sliders, setSliders] = React.useState(Array(sliderCount).fill(totalSliderValue / sliderCount))
     
     // set whether the drawer is shown or hidden
-    const [drawer, setDrawer] = React.useState(true);
+    const [drawer, setDrawer] = React.useState(false);
     
     // selected Node to display on drawer
     const [selectedNode, setNode] = React.useState(initNode);
