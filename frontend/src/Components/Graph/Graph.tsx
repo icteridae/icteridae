@@ -38,6 +38,7 @@ const generateGraph = (data : PapersAndSimilarities) : PaperGraphData =>{
         color: `rgba(150,150,150,${similarityMatrix[x][y]})`,
         similarity: data.similarities.map((similiarity, index) => normalized_tensor[index][x][y]),
         label: data.similarities.map((similiarity, index) => normalized_tensor[index][x][y]).toString(),
+        isHovered: false,
     })))).flat();
 
     const nodes = data.paper.map((paper, index) => ({
@@ -222,15 +223,22 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                                 onLinkHover={(link, prevlink) => {
                                     if(!(prevlink === null)){
                                         (prevlink as SimilarityLinkObject).color = `rgba(150,150,150,${(prevlink as SimilarityLinkObject).similarity.reduce((x, y) => x + y)})`;
+                                        (prevlink as SimilarityLinkObject).isHovered = false;
                                     }
                                     if(!(link === null)){
                                         (link as SimilarityLinkObject).color = 'rgba(150,150,150,1)';
+                                        (link as SimilarityLinkObject).isHovered = true;
                                     }
                                 }}
                                 nodeAutoColorBy='fieldsOfStudy'
                                 nodeLabel='title'
                                 linkLabel={(link) => (link as SimilarityLinkObject).label}
-                                linkWidth={(link) => ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y)*6)}
+                                linkWidth={(link) => {
+                                    if((link as SimilarityLinkObject).isHovered){
+                                        return 4;
+                                    }else{
+                                        return ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y)*6)}
+                                    }}
                                 linkCurvature='curvature'
                                 linkDirectionalArrowLength='arrowLen'
                                 linkDirectionalParticles='dirParticles'
