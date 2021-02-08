@@ -1,26 +1,28 @@
 import React from 'react';
 
-import ForceGraph2D, { GraphData } from 'react-force-graph-2d';
+import ForceGraph2D, { LinkObject } from 'react-force-graph-2d';
 import { Button, Drawer, Row, Col, Slider, InputNumber, Loader } from 'rsuite';
 
-import { Paper, PapersAndSimilarities, MyGraphData, MyLinkObject } from './GraphTypes';
+import { Paper, PapersAndSimilarities, PaperGraphData, SimilarityLinkObject } from './GraphTypes';
 import { GetMinAndMaxFromMatrix, Normalize } from './GraphHelperfunctions';
 
 import './Graph.css'
 
 const totalSliderValue: number = 100;
-const squish: number = 0.5;
+const squish: number = 0.2;
+const logBulk: number = 2;
+const nodeBaseSize: number = 4;
 
 /**
  * This method generates the graph for the provided graphsAndSimilarities Object
  * @param data contains all papers, similarities and similarities between papers
  * @returns a GraphData object consisting of nodes[] and links[]
  */
-const generateGraph = (data : PapersAndSimilarities) : MyGraphData =>{
+const generateGraph = (data : PapersAndSimilarities) : PaperGraphData =>{
     let similarityMatrix : number[][] = new Array(data.paper.length);
 
     const normalized_tensor = data.tensor.map(matrix => {
-        const bounds = GetMinAndMaxFromMatrix(matrix)
+        const bounds = GetMinAndMaxFromMatrix(matrix);
         return Normalize(matrix, bounds[0], bounds[1])
     });
 
@@ -36,12 +38,14 @@ const generateGraph = (data : PapersAndSimilarities) : MyGraphData =>{
         color: `rgba(150,150,150,${similarityMatrix[x][y]})`,
         similarity: data.similarities.map((similiarity, index) => normalized_tensor[index][x][y]),
         label: data.similarities.map((similiarity, index) => normalized_tensor[index][x][y]).toString(),
+        isHovered: false,
     })))).flat();
 
     const nodes = data.paper.map((paper, index) => ({
         ...paper,
         color: '',
         originSim: similarityMatrix[0][index],
+        val: Math.log(paper.inCitations.length + logBulk) * nodeBaseSize,
     }));
 
     return ({    
@@ -51,7 +55,10 @@ const generateGraph = (data : PapersAndSimilarities) : MyGraphData =>{
 }
 
 const changeSlider = (index: number, val: number, oldValues: number[]) => {
-    return oldValues.map((x, i) => i === index ? val : oldValues[index] === totalSliderValue ? 0 : (totalSliderValue - val) * x / (totalSliderValue - oldValues[index]));
+    if (oldValues.filter((x, i) => x === 0.1 || i === index).length === oldValues.length ) {
+        return oldValues.map((x,i) => i===index ? val : (totalSliderValue-val)/(oldValues.length-1))
+    }
+    return oldValues.map((x, i) => i === index ? val : oldValues[index] === totalSliderValue ? 1 : (totalSliderValue - val) * x / (totalSliderValue - oldValues[index]));
 }
 
 /**
@@ -104,7 +111,7 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
     const [selectedNode, setNode] = React.useState(initNode);
 
     // load an empty Graph until the real Data is fetched
-    const [graphData, setGraphData] = React.useState<GraphData>({nodes : [], links : []})
+    const [graphData, setGraphData] = React.useState<PaperGraphData>({nodes : [], links : []})
 
     React.useEffect(() => {
         setSliders(Array(sliderCount).fill(totalSliderValue / sliderCount))
@@ -119,8 +126,10 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
     React.useEffect(() => {
         const fg : any = fgRef.current;
         if (fg) {
-            fg.d3Force('link').distance((link : MyLinkObject) => 50 / (link.similarity.map((element, index) => element * sliders[index] / 100).reduce((x,y) => x+y) + squish));
-            fg.d3Force('link').strength((link : MyLinkObject) => (link.similarity.map((element, index) => element * sliders[index] / 100).reduce((x,y) => x+y) + squish));
+            fg.d3Force('charge').strength(-100);
+            fg.d3Force('charge').distanceMin(10);
+            fg.d3Force('link').distance((link : SimilarityLinkObject) => 100 / (link.similarity.map((element, index) => element * sliders[index] / 100).reduce((x,y) => x+y) + squish));
+            fg.d3Force('link').strength((link : SimilarityLinkObject) => (link.similarity.map((element, index) => element * sliders[index] / 100).reduce((x,y) => x+y) + squish));
         }
         }, [sliders]);
 
@@ -138,6 +147,7 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                 <Row key={index}>
                     <Col md={10}>
                         <Slider 
+                            step= {0.1}
                             progress
                             style={{ marginTop: 16, marginLeft: 50 }}
                             value={sliderVal}
@@ -210,15 +220,30 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                                     e.preventDefault()
                                     setDrawer(false)
                                 }}
+                                onLinkHover={(link, prevlink) => {
+                                    if(!(prevlink === null)){
+                                        (prevlink as SimilarityLinkObject).color = `rgba(150,150,150,${(prevlink as SimilarityLinkObject).similarity.reduce((x, y) => x + y)})`;
+                                        (prevlink as SimilarityLinkObject).isHovered = false;
+                                    }
+                                    if(!(link === null)){
+                                        (link as SimilarityLinkObject).color = 'rgba(150,150,150,1)';
+                                        (link as SimilarityLinkObject).isHovered = true;
+                                    }
+                                }}
                                 nodeAutoColorBy='fieldsOfStudy'
                                 nodeLabel='title'
-                                linkLabel={(link) =>((link as MyLinkObject).label)}
-                                linkWidth={(link) => ((link as MyLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y)*3)}
+                                linkLabel={(link) => (link as SimilarityLinkObject).label}
+                                linkWidth={(link) => {
+                                    if((link as SimilarityLinkObject).isHovered){
+                                        return 4;
+                                    }else{
+                                        return ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y)*6)}
+                                    }}
                                 linkCurvature='curvature'
                                 linkDirectionalArrowLength='arrowLen'
                                 linkDirectionalParticles='dirParticles'
                                 //Add this line together with the initialising and instantiating of selectedPaper to show only Links connected to the selectetPaper
-                                //linkVisibility={(link:LinkObject) => ((link.source as NodeObject).id == selectedPaper)}
+                                //linkVisibility={(link : LinkObject) => ((link as SimilarityLinkObject).similarity.reduce((x, y) => x + y) >= 0)}
                                 d3VelocityDecay={0.95}
                                 cooldownTicks={100}
                                 //onEngineStop={() => (fgRef.current as any).zoomToFit(400, 100)}
