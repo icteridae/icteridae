@@ -77,3 +77,16 @@ function GetPaperIds(tree : Array<TreeNode>) {
     }
     return ids;
 }
+
+export function setSavedSliders(slider: Array<number>) {
+    if(typeof(slider) !== "undefined") {
+        localStorage.removeItem("slider");
+        localStorage.setItem("slider", JSON.stringify(slider));
+    }
+    return;
+}
+
+
+export function getSavedSliders() {
+    return JSON.parse(localStorage.getItem("slider") as string) as Array<number>;
+}

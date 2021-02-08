@@ -1,12 +1,13 @@
 import React from 'react';
 
-import ForceGraph2D, { LinkObject } from 'react-force-graph-2d';
+import ForceGraph2D from 'react-force-graph-2d';
 import { Button, Drawer, Row, Col, Slider, InputNumber, Loader } from 'rsuite';
 
 import { Paper, PapersAndSimilarities, PaperGraphData, SimilarityLinkObject } from './GraphTypes';
 import { GetMinAndMaxFromMatrix, Normalize } from './GraphHelperfunctions';
 
 import './Graph.css'
+import { getSavedSliders, setSavedSliders } from '../../Utils/Webstorage';
 
 const totalSliderValue: number = 100;
 const squish: number = 0.2;
@@ -55,10 +56,10 @@ const generateGraph = (data : PapersAndSimilarities) : PaperGraphData =>{
 }
 
 const changeSlider = (index: number, val: number, oldValues: number[]) => {
-    if (oldValues.filter((x, i) => x === 0.1 || i === index).length === oldValues.length ) {
+    if (oldValues.filter((x, i) => x === 0 || i === index).length === oldValues.length ) {
         return oldValues.map((x,i) => i===index ? val : (totalSliderValue-val)/(oldValues.length-1))
     }
-    return oldValues.map((x, i) => i === index ? val : oldValues[index] === totalSliderValue ? 1 : (totalSliderValue - val) * x / (totalSliderValue - oldValues[index]));
+    return oldValues.map((x, i) => i === index ? val : oldValues[index] === totalSliderValue ? 0 : (totalSliderValue - val) * x / (totalSliderValue - oldValues[index]));
 }
 
 /**
@@ -90,6 +91,14 @@ const initNode = {
     color: '',
 };
 
+function ChoosingSliderValues(sliderCount : number) {
+    const SavedSliders = getSavedSliders();
+    console.log(SavedSliders?.length + "   " +   sliderCount);
+    if(SavedSliders?.length !== sliderCount)
+        return Array(sliderCount).fill(totalSliderValue / sliderCount);
+    return SavedSliders;
+}
+
 /**
  * main Method for generating the Graph
  * @returns everything that is displayed under the Graph Tab
@@ -102,7 +111,7 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
     const fgRef = React.useRef();
 
     // slider values
-    const [sliders, setSliders] = React.useState(Array(sliderCount).fill(totalSliderValue / sliderCount))
+    const [sliders, setSliders] = React.useState(ChoosingSliderValues(sliderCount));
     
     // set whether the drawer is shown or hidden
     const [drawer, setDrawer] = React.useState(true);
@@ -150,9 +159,11 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                             step= {0.1}
                             progress
                             style={{ marginTop: 16, marginLeft: 50 }}
-                            value={sliderVal}
+                            value={ChoosingSliderValues(sliderCount)[index]}
                             onChange={value => {
-                                setSliders(changeSlider(index, value, sliders))
+                                const newSliders = changeSlider(index, value, sliders);
+                                setSliders(newSliders);
+                                setSavedSliders(newSliders);
                             }}
                             />
                     </Col>
@@ -160,7 +171,7 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                         <InputNumber
                             min={0}
                             max={totalSliderValue}
-                            value={sliderVal}
+                            value={ChoosingSliderValues(sliderCount)[index]}
                             onChange={value => {
                                 setSliders(changeSlider(index, value as number, sliders))
                             }}
