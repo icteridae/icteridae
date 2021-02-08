@@ -1,0 +1,12 @@
+.imprint {
+    width: 60%;
+    padding: 20px 50px;
+}
+
+.imprint a {
+    color: #96d4bc;
+}
+
+.imprint strong {
+    font-size: large;
+}
