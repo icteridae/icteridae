@@ -38,9 +38,8 @@ const generateGraph = (data : PapersAndSimilarities) : PaperGraphData =>{
         color: `rgba(150,150,150,${similarityMatrix[x][y]})`,
         similarity: data.similarities.map((similiarity, index) => normalized_tensor[index][x][y]),
         label: data.similarities.map((similiarity, index) => normalized_tensor[index][x][y]).toString(),
-        width: 0,
     })))).flat();
-    console.log(links)
+
     const nodes = data.paper.map((paper, index) => ({
         ...paper,
         color: '',
@@ -227,13 +226,11 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                                     if(!(link === null)){
                                         (link as SimilarityLinkObject).color = 'rgba(150,150,150,1)';
                                     }
-                                            //setGraphData({ nodes: [...graphData.nodes], links: [...graphData.links.filter((graphLink) => !(link === graphLink)), ]});
-                                            //(link as SimilarityLinkObject).width = 1.2;
                                 }}
                                 nodeAutoColorBy='fieldsOfStudy'
                                 nodeLabel='title'
                                 linkLabel={(link) => (link as SimilarityLinkObject).label}
-                                linkWidth={(link) => (link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y)*6}
+                                linkWidth={(link) => ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y)*6)}
                                 linkCurvature='curvature'
                                 linkDirectionalArrowLength='arrowLen'
                                 linkDirectionalParticles='dirParticles'
