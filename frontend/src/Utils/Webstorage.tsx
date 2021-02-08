@@ -1,4 +1,4 @@
-import { TreeNode } from "../Components/SavedPapers/Tree/PaperTree";
+import { TreeNode } from "../Components/SavedPapers/PaperTree";
 
 /**
  * Loads the recent papers from the web-storage
