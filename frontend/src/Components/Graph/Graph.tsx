@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ForceGraph2D, { LinkObject } from 'react-force-graph-2d';
+import ForceGraph2D from 'react-force-graph-2d';
 import { Button, Drawer, Row, Col, Slider, InputNumber, Loader } from 'rsuite';
 
 import { Paper, PapersAndSimilarities, PaperGraphData, SimilarityLinkObject } from './GraphTypes';
@@ -12,6 +12,7 @@ const totalSliderValue: number = 100;
 const squish: number = 0.2;
 const logBulk: number = 2;
 const nodeBaseSize: number = 4;
+const linkOnHoverWidth: number = 4;
 
 /**
  * This method generates the graph for the provided graphsAndSimilarities Object
@@ -235,7 +236,7 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                                 linkLabel={(link) => (link as SimilarityLinkObject).label}
                                 linkWidth={(link) => {
                                     if((link as SimilarityLinkObject).isHovered){
-                                        return 4;
+                                        return linkOnHoverWidth;
                                     }else{
                                         return ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y)*6)}
                                     }}
