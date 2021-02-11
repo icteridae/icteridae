@@ -13,7 +13,7 @@ const testData: TreeTypes.DirectoryNode = {
         {
             value: 'p1',
             label: <>child1</>,
-            paperId: '',
+            paperId: '1',
         },
         {
             value: 'd2',
@@ -23,7 +23,7 @@ const testData: TreeTypes.DirectoryNode = {
                 {
                     value: 'p3',
                     label: <>child1</>,
-                    paperId: '',
+                    paperId: '3',
                 },
             ],
         },
@@ -37,7 +37,7 @@ export const NewPageSavedPapers: React.FC = () => {
     const folderIcon = <Icon icon='folder'></Icon>
 
     useEffect(() => {
-        setTreeData([testData, { value: 'p4', paperId: '', label: <>p4</> }]);
+        setTreeData([testData, { value: 'p4', paperId: '2', label: <>p4</> }]);
     }, []);
 
     function createDirectory(directoryName: String) {
@@ -51,6 +51,22 @@ export const NewPageSavedPapers: React.FC = () => {
         setTreeData(temp);
     }
 
+    function loadPapers() {
+        let prom : any[] = [];
+        getLoadPaperPromises(treeData, prom);
+        console.log(prom);
+
+    }
+
+    function getLoadPaperPromises(nodes: TreeTypes.PaperOrDirectoryNode[], promises: any[]) {
+        nodes.forEach(node => 
+            TreeTypes.isPaperNode(node) 
+                ? 
+                    promises.push(node.paperId) 
+                    : TreeTypes.isDirectoryNode(node) && node.children && getLoadPaperPromises(node.children, promises)
+        );
+    }   
+
     function generateNewDirectoryValue(): String {
         return new Date().valueOf().toString();
     }
@@ -61,7 +77,7 @@ export const NewPageSavedPapers: React.FC = () => {
         setTreeData(temp);
     }
 
-    function renameDirectoryRecursively (nodes: TreeTypes.PaperOrDirectoryNode[], value: String, newName: String) : TreeTypes.PaperOrDirectoryNode[]{
+    function renameDirectoryRecursively (nodes: TreeTypes.PaperOrDirectoryNode[], value: String, newName: String) : TreeTypes.PaperOrDirectoryNode[] {
         let r = nodes
             .map(node =>
                 TreeTypes.isDirectoryNode(node) && node.value === value
@@ -130,7 +146,7 @@ export const NewPageSavedPapers: React.FC = () => {
                     Create Directory
                 </Button>
                 {selectedTreeNode != null && (
-                    <Button onClick={() => deleteTreeNode(selectedTreeNode.value)}>
+                    <Button onClick={() => loadPapers()}>
                         Delete
                     </Button>
                 )}
