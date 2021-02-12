@@ -40,7 +40,7 @@ export const NewPageSavedPapers: React.FC = () => {
         setTreeData([testData, { value: 'p4', paperId: '2', label: <>p4</> }]);
     }, []);
 
-    function createDirectory(directoryName: String) {
+    function createDirectory(directoryName: string) {
         let temp = [...treeData];
         temp.push({
             value: generateNewDirectoryValue(),
@@ -67,17 +67,17 @@ export const NewPageSavedPapers: React.FC = () => {
         );
     }   
 
-    function generateNewDirectoryValue(): String {
+    function generateNewDirectoryValue(): string {
         return new Date().valueOf().toString();
     }
 
-    function renameDirectory(value: String, newName: String) {
+    function renameDirectory(value: string, newName: string) {
         let temp = [...treeData];
         temp = renameDirectoryRecursively(temp, value, newName);
         setTreeData(temp);
     }
 
-    function renameDirectoryRecursively (nodes: TreeTypes.PaperOrDirectoryNode[], value: String, newName: String) : TreeTypes.PaperOrDirectoryNode[] {
+    function renameDirectoryRecursively (nodes: TreeTypes.PaperOrDirectoryNode[], value: string, newName: string) : TreeTypes.PaperOrDirectoryNode[] {
         let r = nodes
             .map(node =>
                 TreeTypes.isDirectoryNode(node) && node.value === value
@@ -99,14 +99,14 @@ export const NewPageSavedPapers: React.FC = () => {
         return r;
     }
 
-    function deleteTreeNode(value: String) {
+    function deleteTreeNode(value: string) {
         let temp = [...treeData];
         temp = filterNodeRecursively(temp, value);
 
         setTreeData(temp);
     }
 
-    function filterNodeRecursively(nodes: TreeTypes.PaperOrDirectoryNode[], value: String) : TreeTypes.PaperOrDirectoryNode[] {
+    function filterNodeRecursively(nodes: TreeTypes.PaperOrDirectoryNode[], value: string) : TreeTypes.PaperOrDirectoryNode[] {
         let r = nodes
             .filter(node => node.value !== value)
             .map(node =>

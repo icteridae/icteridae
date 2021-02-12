@@ -1,6 +1,6 @@
 export interface TreeNode {
     label: JSX.Element;
-    value: String;
+    value: string;
 }
 
 export interface PaperNode extends TreeNode {
