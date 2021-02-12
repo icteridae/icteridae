@@ -22,7 +22,7 @@ class Paper(models.Model):  # Independent
 
     id = models.CharField(max_length=40, primary_key=True)
 
-    title = models.CharField(max_length=400)  # TODO check max title length
+    title = models.TextField(blank=True) 
     paperAbstract = models.TextField(blank=True)
 
     authors = models.ManyToManyField('Author')
@@ -30,17 +30,17 @@ class Paper(models.Model):  # Independent
     # outCitations not needed as they are implied by inCitations
     year = models.IntegerField(null=True)
     s2Url = models.URLField()
-    venue = models.TextField(default='')
-    journalName = models.TextField(default='')
-    journalVolume = models.CharField(max_length=40, default='')
-    journalPages = models.CharField(max_length=35, default='')
-    doi = models.CharField(max_length=100, default='')
+    venue = models.TextField(blank=True)
+    journalName = models.TextField(blank=True)
+    journalVolume = models.TextField(blank=True)
+    journalPages = models.TextField(blank=True)
+    doi = models.TextField(blank=True)
     pdfUrls = ArrayField(base_field=models.URLField(), default=list)
     doiUrl = models.URLField(null=True)
     # pmid # there is no documentation on what pmid is so well save that for when it is needed
     # fieldsOfStudy = models.ManyToManyField('FieldOfStudy')
     fieldsOfStudy = ArrayField(base_field=models.CharField(max_length=100), default=list)
-    magId = models.CharField(max_length=30, default='') 
+    magId = models.TextField(blank=True)
     # s2PdUrl # deprecated since 2019 (see semanticscholar)
     # entities # ndeprecated since 2019 (see semanticscholar)
 
