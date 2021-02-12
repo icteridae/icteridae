@@ -1,7 +1,7 @@
 import React from 'react';
 
 import ForceGraph2D from 'react-force-graph-2d';
-import { Button, Drawer, Row, Col, Slider, InputNumber, Loader, IconButton, Icon } from 'rsuite';
+import { Button, Drawer, Slider, InputNumber, Loader, Icon } from 'rsuite';
 
 import { Paper, PapersAndSimilarities, PaperGraphData, SimilarityLinkObject } from './GraphTypes';
 import { GetMinAndMaxFromMatrix, Normalize } from './GraphHelperfunctions';
@@ -289,7 +289,11 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                                 //onEngineStop={() => (fgRef.current as any).zoomToFit(400, 100)}
                                 />
                 </>
-            : <Loader className='loader' content="Loading..." />}
+            : <Loader 
+                className='loader' 
+                content="Loading..." 
+                size='md'
+                />}
         </div>
     )
 }
