@@ -52,18 +52,37 @@ export const NewPageSavedPapers: React.FC = () => {
     }
 
     function loadPapers() {
-        let prom : any[] = [];
-        getLoadPaperPromises(treeData, prom);
-        console.log(prom);
+        let paper_ids : string[] = getSubtreePaperIds(treeData);
+        console.log(paper_ids);
 
+    }
+
+    function getSubtreePaperIds(node: TreeTypes.PaperOrDirectoryNode[]): string[] {
+        
+        return node.map(
+            node => TreeTypes.isPaperNode(node) ? node.paperId
+                    : TreeTypes.isDirectoryNode(node) ? getSubtreePaperIds(node.children) 
+                    : []
+        ).flat()
+        
+    }
+
+    function stripTree(nodes: TreeTypes.PaperOrDirectoryNode[]): TreeTypes.StrippedPaperOrDirectoryNode[] {
+        return nodes.filter(node => TreeTypes.isPaperNode(node) || TreeTypes.isDirectoryNode(node))
+                    .map(
+                        node => TreeTypes.isPaperNode(node) ? {paperId: node.paperId} as TreeTypes.StrippedPaperNode
+                                : {
+                                    value: node.value,
+                                    children: stripTree(node.children),
+                                    directoryName: node.directoryName
+                                } as TreeTypes.StrippedDirectoryNode   
+        )
     }
 
     function getLoadPaperPromises(nodes: TreeTypes.PaperOrDirectoryNode[], promises: any[]) {
         nodes.forEach(node => 
-            TreeTypes.isPaperNode(node) 
-                ? 
-                    promises.push(node.paperId) 
-                    : TreeTypes.isDirectoryNode(node) && node.children && getLoadPaperPromises(node.children, promises)
+            TreeTypes.isPaperNode(node) ? promises.push(node.paperId) 
+            : TreeTypes.isDirectoryNode(node) && node.children && getLoadPaperPromises(node.children, promises)
         );
     }   
 
