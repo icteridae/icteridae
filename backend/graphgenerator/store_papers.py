@@ -17,8 +17,8 @@ from .models import Paper, Author, FieldOfStudy
 
 PAPER_BATCH = 1000  # batch size of bulk inserts. increase for better performance, decrease for less RAM usage
 VERBOSE_COUNT = 71317  # Frequency of status output
-BREAK_POINT = 700000  # Use reduced files for debugging. Otherwise set to None
-PATHS = ['result4.json']
+BREAK_POINT = 10000  # Use reduced files for debugging. Otherwise set to None
+PATHS = ['result3.json']
 
 #paper_ids = set()  # do not edit. used for more efficient citation validation
 
@@ -63,6 +63,15 @@ def load_papers():
                     year=data['year'],
                     s2Url=data['s2Url'],
                     doiUrl=data['doiUrl'],
+                    venue=data['venue'],
+                    journalName=data['journalName'],
+                    journalVolume=data['journalVolume'],
+                    journalPages=data['journalPages'].strip(), # No idea why but Pages have weird spaces around them sometimes
+                    doi=data['doi'],
+                    magId=data['magId'],
+
+                    fieldsOfStudy=data['fieldsOfStudy'],
+                    pdfUrls=data['pdfUrls'],
                     # add any new attributes here
 
                     citations=len(data['inCitations']),
