@@ -1,7 +1,7 @@
 import React from 'react';
 
 import ForceGraph2D from 'react-force-graph-2d';
-import { Button, Drawer, Row, Col, Slider, InputNumber, Loader } from 'rsuite';
+import { Button, Drawer, Row, Col, Slider, InputNumber, Loader, IconButton, Icon } from 'rsuite';
 
 import { Paper, PapersAndSimilarities, PaperGraphData, SimilarityLinkObject } from './GraphTypes';
 import { GetMinAndMaxFromMatrix, Normalize } from './GraphHelperfunctions';
@@ -106,7 +106,10 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
     const [sliders, setSliders] = React.useState(Array(sliderCount).fill(totalSliderValue / sliderCount))
     
     // set whether the drawer is shown or hidden
-    const [drawer, setDrawer] = React.useState(false);
+    const [paperDrawer, setPaperDrawer] = React.useState(false);
+
+    // set whether the drawer is shown or hidden
+    const [sliderDrawer, setSliderDrawer] = React.useState(false);
     
     // selected Node to display on drawer
     const [selectedNode, setNode] = React.useState(initNode);
@@ -143,43 +146,64 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
     }, [sliders]);
 
     return(
-        <div>
-            {sliders.map((sliderVal, index) => (
-                <Row key={index}>
-                    <Col md={10}>
-                        <Slider 
-                            step= {0.1}
-                            progress
-                            style={{ marginTop: 16, marginLeft: 50 }}
-                            value={sliderVal}
-                            onChange={value => {
-                                setSliders(changeSlider(index, value, sliders))
-                            }}
-                            />
-                    </Col>
-                    <Col md={4}>
-                        <InputNumber
-                            min={0}
-                            max={totalSliderValue}
-                            value={sliderVal}
-                            onChange={value => {
-                                setSliders(changeSlider(index, value as number, sliders))
-                            }}
-                        />
-                    </Col>
-                </Row>)
-                )}
-            
+        <div className='graph'>         
+            <IconButton
+                icon={<Icon icon="angle-right" />}
+                onMouseEnter={() => setSliderDrawer(true)}
+            >
+                Left
+            </IconButton>
             {/**
-             * Drawer displays paper meta data
+             * Drawer displays the Sliders
              */}
-            
             {props.data.tensor.length > 0 ? 
                 <>
                     <Drawer
-                        show={drawer}
+                        className='rs-drawer-left'
+                        show={sliderDrawer}
+                        placement='left'
                         backdrop={false}
-                        onHide={() => {setDrawer(false);}}
+                        onMouseLeave={() => setSliderDrawer(false)}
+                        onHide={() => setSliderDrawer(false)}
+                    >
+                        <Drawer.Header>
+                            <Drawer.Title>
+                                {'Slider'}
+                            </Drawer.Title>
+                        </Drawer.Header>
+                        <Drawer.Body>
+                            <div className='slider-popup'>
+                                {sliders.map((sliderVal, index) => (
+                                    <div className='slider-with-input-number' key={index}>
+                                            <Slider
+                                                step= {0.1}
+                                                progress
+                                                style={{ marginTop: 16, marginLeft: 20, marginRight: 10 }}
+                                                value={sliderVal}
+                                                onChange={value => {
+                                                    setSliders(changeSlider(index, value, sliders))
+                                                }}
+                                                />
+                                            <InputNumber
+                                                min={0}
+                                                max={totalSliderValue}
+                                                value={sliderVal}
+                                                onChange={value => {
+                                                    setSliders(changeSlider(index, value as number, sliders))
+                                                }}
+                                            />
+                                    </div>)
+                                )}
+                            </div>
+                        </Drawer.Body>
+                        <Drawer.Footer>
+
+                        </Drawer.Footer>
+                    </Drawer>
+                    <Drawer
+                        show={paperDrawer}
+                        backdrop={false}
+                        onHide={() => {setPaperDrawer(false);}}
                     >
                         <Drawer.Header>
                             <Drawer.Title>
@@ -206,20 +230,22 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                      * ForceGraph2D renders the actual graph
                      * For information on the attributes, pls visit: https://github.com/vasturiano/react-force-graph
                      */}
-                    <ForceGraph2D ref = {fgRef}
+                    <ForceGraph2D 
+                                ref = {fgRef}
                                 graphData={graphData}
                                 onNodeClick={(node, e) => {
                                     e.preventDefault();
                                     if (node.id === selectedNode.id) {
-                                        setDrawer(!drawer);
+                                        setPaperDrawer(!paperDrawer);
                                     } else {
                                         setNode((node as Paper));
-                                        setDrawer(true);
+                                        setPaperDrawer(true);
                                     };
                                 }}
                                 onBackgroundClick={(e) => {
                                     e.preventDefault()
-                                    setDrawer(false)
+                                    setPaperDrawer(false)
+                                    setSliderDrawer(false)
                                 }}
                                 onLinkHover={(link, prevlink) => {
                                     if(!(prevlink === null)){
@@ -238,8 +264,8 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                                     if((link as SimilarityLinkObject).isHovered){
                                         return linkOnHoverWidth;
                                     }else{
-                                        return ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y)*6)}
-                                    }}
+                                        return ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y)*6)
+                                    }}}
                                 linkCurvature='curvature'
                                 linkDirectionalArrowLength='arrowLen'
                                 linkDirectionalParticles='dirParticles'
@@ -250,7 +276,7 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                                 //onEngineStop={() => (fgRef.current as any).zoomToFit(400, 100)}
                                 />
                 </>
-            : <Loader content="Loading..." />}
+            : <Loader className='loader' content="Loading..." />}
         </div>
     )
 }
