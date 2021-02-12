@@ -147,12 +147,13 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
 
     return(
         <div className='graph'>         
-            <IconButton
-                icon={<Icon icon="angle-right" />}
-                onMouseEnter={() => setSliderDrawer(true)}
-            >
-                Left
-            </IconButton>
+            <div className='show-slider-icon'>
+                <Icon 
+                    size='4x'
+                    icon='angle-right'
+                    onMouseEnter={() => setSliderDrawer(true)}
+                    />
+            </div>
             {/**
              * Drawer displays the Sliders
              */}
