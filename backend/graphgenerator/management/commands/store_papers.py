@@ -262,7 +262,7 @@ def create_search_index(files, limit, batch, verbosity=1):
 def load(limit, batch, verbosity=1):
     file_path = os.path.dirname(os.path.abspath(__file__))
     base_path = os.path.join(file_path, '..', '..', '..', 'data')
-    paths = [os.path.join(base_path, file) for file in os.listdir(base_path)]
+    paths = [os.path.join(base_path, file) for file in os.listdir(base_path) if file!='.gitignore']
     
     start = time.time() 
     load_papers(paths, limit, batch, verbosity)
