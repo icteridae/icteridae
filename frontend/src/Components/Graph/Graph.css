@@ -19,14 +19,20 @@
     height: calc(100% - 56px);
 }
 
+.rs-loader-has-content {
+    height: 100%;
+}
+
 .loader {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
 }
 
 .graph {
     overflow: hidden;
+    height: 100%;
 }
 
 .show-slider-icon {
