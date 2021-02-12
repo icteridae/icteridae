@@ -8,6 +8,7 @@ import { GetMinAndMaxFromMatrix, Normalize } from './GraphHelperfunctions';
 
 import './Graph.css'
 
+// maximum number that can be selected on a slider
 const totalSliderValue: number = 100;
 const squish: number = 0.2;
 const logBulk: number = 2;
@@ -55,6 +56,12 @@ const generateGraph = (data : PapersAndSimilarities) : PaperGraphData =>{
     });
 }
 
+/**
+ * this method provides the values of the remaining sliders when one of them is changed
+ * @param index contains the unique index of the slider that was changed
+ * @param val contains the new value of the changed slider
+ * @param oldValues contains all values of all sliders before the change
+ */
 const changeSlider = (index: number, val: number, oldValues: number[]) => {
     if (oldValues.filter((x, i) => x === 0.1 || i === index).length === oldValues.length ) {
         return oldValues.map((x,i) => i===index ? val : (totalSliderValue-val)/(oldValues.length-1))
@@ -97,6 +104,7 @@ const initNode = {
  */
 export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
 
+    // total number of Sliders needed base on the number of similarity metrics applied
     const sliderCount: number = props.data.tensor.length;
 
     // reference to the Graph used for TODO: insert Usage  
@@ -154,11 +162,12 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                     onMouseEnter={() => setSliderDrawer(true)}
                     />
             </div>
-            {/**
-             * Drawer displays the Sliders
-             */}
+
             {props.data.tensor.length > 0 ? 
                 <>
+                    {/**
+                     * Drawer displays the Sliders
+                    */}
                     <Drawer
                         className='rs-drawer-left'
                         show={sliderDrawer}
@@ -182,7 +191,7 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                                                 style={{ marginTop: 16, marginLeft: 20, marginRight: 10 }}
                                                 value={sliderVal}
                                                 onChange={value => {
-                                                    setSliders(changeSlider(index, value, sliders))
+                                                    setSliders(changeSlider(index, value, sliders));
                                                 }}
                                                 />
                                             <InputNumber
@@ -190,7 +199,9 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                                                 max={totalSliderValue}
                                                 value={sliderVal}
                                                 onChange={value => {
-                                                    setSliders(changeSlider(index, value as number, sliders))
+                                                    if (0 <= value && 100 >= value){
+                                                    setSliders(changeSlider(index, value as number, sliders));
+                                                    }
                                                 }}
                                             />
                                     </div>)
@@ -201,6 +212,9 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
 
                         </Drawer.Footer>
                     </Drawer>
+                    {/**
+                     * Drawer displays the selected Paper
+                     */}
                     <Drawer
                         show={paperDrawer}
                         backdrop={false}
@@ -270,8 +284,6 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                                 linkCurvature='curvature'
                                 linkDirectionalArrowLength='arrowLen'
                                 linkDirectionalParticles='dirParticles'
-                                //Add this line together with the initialising and instantiating of selectedPaper to show only Links connected to the selectetPaper
-                                //linkVisibility={(link : LinkObject) => ((link as SimilarityLinkObject).similarity.reduce((x, y) => x + y) >= 0)}
                                 d3VelocityDecay={0.95}
                                 cooldownTicks={100}
                                 //onEngineStop={() => (fgRef.current as any).zoomToFit(400, 100)}
