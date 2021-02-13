@@ -1,155 +1,83 @@
 import React, { useEffect, useState } from 'react';
 
-import { Button, Icon, Tree } from 'rsuite';
+import { Button, Tree } from 'rsuite';
 import { DropData } from 'rsuite/lib/TreePicker';
 
 import * as TreeTypes from './TreeTypes';
+import * as PaperFunctions from './PageSavedPapersFunctions';
+import * as GeneralTypes from '../../Utils/GeneralTypes';
+import { RenamableDirectory } from './RenameableDirectory';
 
-const testData: TreeTypes.DirectoryNode = {
-    value: 'd1',
-    label: <>text</>,
-    directoryName: 'testDirectory',
-    children: [
-        {
-            value: 'p1',
-            label: <>child1</>,
-            paperId: '1',
-        },
-        {
-            value: 'd2',
-            label: <>text</>,
-            directoryName: '',
-            children: [
-                {
-                    value: 'p3',
-                    label: <>child1</>,
-                    paperId: '3',
-                },
-            ],
-        },
-    ],
-};
+const testData: TreeTypes.PaperOrDirectoryNode[] = [
+    {
+        value: 'd1',
+        label: <>testDirectory</>,
+        directoryName: 'a test directory',
+        children: [
+            {
+                value: 'p1',
+                label: <>child1</>,
+                paperId: 'a2e87fad8a1430e52e8c3cc3dcb66cb47b62bffc',
+            },
+            {
+                value: 'd2',
+                label: <>text</>,
+                directoryName: 'another test directory',
+                children: [
+                    {
+                        value: 'p3',
+                        label: <>child1</>,
+                        paperId: 'f8cd82997f35e86c862225395e52fe45c0580910',
+                    },
+                ],
+            },
+        ],
+    },
+    { value: 'p4', paperId: '9165b228d0cc7ee9f8b5c32ab10753d3cd2d3a6c', label: <>p4</> }
+];
 
 export const NewPageSavedPapers: React.FC = () => {
-    const [treeData, setTreeData] = useState<TreeTypes.PaperOrDirectoryNode[]>([]);
-    const [selectedTreeNode, setSelectedTreeNode] = useState<TreeTypes.PaperOrDirectoryNode>();
 
-    const folderIcon = <Icon icon='folder'></Icon>
+    
+    const [selectedTreeNode, setSelectedTreeNode] = useState<TreeTypes.PaperOrDirectoryNode>();
+    const [loadedPapers, setLoadedPapers] = useState<{ [id: string] : GeneralTypes.Paper}>({})
+    const [directoryNames, setDirectoryNames] = useState<{ [id: string] : string}>({})
+    const [treeData, setTreeData] = useState<TreeTypes.PaperOrDirectoryNode[]>(
+        PaperFunctions.deepMap(JSON.parse(localStorage.getItem('savedpapers') || '[]'),
+        (node) => TreeTypes.isDirectoryNode(node) ? 
+        {
+            ...node, 
+            label: <RenamableDirectory name={directoryNames.hasOwnProperty(node.value) ? directoryNames[node.value] : 'Loading...'} 
+                                       setName={(val) => setDirectoryNames((directoryNames) => ({...directoryNames, [node.value]: val}))}/>//<><Icon icon='folder'/> {node.directoryName}</>
+        } : {...node, value: node.paperId}
+        )
+        );
 
     useEffect(() => {
-        setTreeData([testData, { value: 'p4', paperId: '2', label: <>p4</> }]);
+        PaperFunctions.loadPapers(treeData, setLoadedPapers)
+        setDirectoryNames(PaperFunctions.deepReduce(treeData, (ac, val) => TreeTypes.isDirectoryNode(val) ? {...ac, [val.value]: val.directoryName}: ac, {}))
     }, []);
 
-    function createDirectory(directoryName: string) {
-        let temp = [...treeData];
-        temp.push({
-            value: generateNewDirectoryValue(),
-            directoryName: directoryName,
-            label: <>{folderIcon} New Folder</>,
-            children: []
-        });
-        setTreeData(temp);
-    }
+    useEffect(() => {
+        setTreeData(treeData => PaperFunctions.deepMap(treeData, 
+            node => (
+                TreeTypes.isPaperNode(node) && loadedPapers.hasOwnProperty(node.paperId) ? {...node, label: <>{loadedPapers[node.paperId].title}</>} 
+                : node
+                )))
+    }, [loadedPapers])
 
-    function loadPapers() {
-        let paper_ids : string[] = getSubtreePaperIds(treeData);
-        console.log(paper_ids);
+    useEffect(() => {
+        setTreeData(treeData => PaperFunctions.deepMap(treeData,
+            node => (
+                TreeTypes.isDirectoryNode(node) && directoryNames.hasOwnProperty(node.value) ? {...node, label: <RenamableDirectory name={directoryNames.hasOwnProperty(node.value) ? directoryNames[node.value] : 'Loading...'} 
+                setName={(val) => setDirectoryNames((directoryNames) => ({...directoryNames, [node.value]: val}))}/>} 
+                : node
+            )))
+    }, [directoryNames])
 
-    }
-
-    function getSubtreePaperIds(node: TreeTypes.PaperOrDirectoryNode[]): string[] {
-        
-        return node.map(
-            node => TreeTypes.isPaperNode(node) ? node.paperId
-                    : TreeTypes.isDirectoryNode(node) ? getSubtreePaperIds(node.children) 
-                    : []
-        ).flat()
-        
-    }
-
-    function stripTree(nodes: TreeTypes.PaperOrDirectoryNode[]): TreeTypes.StrippedPaperOrDirectoryNode[] {
-        return nodes.filter(node => TreeTypes.isPaperNode(node) || TreeTypes.isDirectoryNode(node))
-                    .map(
-                        node => TreeTypes.isPaperNode(node) ? {paperId: node.paperId} as TreeTypes.StrippedPaperNode
-                                : {
-                                    value: node.value,
-                                    children: stripTree(node.children),
-                                    directoryName: node.directoryName
-                                } as TreeTypes.StrippedDirectoryNode   
-        )
-    }
-
-    function getLoadPaperPromises(nodes: TreeTypes.PaperOrDirectoryNode[], promises: any[]) {
-        nodes.forEach(node => 
-            TreeTypes.isPaperNode(node) ? promises.push(node.paperId) 
-            : TreeTypes.isDirectoryNode(node) && node.children && getLoadPaperPromises(node.children, promises)
-        );
-    }   
-
-    function generateNewDirectoryValue(): string {
-        return new Date().valueOf().toString();
-    }
-
-    function renameDirectory(value: string, newName: string) {
-        let temp = [...treeData];
-        temp = renameDirectoryRecursively(temp, value, newName);
-        setTreeData(temp);
-    }
-
-    function renameDirectoryRecursively (nodes: TreeTypes.PaperOrDirectoryNode[], value: string, newName: string) : TreeTypes.PaperOrDirectoryNode[] {
-        let r = nodes
-            .map(node =>
-                TreeTypes.isDirectoryNode(node) && node.value === value
-                    ? {
-                          ...node,
-                          directoryName: newName,
-                          label: <>{folderIcon} {newName}</>
-                      }
-                    : node
-            )
-            .map(node =>
-                TreeTypes.isDirectoryNode(node) && node.children
-                    ? {
-                          ...node,
-                          children: renameDirectoryRecursively(node.children, value, newName)
-                      }
-                    : node
-            );
-        return r;
-    }
-
-    function deleteTreeNode(value: string) {
-        let temp = [...treeData];
-        temp = filterNodeRecursively(temp, value);
-
-        setTreeData(temp);
-    }
-
-    function filterNodeRecursively(nodes: TreeTypes.PaperOrDirectoryNode[], value: string) : TreeTypes.PaperOrDirectoryNode[] {
-        let r = nodes
-            .filter(node => node.value !== value)
-            .map(node =>
-                TreeTypes.isDirectoryNode(node) && node.children
-                    ? {
-                          ...node,
-                          children: filterNodeRecursively(node.children, value)
-                      }
-                    : node
-            );
-        return r;
-
-        /*let r = nodes.filter((node) => {
-            if(TreeTypes.isDirectoryNode(node)) {
-                if(node.children)
-                    node.children.map(o => filterNodeRecursively(o, value));
-                
-                return node.value !== value;
-            } else if(TreeTypes.isPaperNode(node)) {
-                return node.value !== value;
-            }
-        })
-        */
-    }
+    useEffect(() => {
+        localStorage.setItem('savedpapers', JSON.stringify(PaperFunctions.deepMap(PaperFunctions.stripTree(treeData), (node) => (TreeTypes.isStrippedDirectoryNode(node) ? {...node, directoryName: directoryNames[node.value]} : node))))
+    }, [treeData, directoryNames])
 
     return (
         <div className="page-my-papers">
@@ -157,20 +85,23 @@ export const NewPageSavedPapers: React.FC = () => {
                 data={treeData}
                 draggable
                 defaultExpandAll
-                onDrop={({ createUpdateDataFunction }: DropData) => setTreeData(createUpdateDataFunction(treeData))}
+                onDrop={({ createUpdateDataFunction }: DropData) => setTreeData(PaperFunctions.flattenPapers(createUpdateDataFunction(treeData)))}
                 onSelect={(active) => setSelectedTreeNode(active)}
             />
             <div className="my-papers-actions">
-                <Button onClick={() => createDirectory('new Directory')}>
+                <Button onClick={() => PaperFunctions.createDirectory(treeData, 'new Directory', setTreeData)}>
                     Create Directory
                 </Button>
+                <Button onClick={() => setTreeData(testData)}>
+                    Reset
+                </Button>
                 {selectedTreeNode != null && (
-                    <Button onClick={() => loadPapers()}>
+                    <Button onClick={() => PaperFunctions.deleteTreeNode(selectedTreeNode.value, treeData, setTreeData)}>
                         Delete
                     </Button>
                 )}
                 {TreeTypes.isDirectoryNode(selectedTreeNode) && (
-                    <Button onClick={() => renameDirectory("d2", "testname")}>Rename</Button>
+                    <Button onClick={() => PaperFunctions.renameDirectory("d2", "testname", treeData, setTreeData)}>Rename</Button>
                 )}
             </div>
         </div>
