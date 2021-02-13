@@ -5,7 +5,7 @@ import { TreeNode } from "../Components/SavedPapers/PaperTree";
  * @returns the stored recent papers
  */
 export function getRecentPapers(){
-    const storedPapers : Array<string> = JSON.parse(localStorage.getItem("papers") as string);
+    const storedPapers : Array<string> = localStorage && JSON.parse(localStorage.getItem("papers") as string);
     return storedPapers;
 }
 
