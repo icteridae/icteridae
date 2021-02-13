@@ -3,7 +3,7 @@ import React from 'react';
 import ForceGraph2D, { GraphData } from 'react-force-graph-2d';
 import { Button, Drawer, Row, Col, Slider, InputNumber, Loader } from 'rsuite';
 
-import { Paper, PapersAndSimilarities, MyGraphData, MyLinkObject } from './GraphTypes';
+import { PaperNode, PapersAndSimilarities, MyGraphData, MyLinkObject } from './GraphTypes';
 import { GetMinAndMaxFromMatrix, Normalize } from './GraphHelperfunctions';
 
 import './Graph.css'
@@ -61,13 +61,13 @@ const initNode = {
     id: '0',
     title: 'Origin',
     paperAbstract: '',
+    s2Url: '',
+    pdfUrls: [''],
     authors: [{name: 'John Glanz', 'ids':['321534234']}],
     inCitations: ['asdasd', 'aisdingk'],
     outCitations: ['fadg'],
+    fieldsOfStudy: ['Materials Science'],
     year: 2021,
-    s2Url: '',
-    sources: [''],
-    pdfUrls: [''],
     venue: '',
     journalName: '',
     journalVolume: '',
@@ -75,10 +75,7 @@ const initNode = {
     doi: '',
     doiUrl: '',
     pmid: '',
-    fieldsOfStudy: ['Materials Science'],
     magId: '',
-    s2PdfUrl: '',
-    entities: [''],
 
     color: '',
 };
@@ -202,7 +199,7 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                                     if (node.id === selectedNode.id) {
                                         setDrawer(!drawer);
                                     } else {
-                                        setNode((node as Paper));
+                                        setNode((node as PaperNode));
                                         setDrawer(true);
                                     };
                                 }}
