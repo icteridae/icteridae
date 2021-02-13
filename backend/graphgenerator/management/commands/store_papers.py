@@ -89,7 +89,7 @@ def load_papers(files, limit, batch, verbosity=1):
 
             Paper.objects.bulk_create(papers)
 
-    FieldOfStudy.objects.bulk_create([FieldOfStudy(field=field) for field in fields])
+    #FieldOfStudy.objects.bulk_create([FieldOfStudy(field=field) for field in fields])
 
     if verbosity > 1: print('Rebuilding indexes...')
 
@@ -259,10 +259,13 @@ def create_search_index(files, limit, batch, verbosity=1):
         search_vector=SearchVector('title', 'year')) #+ SearchVector('paperAbstract', weight='B'))
 
 
-def load(limit, batch, verbosity=1):
+def load(limit, batch, verbosity, files):
     file_path = os.path.dirname(os.path.abspath(__file__))
     base_path = os.path.join(file_path, '..', '..', '..', 'data')
-    paths = [os.path.join(base_path, file) for file in os.listdir(base_path) if file!='.gitignore']
+    if files:
+        paths = [os.path.join(base_path, file) for file in os.listdir(base_path) if file!='.gitignore' and file in files]
+    else:
+        paths = [os.path.join(base_path, file) for file in os.listdir(base_path) if file!='.gitignore']
     
     start = time.time() 
     load_papers(paths, limit, batch, verbosity)
