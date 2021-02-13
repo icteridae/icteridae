@@ -12,3 +12,11 @@
 #navbar {
        background-color: #161C27;
 }
+
+.rs-navbar.rs-navbar-subtle .rs-navbar-nav .rs-nav-item-active > .rs-nav-item-content {
+       color: #7ac9ab ;
+}
+
+.rs-navbar.rs-navbar-subtle .rs-dropdown .rs-dropdown-toggle {
+       background-color: #161C27;
+}

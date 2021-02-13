@@ -19,6 +19,10 @@
     height: calc(100% - 56px);
 }
 
+h4 {
+    color: #a4a9b3 !important;
+}
+
 .rs-loader-has-content {
     height: 100%;
 }
@@ -64,13 +68,22 @@
 }
 
 .rs-slider {
-    width: calc(100% - 100px);
+    width: calc(100% - 110px);
+}
+
+.rs-slider-bar {
+    background-color: #a9a9a9 !important;
+}
+
+.rs-slider-progress-bar {
+    background-color: #7ac9ab !important;
 }
 
 .rs-input-number {
     width: 70px;
+    border-color: #7ac9ab !important;
 }
 
-.rs-slider-handle {
-    padding-top: 6px;
+.rs-slider-handle::before {
+    border: 2px solid #7ac9ab;
 }

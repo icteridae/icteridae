@@ -189,6 +189,7 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                                                 step= {0.1}
                                                 progress
                                                 style={{ marginTop: 16, marginLeft: 20, marginRight: 10 }}
+                                                handleStyle={{ paddingTop: 7 }}
                                                 value={sliderVal}
                                                 onChange={value => {
                                                     setSliders(changeSlider(index, value, sliders));
