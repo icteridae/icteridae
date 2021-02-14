@@ -8,32 +8,29 @@ import * as PaperFunctions from './PageSavedPapersFunctions';
 import * as GeneralTypes from '../../Utils/GeneralTypes';
 import { RenamableDirectory } from './RenameableDirectory';
 
-const testData: TreeTypes.PaperOrDirectoryNode[] = [
+const testData: TreeTypes.StrippedPaperOrDirectoryNode[] = 
+[
     {
         value: 'd1',
-        label: <>testDirectory</>,
         directoryName: 'a test directory',
         children: [
             {
-                value: 'p1',
-                label: <>child1</>,
                 paperId: 'a2e87fad8a1430e52e8c3cc3dcb66cb47b62bffc',
             },
             {
                 value: 'd2',
-                label: <>text</>,
                 directoryName: 'another test directory',
                 children: [
                     {
-                        value: 'p3',
-                        label: <>child1</>,
                         paperId: 'f8cd82997f35e86c862225395e52fe45c0580910',
                     },
                 ],
             },
         ],
     },
-    { value: 'p4', paperId: '9165b228d0cc7ee9f8b5c32ab10753d3cd2d3a6c', label: <>p4</> }
+    { 
+        paperId: '9165b228d0cc7ee9f8b5c32ab10753d3cd2d3a6c'
+    }
 ];
 
 export const NewPageSavedPapers: React.FC = () => {
@@ -52,6 +49,12 @@ export const NewPageSavedPapers: React.FC = () => {
         } : {...node, value: node.paperId}
         )
         );
+
+    function addFolder(name: string): void {
+        let newTreeData: TreeTypes.PaperOrDirectoryNode[] = PaperFunctions.createDirectory(treeData, name)
+        setTreeData(newTreeData)
+        setDirectoryNames(PaperFunctions.deepReduce(newTreeData, (ac, val) => TreeTypes.isDirectoryNode(val) ? {...ac, [val.value]: val.directoryName}: ac, {}))
+    }
 
     useEffect(() => {
         PaperFunctions.loadPapers(treeData, setLoadedPapers)
@@ -89,11 +92,11 @@ export const NewPageSavedPapers: React.FC = () => {
                 onSelect={(active) => setSelectedTreeNode(active)}
             />
             <div className="my-papers-actions">
-                <Button onClick={() => PaperFunctions.createDirectory(treeData, 'new Directory', setTreeData)}>
+                <Button onClick={() => addFolder('New Directory')}>
                     Create Directory
                 </Button>
-                <Button onClick={() => setTreeData(testData)}>
-                    Reset
+                <Button onClick={() => localStorage.setItem('savedpapers', JSON.stringify(testData))}>
+                    Reset localStorage
                 </Button>
                 {selectedTreeNode != null && (
                     <Button onClick={() => PaperFunctions.deleteTreeNode(selectedTreeNode.value, treeData, setTreeData)}>

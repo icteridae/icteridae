@@ -33,7 +33,7 @@ export function getSubtreePaperIds(node: TreeTypes.PaperOrDirectoryNode[]): stri
     
 }
 
-export function createDirectory(treeData: TreeTypes.PaperOrDirectoryNode[], directoryName: string, setTreeData: React.Dispatch<React.SetStateAction<TreeTypes.PaperOrDirectoryNode[]>>) {
+export function createDirectory(treeData: TreeTypes.PaperOrDirectoryNode[], directoryName: string): TreeTypes.PaperOrDirectoryNode[]{
     let temp = [...treeData];
     temp.push({
         value: generateNewDirectoryValue(),
@@ -41,7 +41,7 @@ export function createDirectory(treeData: TreeTypes.PaperOrDirectoryNode[], dire
         label: <>{folderIcon} New Folder</>,
         children: []
     });
-    setTreeData(temp);
+    return temp;
 }
 
 export function stripTree(nodes: TreeTypes.PaperOrDirectoryNode[]): TreeTypes.StrippedPaperOrDirectoryNode[] {
