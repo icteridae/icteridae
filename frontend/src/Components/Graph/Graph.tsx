@@ -282,11 +282,15 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                                     const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.2); // some padding
                         
                                     ctx.fillStyle = 'rgba(122, 201, 171, 0.8)';
-                                    ctx.fillRect(node.x! - bckgDimensions[0] / 2, node.y! - bckgDimensions[1] / 2, 300, 10);
+                                    ctx.beginPath();
+                                    ctx.arc(node.x!, node.y!, Math.log((node as Paper).inCitations.length + logBulk) * nodeBaseSize, 0, 2 * Math.PI);
+                                    ctx.strokeStyle = 'rgba(122, 201, 171, 0)';
+                                    ctx.stroke();
+                                    ctx.fill();
                         
                                     ctx.textAlign = 'center';
                                     ctx.textBaseline = 'middle';
-                                    ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';//(node as Paper).color;
+                                    ctx.fillStyle = 'rgba(255, 0, 0, 0.8)';//(node as Paper).color;
                                     ctx.fillText(label as string, node.x!, node.y!);
                         
                                     //node.__bckgDimensions = bckgDimensions; // to re-use in nodePointerAreaPaint
