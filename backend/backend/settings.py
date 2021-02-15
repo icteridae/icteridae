@@ -89,16 +89,11 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-
-        'NAME': 'icteridae',
-
-        'USER': 'icteridae',
-
-        'PASSWORD': 'bp62',
-
-        'HOST': 'localhost',
-
-        'PORT': '',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'db',
+        'PORT': 5432,
     }
 }
 
@@ -143,6 +138,6 @@ STATIC_URL = '/static/'
 
 ELASTICSEARCH_DSL = {
     'default' : {
-        'hosts' : 'localhost:9200'
+        'hosts' : 'elastic:9200'
     },
 }

@@ -11,7 +11,6 @@ from django.db import models
 from django.contrib.postgres.search import SearchVectorField
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.fields import ArrayField, JSONField
-from bulkmodel.models import BulkModel
 
 
 # Create your models here.
