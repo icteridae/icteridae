@@ -275,15 +275,19 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                                 }}
                                 // Remove nodeCanvasObject to get normal circular nodes
                                 nodeCanvasObject={(node, ctx, globalScale) => {
-                                    const label = (node as Paper).title;
+                                    let authorName = (node as Paper).authors[0].name.split(' ');
+                                    const label = authorName[authorName.length - 1];    
                                     const fontSize = 12/globalScale;
                                     ctx.font = `${fontSize}px Sans-Serif`;
                                     const textWidth = ctx.measureText(label as string).width;
                                     const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.2); // some padding
-                        
-                                    ctx.fillStyle = 'rgba(122, 201, 171, 0.8)';
+                                    
+                                    //Node Color
+                                    ctx.fillStyle = 'rgba(122, 201, 171, 1)';
                                     ctx.beginPath();
+                                    //Node shape (arc creates a cirle at coordinate (node.x, node.y) with radius (radiusmagie). Last 2 Parameters are needed to draw a full circle)
                                     ctx.arc(node.x!, node.y!, Math.log((node as Paper).inCitations.length + logBulk) * nodeBaseSize, 0, 2 * Math.PI);
+                                    //Circle Edge Color. The color doesnt matter since Alpha is 0 und thus the Edge is transparent
                                     ctx.strokeStyle = 'rgba(122, 201, 171, 0)';
                                     ctx.stroke();
                                     ctx.fill();
