@@ -10,8 +10,8 @@ Icteridae is an open-source Webapp for interactive research exploration, where u
 	 - [Requirements](#requirements)
 	 - [Direct Dependencies](#install-dependencies)
  - [Running](#running)
-	 - [Quickstart](#quickstart-on-single-machine)
-	 - [Regular Start](#regular-start)
+	 - [Start Backend](#start-backend)
+	 - [Start Frontend](#start-frontend)
  - [Import Papers](#import-papers)
  - [References](#references)
 
@@ -35,12 +35,7 @@ Navigate into the `frontend` directory and install the needed dependencies using
 
 ## Running
 
-### Quickstart on single machine
-If both the back- and frontend are supposed to run on the same machine, simply execute `start.sh`
-
-### Regular start
-
-#### Start Django Server
+### Start Backend
 If not using locally, enter the web address of your backend in `backend/backend/settings.py` under `ALLOWED_HOSTS`.
 
 Navigate into the `backend/` directory and run
@@ -48,7 +43,7 @@ Navigate into the `backend/` directory and run
     docker-compose up
 
 
-#### Start React Server
+### Start Frontend
 
 Enter the web address of your backend in `frontend/src/Utils/Config.tsx`
 
