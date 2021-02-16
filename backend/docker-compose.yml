@@ -6,6 +6,8 @@ services:
     image: elasticsearch:7.10.1
     environment: 
       - discovery.type=single-node
+    volumes: 
+      - elastic-data:/usr/lib/elasticsearch/data/
 
   db:
     image: postgres
@@ -31,3 +33,4 @@ services:
 
 volumes: 
   db-data:
+  elastic-data:
