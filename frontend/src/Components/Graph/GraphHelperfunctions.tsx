@@ -98,18 +98,25 @@ export const GraphFetch: React.FC = () => {
     ** EffectHook for the initial Load of the graph
     */
     React.useEffect(() => {
-        loadData();
+        //loadData();
+        let requestURL = Config.base_url + '/api/generate_graph/?paper_id=' + id;
+
+        fetch(requestURL)//f0afdccf2903039d202085a771953a171dfd57b1')nicer Graph //204e3073870fae3d05bcbc2f6a8e263d9b72e776')Attention is all you need
+            .then(res => res.json())
+            .then(res => {
+              setGraph(res);
+            }).catch(() => console.log("Couldn't load graph"));
     },[]);
 
     /*
     ** loadData fetches the graph_Data from the backend and saves the generated Graph in the State Hook graph
-    */
+    *
     const loadData = () => {
         fetch(Config.base_url + '/api/generate_graph/?paper_id=' + id)//f0afdccf2903039d202085a771953a171dfd57b1')nicer Graph //204e3073870fae3d05bcbc2f6a8e263d9b72e776')Attention is all you need
             .then(res => res.json())
             .then(res => {setGraph(res);
                             return res});
-    };
+    };*/
 
     return (
         <Graph data={graph}/>
