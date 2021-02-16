@@ -1,4 +1,5 @@
 
+
 # Icteridae
 
 Icteridae is an open-source Webapp for interactive research exploration, where users can dynamically visualize similarities between large amounts of research.
@@ -6,9 +7,8 @@ Icteridae is an open-source Webapp for interactive research exploration, where u
 ## Table of Contents
 
  - [Setup](#setup)
-	 - [Direct Dependencies](#install-direct-dependencies)
-	 - [Postgresql](#postgresql)
-	 - [Elasticsearch](#elasticsearch)
+	 - [Requirements](#requirements)
+	 - [Direct Dependencies](#install-dependencies)
  - [Running](#running)
 	 - [Quickstart](#quickstart-on-single-machine)
 	 - [Regular Start](#regular-start)
@@ -17,39 +17,20 @@ Icteridae is an open-source Webapp for interactive research exploration, where u
 
 ## Setup
 
-Make sure you have a recent version of yarn.
 Clone the project using
-
 
     git clone git@github.com:icteridae/icteridae.git
 
+### Requirements
 
-#### Install direct dependencies
+*Icteridae* requires having both [Docker](https://www.docker.com/get-started), [Docker Compose](https://docs.docker.com/compose/) and a recent version of [yarn](https://yarnpkg.com/) installed and runnable.
+
+
+#### Install dependencies
   
 Navigate into the `frontend` directory and install the needed dependencies using
 
     yarn
-
-Then, navigate into the `backend` directory and install the needed dependencies using
-
-    pip install -r requirements.txt
-
-
-#### Postgresql
-
-[Setup postgresql](https://www.postgresql.org/download/) locally with a user with credentials 
-
-| username | password |
-|--|--|
-| icteridae | bp62 |
-
-The created user should have access to a database called **icteridae**
-
-All variables can be used but have to be adjusted in `backend/backend/settings.py`
-
-#### Elasticsearch
-
-[Setup elasticsearch](https://www.elastic.co/guide/en/elasticsearch/reference/current/deb.html) locally to run on port 9200 (the default). Alternative ports can be set in `backend/backend/settings.py`
 
 
 ## Running
@@ -64,11 +45,7 @@ If not using locally, enter the web address of your backend in `backend/backend/
 
 Navigate into the `backend/` directory and run
 
-    python3 manage.py runserver
-
-To make the backend accessible from outside, use
-
-    python3 manage.py runserver 0.0.0.0:8000
+    docker-compose up
 
 
 #### Start React Server
@@ -83,11 +60,17 @@ Navigate into the `frontend/` directory and run
 
 Papers are structured as defined in the SemanticScholar Open Research Corpus. When inputting files, each line should represent a single paper as a json object. Place any files in the `backend/data/` directory. Then in the `backend`directory run
 
-    python3 manage.py populate
+Connect to your container (usually named `backend_web_1`) using
+
+    docker exec -it [web container name] bash
+
+Start importing papers using 
+
+    ./manage.py populate [parameters]
 
 Additional parameters can be seen with 
 
-    python3 manage.py help populate
+    ./manage.py help populate
 
 You should first try with a smaller dataset as the process can take a very long time.
 
