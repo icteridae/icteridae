@@ -22,7 +22,7 @@ export const SearchResultCard : React.FC<SearchResultCardProps> = (props) => {
                 }}
                 >
                 <h3 className="title">
-                    <Link to={`paper/${props.data.id}`}>{props.data.title}</Link>
+                    <Link to={`graph/${props.data.id}`}>{props.data.title}</Link>
                 </h3>
                 <span className="author">{props.data.authors.map(obj => obj.name).join(", ")}</span>
                 <span>{props.data.fieldsOfStudy.join(" ,")}</span>
