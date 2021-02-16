@@ -3,13 +3,15 @@ version: "3.9"
 services: 
 
   elastic:
+    container_name: icteridae-elastic
     image: elasticsearch:7.10.1
     environment: 
       - discovery.type=single-node
     volumes: 
-      - elastic-data:/usr/lib/elasticsearch/data/
+      - elastic-data:/usr/share/elasticsearch/data/
 
   db:
+    container_name: icteridae-postgres
     image: postgres
     environment: 
     - POSTGRES_DB=postgres
@@ -19,12 +21,13 @@ services:
       - db-data:/var/lib/postgresql/data/
     ports:
       - "5433:5432"
+
   web:
+    container_name: icteridae-django
     build: .
     command: "/bin/bash docker-entrypoint.sh"
     volumes: 
       - .:/code
-      - ./data:/code/data
     ports: 
       - "8000:8000"
     depends_on: 
