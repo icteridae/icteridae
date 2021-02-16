@@ -1,69 +1,76 @@
 
-# Getting Started 
+
+# Icteridae
+
+Icteridae is an open-source Webapp for interactive research exploration, where users can dynamically visualize similarities between large amounts of research.
+
+## Table of Contents
+
+ - [Setup](#setup)
+	 - [Requirements](#requirements)
+	 - [Direct Dependencies](#install-dependencies)
+ - [Running](#running)
+	 - [Start Backend](#start-backend)
+	 - [Start Frontend](#start-frontend)
+ - [Import Papers](#import-papers)
+ - [References](#references)
 
 ## Setup
 
-Make sure you have a recent version of yarn.
 Clone the project using
-
 
     git clone git@github.com:icteridae/icteridae.git
 
+### Requirements
 
-#### Install direct dependencies
+*Icteridae* requires having both [Docker](https://www.docker.com/get-started), [Docker Compose](https://docs.docker.com/compose/) and a recent version of [yarn](https://yarnpkg.com/) installed and runnable.
+
+
+#### Install dependencies
   
 Navigate into the `frontend` directory and install the needed dependencies using
 
     yarn
 
-Then, navigate into the `backend` directory and install the needed dependencies using
-
-    pip install -r requirements.txt
-
-
-#### Postgresql
-
-[Setup postgresql](https://www.postgresql.org/download/) locally with a user with credentials 
-
-| username | password |
-|--|--|
-| icteridae | bp62 |
-
-The created user should have access to a database called **icteridae**
-
-All variables can be used but have to be adjusted in `backend/backend/settings.py`
-
-#### Elasticsearch
-
-[Setup elasticsearch](https://www.elastic.co/guide/en/elasticsearch/reference/current/deb.html) locally to run on port 9200 (the default). Alternative ports can be set in `backend/backend/settings.py`
-
 
 ## Running
 
-### Quickstart on single machine
-If both the back- and frontend are supposed to run on the same machine, simply execute `start.sh`
+### Start Backend
+If not using locally, enter the web address of your backend in `backend/backend/settings.py` under `ALLOWED_HOSTS`.
 
-### Start separately
-
-#### Start Django Server
 Navigate into the `backend/` directory and run
 
-    python3 manage.py runserver
+    docker-compose up
 
-#### Start React Server
+
+### Start Frontend
+
+Enter the web address of your backend in `frontend/src/Utils/Config.tsx`
 
 Navigate into the `frontend/` directory and run
 
     yarn start
 
-## Parse Paper Data
+## Import Papers
 
 Papers are structured as defined in the SemanticScholar Open Research Corpus. When inputting files, each line should represent a single paper as a json object. Place any files in the `backend/data/` directory. Then in the `backend`directory run
 
-    python3 manage.py populate
+Connect to your container (usually named `backend_web_1`) using
+
+    docker exec -it [web container name] bash
+
+Start importing papers using 
+
+    ./manage.py populate [parameters]
 
 Additional parameters can be seen with 
 
-    python3 manage.py help populate
+    ./manage.py help populate
 
 You should first try with a smaller dataset as the process can take a very long time.
+
+## References
+
+_Waleed Ammar et al. 2018. Construction of the Literature Graph in Semantic Scholar. NAACL_  
+[https://www.semanticscholar.org/paper/09e3cf5704bcb16e6657f6ceed70e93373a54618](https://www.semanticscholar.org/paper/09e3cf5704bcb16e6657f6ceed70e93373a54618).
+
