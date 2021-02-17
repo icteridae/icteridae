@@ -2,8 +2,8 @@ import React, {useState} from 'react';
 
 import { Button, FlexboxGrid } from 'rsuite';
 
-import { PaperTree, TreeNode, saveTree } from './Tree/PaperTree';
-import { PaperSidebar } from './Tree/PaperSidebar';
+import { PaperTree, TreeNode, saveTree } from './PaperTree';
+import { PaperSidebar } from './PaperSidebar';
 import { getSavedPapers } from '../../Utils/Webstorage';
 
 /**

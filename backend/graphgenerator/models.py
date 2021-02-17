@@ -13,6 +13,7 @@ from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.fields import ArrayField, JSONField
 
 
+
 # Create your models here.
 
 class Paper(models.Model):  # Independent

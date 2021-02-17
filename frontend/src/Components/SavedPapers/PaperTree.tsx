@@ -2,9 +2,9 @@ import React, { useEffect } from 'react';
 
 import { Tree, Icon } from 'rsuite';
 
-import { setSavedPapers } from '../../../Utils/Webstorage';
+import { setSavedPapers } from '../../Utils/Webstorage';
 
-import Config from '../../../Utils/Config';
+import Config from '../../Utils/Config';
 
 /**
  * Recursive type describing a tree node. The children-attribute is only used by folders, id by papers

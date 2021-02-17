@@ -1,11 +1,11 @@
-import { TreeNode } from "../Components/SavedPapers/Tree/PaperTree";
+import { TreeNode } from "../Components/SavedPapers/PaperTree";
 
 /**
  * Loads the recent papers from the web-storage
  * @returns the stored recent papers
  */
 export function getRecentPapers(){
-    const storedPapers : Array<string> = JSON.parse(localStorage.getItem("papers") as string);
+    const storedPapers : Array<string> = localStorage && JSON.parse(localStorage.getItem("papers") as string);
     return storedPapers;
 }
 
@@ -25,7 +25,7 @@ export function setRecentPapers(papers: Array<string>){
  * returns the savedPaperTree from the webstorage
  */
 export function getSavedPapers() {
-    const savedPaperTree = JSON.parse(localStorage.getItem("saved") as string);
+    const savedPaperTree = JSON.parse(localStorage.getItem("savedpapers") as string);
     if (!savedPaperTree)
         return [];
     return savedPaperTree;
@@ -39,8 +39,7 @@ export function getSavedPapers() {
 export function setSavedPapers(savedPapers: Array<TreeNode>)
 {
     if(typeof(savedPapers) !== "undefined") {
-        localStorage.removeItem("saved");
-        localStorage.setItem("saved", JSON.stringify(savedPapers));
+        localStorage.setItem("savedpapers", JSON.stringify(savedPapers));
     }
     return;
 }
@@ -52,11 +51,8 @@ export function setSavedPapers(savedPapers: Array<TreeNode>)
 export function addPaper(id : string)
 {
     let savedPapers = getSavedPapers();
-    const ids = GetPaperIds(savedPapers);
-    let value = Math.floor(Math.random() * 10000);
-    while (ids.includes(value)) value = Math.floor(Math.random() * 10000);
 
-    savedPapers.push({ value: "p" + value.toString(), id: id });
+    savedPapers.push({ value: new Date().valueOf().toString(), id: id });
 
     setSavedPapers(savedPapers);
 }
