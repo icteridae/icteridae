@@ -8,13 +8,20 @@ import { GetMinAndMaxFromMatrix, Normalize } from './GraphHelperfunctions';
 
 import './Graph.css'
 
+// Node Params
+// Added inside log(inCitations) to shift the logarithm
 const logBulk: number = 2;
+// Linear Factor to increase each Nodes size
 const nodeBaseSize: number = 4;
+// lowest Node Oppacity for all Nodes
 const lowerBoundForNodeOppacity: number = 0.5;
+// How many years backwards will have their oppacity scaled. Any Paper older than currentYear - paperOppacityYearRange will get the lowerBound value
 const paperOppacityYearRange: number = 10;
 
+// Size of Link that the Cursor hovers over
 const linkOnHoverWidth: number = 4;
-const squish: number = 0.2;
+// 
+const squish: number = 0.25;
 
 // maximum number that can be selected on a slider
 const totalSliderValue: number = 100;
