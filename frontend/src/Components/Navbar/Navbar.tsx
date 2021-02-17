@@ -5,8 +5,8 @@ import { Settings } from "./Settings";
 import './styles/Navbar.css'
 
 /**
- * The Navbar hold links to the different sites of the application
- * @param props are the standard NabrbarProps from ruite
+ * The Navbar holds links to the different sites of the application
+ * @param props are the standard NavbarProps from rsuite
  * @returns the navbar with links to the Search-, My Papers-, Graph-, Privacy- and Aboutpages and a link to Github and to the settings
  */
 export const NavBarInstance: React.FC<NavbarProps> = (props) => {
@@ -23,9 +23,9 @@ export const NavBarInstance: React.FC<NavbarProps> = (props) => {
                     <Nav onSelect={handleSelect} activeKey={activeKey}>
                         <Nav.Item componentClass={Link} to='/' eventKey="search" icon={<Icon icon="search" />}>Search</Nav.Item>
                         <Nav.Item componentClass={Link} to='/author' eventKey="author" icon={<Icon icon="search-peoples" />}>Author</Nav.Item>
-                        <Nav.Item componentClass={Link} to='/papers/' eventKey="mypapers" icon={<Icon icon="bookmark" /> }>My Papers</Nav.Item>
-                        <Nav.Item componentClass={Link} to='/graph/' eventKey="graph" icon={<Icon icon="circle-thin" /> }>Graph</Nav.Item>
-                        <Nav.Item componentClass={Link} to='/privacy/' eventKey="privacy" icon={<Icon icon="circle-thin" />}>Privacy</Nav.Item>
+                        <Nav.Item componentClass={Link} to='/papers' eventKey="SavedPaper" icon={<Icon icon="bookmark" /> }>My Papers</Nav.Item>
+                        <Nav.Item componentClass={Link} to='/graph' eventKey="graph" icon={<Icon icon="circle-thin" /> }>Graph</Nav.Item>
+                        <Nav.Item componentClass={Link} to='/privacy' eventKey="privacy" icon={<Icon icon="circle-thin" />}>Privacy</Nav.Item>
                         <Dropdown eventKey="dropdown" title="About" icon={<Icon icon="info" />} toggleComponentClass={Button} appearance="default">
                             <Dropdown.Item componentClass={Link} to='/description/' eventKey="description" icon={<Icon icon="file-text" />} >Description</Dropdown.Item>
                             <Dropdown.Item componentClass={Link} to='/contact/' eventKey="contact" icon={<Icon icon="group" />} >Contact</Dropdown.Item>

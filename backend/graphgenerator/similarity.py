@@ -1,7 +1,9 @@
 from .models import Paper
 from django.contrib.postgres.search import SearchQuery, TrigramSimilarity
 from django.db.models.query import QuerySet
+from django.db import connection
 
+import math
 
 class PairwiseSimilarity:
 
@@ -45,7 +47,54 @@ class YearSimilarity(PairwiseSimilarity):
     description = 'Similarity is larger as papers are released closer to each other'
 
     def similarity(self, p1: Paper, p2: Paper):
-        return (50 - abs(p1.year - p2.year)) / 5
+        return -abs(p1.year - p2.year)
 
 
-USING_SIMILARITIES = [STitleSimilarity, OTitleSimilarity, YearSimilarity]
+class CocitationSimilarity(PairwiseSimilarity):
+    
+    name = 'Co-citation Similarity'
+    description = 'See https://en.wikipedia.org/wiki/Co-citation'
+
+    def similarity(self, p1: Paper, p2: Paper):
+
+        cursor = connection.cursor()
+        cursor.execute("""  SELECT COUNT(*) FROM 
+                                (SELECT to_paper_id 
+                                    FROM "graphgenerator_paper_inCitations" 
+                                    WHERE from_paper_id = %s) as l1
+                                NATURAL JOIN (SELECT to_paper_id 
+                                    FROM "graphgenerator_paper_inCitations" 
+                                    WHERE from_paper_id = %s) as l2;
+        """, [p1.id, p2.id])
+
+        #res = cursor.fetchone()[0]**(0.1)
+        #res = math.log(cursor.fetchone()[0]+1)
+        res = cursor.fetchone()[0]
+        #print('result', res)
+        return res
+
+
+class BibliographicCouplingSimilarity(PairwiseSimilarity):
+    
+    name = 'Bibliographic Coupling'
+    description = 'See https://en.wikipedia.org/wiki/Bibliographic_coupling'
+
+    def similarity(self, p1: Paper, p2: Paper):
+
+        cursor = connection.cursor()
+        cursor.execute("""  SELECT COUNT(*) FROM 
+                                (SELECT from_paper_id 
+                                    FROM "graphgenerator_paper_inCitations" 
+                                    WHERE to_paper_id = %s) as l1
+                                NATURAL JOIN (SELECT from_paper_id 
+                                    FROM "graphgenerator_paper_inCitations" 
+                                    WHERE to_paper_id = %s) as l2;
+        """, [p1.id, p2.id])
+
+        #res = cursor.fetchone()[0]**(0.1)
+        res = math.log(cursor.fetchone()[0]+1)
+        #res = cursor.fetchone()[0]
+        #print('result', res)
+        return res
+
+USING_SIMILARITIES = [BibliographicCouplingSimilarity, CocitationSimilarity]
