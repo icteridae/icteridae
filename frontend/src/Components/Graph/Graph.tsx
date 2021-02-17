@@ -8,12 +8,16 @@ import { GetMinAndMaxFromMatrix, Normalize } from './GraphHelperfunctions';
 
 import './Graph.css'
 
-// maximum number that can be selected on a slider
-const totalSliderValue: number = 100;
-const squish: number = 0.2;
 const logBulk: number = 2;
 const nodeBaseSize: number = 4;
+const lowerBoundForNodeOppacity: number = 0.5;
+const paperOppacityYearRange: number = 10;
+
 const linkOnHoverWidth: number = 4;
+const squish: number = 0.2;
+
+// maximum number that can be selected on a slider
+const totalSliderValue: number = 100;
 
 /**
  * This method generates the graph for the provided graphsAndSimilarities Object
@@ -276,14 +280,15 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                                 // Remove nodeCanvasObject to get normal circular nodes
                                 nodeCanvasObject={(node, ctx, globalScale) => {
                                     let authorName = (node as Paper).authors[0].name.split(' ');
-                                    const label = authorName[authorName.length - 1];    
+                                    const label = authorName[authorName.length - 1]
                                     const fontSize = 12/globalScale;
                                     ctx.font = `${fontSize}px Sans-Serif`;
                                     const textWidth = ctx.measureText(label as string).width;
                                     const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.2); // some padding
                                     
                                     //Node Color
-                                    ctx.fillStyle = 'rgba(122, 201, 171, 1)';
+                                    //console.log((((node as Paper).year - (new Date().getFullYear() - 20) < 0 ? 5 : ((node as Paper).year - (new Date().getFullYear() - 20)))/20));
+                                    ctx.fillStyle = `rgba(122, 201, 171, ${(((node as Paper).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as Paper).year - new Date().getFullYear()) + 1))})`;
                                     ctx.beginPath();
                                     //Node shape (arc creates a cirle at coordinate (node.x, node.y) with radius (radiusmagie). Last 2 Parameters are needed to draw a full circle)
                                     ctx.arc(node.x!, node.y!, Math.log((node as Paper).inCitations.length + logBulk) * nodeBaseSize, 0, 2 * Math.PI);

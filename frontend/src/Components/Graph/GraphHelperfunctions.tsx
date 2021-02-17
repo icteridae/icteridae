@@ -33,13 +33,13 @@ export const GetMinAndMaxFromMatrix = (matrix : number[][]) => {
  * @param max largest value in the matrix
  */
 export const Normalize = (matrix : number[][], min : number, max : number) => {
-   return matrix.map((row : number[]) => row.map((n : number) => (n - min) / (max - min)));
+     return matrix.map((row : number[]) => row.map((n : number) => (n - min) / (max - min)));
 }
 
 /**
  * Returns true if the provided threshold for Link Generation results in a fully connected Graph. In other Words, that no node ends up without a link
- * @param mat contains the Link-value for each Pair of Nodes
- * @param thr is the threshold to determine if the link will be included in the graph or not
+ * @param matrix contains the Link-value for each Pair of Nodes
+ * @param threshold is the threshold to determine if the link will be included in the graph or not
  */
 export const CheckConnections = (matrix : number[][], threshold : number) => {
     let matrix_c = JSON.parse(JSON.stringify(matrix));
