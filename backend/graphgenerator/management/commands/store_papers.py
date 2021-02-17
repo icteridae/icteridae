@@ -12,8 +12,6 @@ import os
 from tqdm import tqdm
 import itertools
 
-from memory_profiler import profile
-from pympler import tracker
 # responsible for loading data into database
 
 # each line of data should correspond to a single paper json object

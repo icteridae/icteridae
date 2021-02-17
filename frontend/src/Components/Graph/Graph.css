@@ -2,12 +2,88 @@
     background-color: #161C27;
 }
 
-.rs-drawer-right.rs-drawer-sm {
+.rs-drawer-right.rs-drawer-sm, .rs-drawer-left.rs-drawer-sm {
     width: 25%;
 }
-.rs-drawer-left, .rs-drawer-right {
+
+.rs-drawer-left {
+    top: auto;
+    bottom: 0;
+    height: calc(100% - 56px);
+}
+
+.rs-drawer-right {
     top: auto;
     bottom: 0;
     right: 0;
     height: calc(100% - 56px);
+}
+
+h4 {
+    color: #a4a9b3 !important;
+}
+
+.rs-loader-has-content {
+    height: 100%;
+}
+
+.loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.graph {
+    overflow: hidden;
+    height: 100%;
+}
+
+.show-slider-icon {
+    position: absolute;
+    height: 100%;
+    width: 5%;
+    top: 50%;
+    z-index: 2;
+}
+
+.force-graph-container {
+    z-index: 1;
+}
+
+.rs-drawer-body {
+    margin: 0px 20px;
+    padding: 30px 0px;
+}
+
+.slider-popup {
+    display: flex;
+    flex-direction: column;
+}
+
+.slider-with-input-number {
+    display: flex;
+    flex-direction: row;
+    padding: 3px;
+}
+
+.rs-slider {
+    width: calc(100% - 110px);
+}
+
+.rs-slider-bar {
+    background-color: #a9a9a9 !important;
+}
+
+.rs-slider-progress-bar {
+    background-color: #7ac9ab !important;
+}
+
+.rs-input-number {
+    width: 70px;
+    border-color: #7ac9ab !important;
+}
+
+.rs-slider-handle::before {
+    border: 2px solid #7ac9ab;
 }

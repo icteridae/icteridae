@@ -14,8 +14,8 @@ import { SavedPapers } from '../SavedPapers/PageSavedPapersLocalstorage';
           <Route exact path='/' component={FrontPage}/>
           <Route exact path='/results/:query' component={PageSearchResult}/>
           <Route exact path='/privacy' component={PageImprint}/>
-          <Route exact path='/graph' component={GraphFetch}/>
           <Route exact path ='/papers' component={SavedPapers}/>
+          <Route exact path='/graph/:id' component={GraphFetch}/>
           <Route exact path='/results/paper/:id' component={FrontPage}/>
           {/* TODO: insert other routes. See paths in Navbar.tsx */}
       </Switch>

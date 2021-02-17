@@ -45,15 +45,17 @@ export interface PapersAndSimilarities{
 /**
  * This interface adds the similarity attribute to LinkObjects. Is only used if we include our own Link Force
  */
-export interface MyLinkObject extends LinkObject{
+export interface SimilarityLinkObject extends LinkObject{
     similarity: number[],
     label: string,
+    color: string,
+    isHovered: boolean,
 }
 
 /**
  * This interface adjust the nodes and links of the graph to contain enough information
  */
-export interface MyGraphData extends GraphData{
-    nodes: PaperNode[],
-    links: MyLinkObject[],
+export interface PaperGraphData extends GraphData{
+    nodes: Paper[],
+    links: SimilarityLinkObject[],
 }

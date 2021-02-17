@@ -1,26 +1,30 @@
 import React from 'react';
 
-import ForceGraph2D, { GraphData } from 'react-force-graph-2d';
-import { Button, Drawer, Row, Col, Slider, InputNumber, Loader } from 'rsuite';
+import ForceGraph2D from 'react-force-graph-2d';
+import { Button, Drawer, Slider, InputNumber, Loader, Icon } from 'rsuite';
 
-import { PaperNode, PapersAndSimilarities, MyGraphData, MyLinkObject } from './GraphTypes';
+import { Paper, PapersAndSimilarities, PaperGraphData, SimilarityLinkObject } from './GraphTypes';
 import { GetMinAndMaxFromMatrix, Normalize } from './GraphHelperfunctions';
 
 import './Graph.css'
 
+// maximum number that can be selected on a slider
 const totalSliderValue: number = 100;
-const squish: number = 0.5;
+const squish: number = 0.2;
+const logBulk: number = 2;
+const nodeBaseSize: number = 4;
+const linkOnHoverWidth: number = 4;
 
 /**
  * This method generates the graph for the provided graphsAndSimilarities Object
  * @param data contains all papers, similarities and similarities between papers
  * @returns a GraphData object consisting of nodes[] and links[]
  */
-const generateGraph = (data : PapersAndSimilarities) : MyGraphData =>{
+const generateGraph = (data : PapersAndSimilarities) : PaperGraphData =>{
     let similarityMatrix : number[][] = new Array(data.paper.length);
 
     const normalized_tensor = data.tensor.map(matrix => {
-        const bounds = GetMinAndMaxFromMatrix(matrix)
+        const bounds = GetMinAndMaxFromMatrix(matrix);
         return Normalize(matrix, bounds[0], bounds[1])
     });
 
@@ -36,12 +40,14 @@ const generateGraph = (data : PapersAndSimilarities) : MyGraphData =>{
         color: `rgba(150,150,150,${similarityMatrix[x][y]})`,
         similarity: data.similarities.map((similiarity, index) => normalized_tensor[index][x][y]),
         label: data.similarities.map((similiarity, index) => normalized_tensor[index][x][y]).toString(),
+        isHovered: false,
     })))).flat();
 
     const nodes = data.paper.map((paper, index) => ({
         ...paper,
         color: '',
         originSim: similarityMatrix[0][index],
+        val: Math.log(paper.inCitations.length + logBulk) * nodeBaseSize,
     }));
 
     return ({    
@@ -50,8 +56,17 @@ const generateGraph = (data : PapersAndSimilarities) : MyGraphData =>{
     });
 }
 
+/**
+ * this method provides the values of the remaining sliders when one of them is changed
+ * @param index contains the unique index of the slider that was changed
+ * @param val contains the new value of the changed slider
+ * @param oldValues contains all values of all sliders before the change
+ */
 const changeSlider = (index: number, val: number, oldValues: number[]) => {
-    return oldValues.map((x, i) => i === index ? val : oldValues[index] === totalSliderValue ? 0 : (totalSliderValue - val) * x / (totalSliderValue - oldValues[index]));
+    if (oldValues.filter((x, i) => x === 0.1 || i === index).length === oldValues.length ) {
+        return oldValues.map((x,i) => i===index ? val : (totalSliderValue-val)/(oldValues.length-1))
+    }
+    return oldValues.map((x, i) => i === index ? val : oldValues[index] === totalSliderValue ? 1 : (totalSliderValue - val) * x / (totalSliderValue - oldValues[index]));
 }
 
 /**
@@ -86,6 +101,7 @@ const initNode = {
  */
 export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
 
+    // total number of Sliders needed base on the number of similarity metrics applied
     const sliderCount: number = props.data.tensor.length;
 
     // reference to the Graph used for TODO: insert Usage  
@@ -95,13 +111,16 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
     const [sliders, setSliders] = React.useState(Array(sliderCount).fill(totalSliderValue / sliderCount))
     
     // set whether the drawer is shown or hidden
-    const [drawer, setDrawer] = React.useState(true);
+    const [paperDrawer, setPaperDrawer] = React.useState(false);
+
+    // set whether the drawer is shown or hidden
+    const [sliderDrawer, setSliderDrawer] = React.useState(false);
     
     // selected Node to display on drawer
     const [selectedNode, setNode] = React.useState(initNode);
 
     // load an empty Graph until the real Data is fetched
-    const [graphData, setGraphData] = React.useState<GraphData>({nodes : [], links : []})
+    const [graphData, setGraphData] = React.useState<PaperGraphData>({nodes : [], links : []})
 
     React.useEffect(() => {
         setSliders(Array(sliderCount).fill(totalSliderValue / sliderCount))
@@ -116,8 +135,10 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
     React.useEffect(() => {
         const fg : any = fgRef.current;
         if (fg) {
-            fg.d3Force('link').distance((link : MyLinkObject) => 50 / (link.similarity.map((element, index) => element * sliders[index] / 100).reduce((x,y) => x+y) + squish));
-            fg.d3Force('link').strength((link : MyLinkObject) => (link.similarity.map((element, index) => element * sliders[index] / 100).reduce((x,y) => x+y) + squish));
+            fg.d3Force('charge').strength(-100);
+            fg.d3Force('charge').distanceMin(10);
+            fg.d3Force('link').distance((link : SimilarityLinkObject) => 100 / (link.similarity.map((element, index) => element * sliders[index] / 100).reduce((x,y) => x+y) + squish));
+            fg.d3Force('link').strength((link : SimilarityLinkObject) => (link.similarity.map((element, index) => element * sliders[index] / 100).reduce((x,y) => x+y) + squish));
         }
         }, [sliders]);
 
@@ -130,42 +151,72 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
     }, [sliders]);
 
     return(
-        <div>
-            {sliders.map((sliderVal, index) => (
-                <Row key={index}>
-                    <Col md={10}>
-                        <Slider 
-                            progress
-                            style={{ marginTop: 16, marginLeft: 50 }}
-                            value={sliderVal}
-                            onChange={value => {
-                                setSliders(changeSlider(index, value, sliders))
-                            }}
-                            />
-                    </Col>
-                    <Col md={4}>
-                        <InputNumber
-                            min={0}
-                            max={totalSliderValue}
-                            value={sliderVal}
-                            onChange={value => {
-                                setSliders(changeSlider(index, value as number, sliders))
-                            }}
-                        />
-                    </Col>
-                </Row>)
-                )}
-            
-            {/**
-             * Drawer displays paper meta data
-             */}
-            
+        <div className='graph'>         
+            <div className='show-slider-icon'>
+                <Icon 
+                    size='4x'
+                    icon='angle-right'
+                    onMouseEnter={() => setSliderDrawer(true)}
+                    />
+            </div>
+
             {props.data.tensor.length > 0 ? 
                 <>
+                    {/**
+                     * Drawer displays the Sliders
+                    */}
                     <Drawer
-                        show={drawer}
+                        className='rs-drawer-left'
+                        show={sliderDrawer}
+                        placement='left'
                         backdrop={false}
-                        onHide={() => {setDrawer(false);}}
+                        onMouseLeave={() => setSliderDrawer(false)}
+                        onHide={() => setSliderDrawer(false)}
+                    >
+                        <Drawer.Header>
+                            <Drawer.Title>
+                                {'Slider'}
+                            </Drawer.Title>
+                        </Drawer.Header>
+                        <Drawer.Body>
+                            <div className='slider-popup'>
+                                {sliders.map((sliderVal, index) => (
+                                    <div className='slider-with-input-number' key={index}>
+                                            <Slider
+                                                step= {0.1}
+                                                progress
+                                                style={{ marginTop: 16, marginLeft: 20, marginRight: 10 }}
+                                                handleStyle={{ paddingTop: 7 }}
+                                                value={sliderVal}
+                                                onChange={value => {
+                                                    setSliders(changeSlider(index, value, sliders));
+                                                }}
+                                                />
+                                            <InputNumber
+                                                min={0}
+                                                max={totalSliderValue}
+                                                value={sliderVal}
+                                                onChange={value => {
+                                                    if (0 <= value && 100 >= value){
+                                                    setSliders(changeSlider(index, value as number, sliders));
+                                                    }
+                                                }}
+                                            />
+                                    </div>)
+                                )}
+                            </div>
+                        </Drawer.Body>
+                        <Drawer.Footer>
+
+                        </Drawer.Footer>
+                    </Drawer>
+                    {/**
+                     * Drawer displays the selected Paper
+                     */}
+                    <Drawer
+                        show={paperDrawer}
+                        backdrop={false}
+                        onHide={() => {setPaperDrawer(false);}}
                     >
                         <Drawer.Header>
                             <Drawer.Title>
@@ -192,36 +243,81 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                      * ForceGraph2D renders the actual graph
                      * For information on the attributes, pls visit: https://github.com/vasturiano/react-force-graph
                      */}
-                    <ForceGraph2D ref = {fgRef}
+                    <ForceGraph2D 
+                                ref = {fgRef}
                                 graphData={graphData}
                                 onNodeClick={(node, e) => {
                                     e.preventDefault();
                                     if (node.id === selectedNode.id) {
-                                        setDrawer(!drawer);
+                                        setPaperDrawer(!paperDrawer);
                                     } else {
-                                        setNode((node as PaperNode));
-                                        setDrawer(true);
+                                        setNode((node as Paper));
+                                        setPaperDrawer(true);
                                     };
                                 }}
                                 onBackgroundClick={(e) => {
                                     e.preventDefault()
-                                    setDrawer(false)
+                                    setPaperDrawer(false)
+                                    setSliderDrawer(false)
                                 }}
+                                onLinkHover={(link, prevlink) => {
+                                    if(!(prevlink === null)){
+                                        (prevlink as SimilarityLinkObject).color = `rgba(150,150,150,${(prevlink as SimilarityLinkObject).similarity.reduce((x, y) => x + y)})`;
+                                        (prevlink as SimilarityLinkObject).isHovered = false;
+                                    }
+                                    if(!(link === null)){
+                                        (link as SimilarityLinkObject).color = 'rgba(150,150,150,1)';
+                                        (link as SimilarityLinkObject).isHovered = true;
+                                    }
+                                }}
+                                // Remove nodeCanvasObject to get normal circular nodes
+                                nodeCanvasObject={(node, ctx, globalScale) => {
+                                    let authorName = (node as Paper).authors[0].name.split(' ');
+                                    const label = authorName[authorName.length - 1];    
+                                    const fontSize = 12/globalScale;
+                                    ctx.font = `${fontSize}px Sans-Serif`;
+                                    const textWidth = ctx.measureText(label as string).width;
+                                    const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.2); // some padding
+                                    
+                                    //Node Color
+                                    ctx.fillStyle = 'rgba(122, 201, 171, 1)';
+                                    ctx.beginPath();
+                                    //Node shape (arc creates a cirle at coordinate (node.x, node.y) with radius (radiusmagie). Last 2 Parameters are needed to draw a full circle)
+                                    ctx.arc(node.x!, node.y!, Math.log((node as Paper).inCitations.length + logBulk) * nodeBaseSize, 0, 2 * Math.PI);
+                                    //Circle Edge Color. The color doesnt matter since Alpha is 0 und thus the Edge is transparent
+                                    ctx.strokeStyle = 'rgba(122, 201, 171, 0)';
+                                    ctx.stroke();
+                                    ctx.fill();
+                        
+                                    ctx.textAlign = 'center';
+                                    ctx.textBaseline = 'middle';
+                                    ctx.fillStyle = 'rgba(255, 0, 0, 0.8)';//(node as Paper).color;
+                                    ctx.fillText(label as string, node.x!, node.y!);
+                        
+                                    //node.__bckgDimensions = bckgDimensions; // to re-use in nodePointerAreaPaint
+                                  }}
                                 nodeAutoColorBy='fieldsOfStudy'
                                 nodeLabel='title'
-                                linkLabel={(link) =>((link as MyLinkObject).label)}
-                                linkWidth={(link) => ((link as MyLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y)*3)}
+                                linkLabel={(link) => (link as SimilarityLinkObject).label}
+                                linkWidth={(link) => {
+                                    if((link as SimilarityLinkObject).isHovered){
+                                        return linkOnHoverWidth;
+                                    }else{
+                                        return ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y)*6);
+                                    }}}
                                 linkCurvature='curvature'
                                 linkDirectionalArrowLength='arrowLen'
                                 linkDirectionalParticles='dirParticles'
-                                //Add this line together with the initialising and instantiating of selectedPaper to show only Links connected to the selectetPaper
-                                //linkVisibility={(link:LinkObject) => ((link.source as NodeObject).id == selectedPaper)}
                                 d3VelocityDecay={0.95}
                                 cooldownTicks={100}
                                 //onEngineStop={() => (fgRef.current as any).zoomToFit(400, 100)}
                                 />
                 </>
-            : <Loader content="Loading..." />}
+            : <Loader 
+                className='loader' 
+                content="Loading..." 
+                size='md'
+                />}
         </div>
     )
 }
