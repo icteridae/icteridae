@@ -14,15 +14,8 @@ import itertools
 
 # responsible for loading data into database
 
-# each line of data should correspond to a single paper json object
-# data can be split into multiple files. specify paths to files in PATHS attribute
-
 # file is optimized to work with a Postgresql database 
-# if using another type, querys may have to be modified
-
-VERBOSE_COUNT = 71317  # Frequency of status output
-
-#paper_ids = set()  # do not edit. used for more efficient citation validation
+# if using another type, querys have to be modified
 
 # with large data, this may need a lot of random access memory
 
@@ -30,12 +23,10 @@ def batchify(iterable, n):
     args = [iter(iterable)] * n
     return itertools.zip_longest(*args)
 
-#@profile
 def load_papers(files, limit, batch, verbosity=1):
     """
     loads all papers and fields of study into database
     """
-    #tr = tracker.SummaryTracker()
 
     if verbosity > 1: print('Deleting stored papers...')
     
@@ -101,7 +92,6 @@ def load_papers(files, limit, batch, verbosity=1):
 
     #tr.print_diff()
 
-
 def load_authors(files, limit, batch, verbosity=1):
     """
     loads all authors into database
@@ -143,12 +133,13 @@ def connect_authors(files, limit, batch, verbosity=1):
     ThroughModel = AuthorPaper #Paper.authors.through
 
     cursor = connection.cursor()
-    #cursor.execute("""
-    #    DROP INDEX IF EXISTS public.graphgenerator_paper_authors_author_id_736e7be2;
-    #    DROP INDEX IF EXISTS public.graphgenerator_paper_authors_paper_id_591aff60;
-    #    DROP INDEX IF EXISTS public.graphgenerator_paper_authors_paper_id_591aff60_like;
-    #    ALTER TABLE graphgenerator_author DISABLE TRIGGER ALL;
-    #    """)
+    cursor.execute("""
+        DROP INDEX IF EXISTS public.graphgenerator_authorpaper_author_id_7e3dcd34;
+        DROP INDEX IF EXISTS public.graphgenerator_authorpaper_author_id_7e3dcd34_like;
+        DROP INDEX IF EXISTS public.graphgenerator_authorpaper_paper_id_c0f4bb6a;
+        DROP INDEX IF EXISTS public.graphgenerator_authorpaper_paper_id_c0f4bb6a_like;
+        ALTER TABLE public.graphgenerator_authorpaper DISABLE TRIGGER ALL;
+        """)
 
 
     for path in files:
@@ -165,22 +156,28 @@ def connect_authors(files, limit, batch, verbosity=1):
                 ThroughModel.objects.bulk_create(filter(lambda x:x!=None, through), ignore_conflicts=True)
                 db.reset_queries()
 
-    #cursor.execute("""  CREATE INDEX graphgenerator_paper_authors_author_id_736e7be2
-    #                        ON public.graphgenerator_paper_authors USING btree
-    #                        (author_id COLLATE pg_catalog."default" ASC NULLS LAST)
-    #                        TABLESPACE pg_default;
-#
-##                        CREATE INDEX graphgenerator_paper_authors_paper_id_591aff60
- #                           ON public.graphgenerator_paper_authors USING btree
-   #                         (paper_id COLLATE pg_catalog."default" ASC NULLS LAST)
-    #                        TABLESPACE pg_default;
-     #                   
-      #                  CREATE INDEX graphgenerator_paper_authors_paper_id_591aff60_like
-       #                     ON public.graphgenerator_paper_authors USING btree
-        #                    (paper_id COLLATE pg_catalog."default" varchar_pattern_ops ASC NULLS LAST)
-         #                   TABLESPACE pg_default;
-          #                  
-           #             ALTER TABLE graphgenerator_author ENABLE TRIGGER ALL;""")
+    cursor.execute("""
+        CREATE INDEX graphgenerator_authorpaper_author_id_7e3dcd34
+            ON public.graphgenerator_authorpaper USING btree
+            (author_id COLLATE pg_catalog."default" ASC NULLS LAST)
+            TABLESPACE pg_default;
+        
+        CREATE INDEX graphgenerator_authorpaper_author_id_7e3dcd34_like
+            ON public.graphgenerator_authorpaper USING btree
+            (author_id COLLATE pg_catalog."default" varchar_pattern_ops ASC NULLS LAST)
+            TABLESPACE pg_default;
+        
+        CREATE INDEX graphgenerator_authorpaper_paper_id_c0f4bb6a
+            ON public.graphgenerator_authorpaper USING btree
+            (paper_id COLLATE pg_catalog."default" ASC NULLS LAST)
+            TABLESPACE pg_default;
+        
+        CREATE INDEX graphgenerator_authorpaper_paper_id_c0f4bb6a_like
+            ON public.graphgenerator_authorpaper USING btree
+            (paper_id COLLATE pg_catalog."default" varchar_pattern_ops ASC NULLS LAST)
+            TABLESPACE pg_default;
+        
+        ALTER TABLE public.graphgenerator_authorpaper ENABLE TRIGGER ALL;""")
 
 def connect_citations(files, limit, batch, verbosity=1):
     """
@@ -191,7 +188,12 @@ def connect_citations(files, limit, batch, verbosity=1):
     if verbosity > 1: print('Reading citations...')
     cursor = connection.cursor()
     cursor.execute("""
-        ALTER TABLE "graphgenerator_paper_inCitations" DISABLE TRIGGER ALL;
+        DROP INDEX public."graphgenerator_paper_inCitations_from_paper_id_3c02b95e";
+        DROP INDEX public."graphgenerator_paper_inCitations_from_paper_id_3c02b95e_like";
+        DROP INDEX public."graphgenerator_paper_inCitations_to_paper_id_66996748";
+        DROP INDEX public."graphgenerator_paper_inCitations_to_paper_id_66996748_like";
+
+        ALTER TABLE public."graphgenerator_paper_inCitations" DISABLE TRIGGER ALL;
     """)
 
     Paper.inCitations.through.objects.all().delete()  # delete previous data
@@ -211,7 +213,27 @@ def connect_citations(files, limit, batch, verbosity=1):
                 db.reset_queries()
 
     cursor.execute("""
-        ALTER TABLE "graphgenerator_paper_inCitations" ENABLE TRIGGER ALL;
+        CREATE INDEX "graphgenerator_paper_inCitations_from_paper_id_3c02b95e"
+            ON public."graphgenerator_paper_inCitations" USING btree
+            (from_paper_id COLLATE pg_catalog."default" ASC NULLS LAST)
+            TABLESPACE pg_default;
+        
+        CREATE INDEX "graphgenerator_paper_inCitations_from_paper_id_3c02b95e_like"
+            ON public."graphgenerator_paper_inCitations" USING btree
+            (from_paper_id COLLATE pg_catalog."default" varchar_pattern_ops ASC NULLS LAST)
+            TABLESPACE pg_default;
+        
+        CREATE INDEX "graphgenerator_paper_inCitations_to_paper_id_66996748"
+            ON public."graphgenerator_paper_inCitations" USING btree
+            (to_paper_id COLLATE pg_catalog."default" ASC NULLS LAST)
+            TABLESPACE pg_default;
+        
+        CREATE INDEX "graphgenerator_paper_inCitations_to_paper_id_66996748_like"
+            ON public."graphgenerator_paper_inCitations" USING btree
+            (to_paper_id COLLATE pg_catalog."default" varchar_pattern_ops ASC NULLS LAST)
+            TABLESPACE pg_default;
+            
+        ALTER TABLE public."graphgenerator_paper_inCitations" ENABLE TRIGGER ALL;
     """)
 
 def create_search_index(files, limit, batch, verbosity=1):
