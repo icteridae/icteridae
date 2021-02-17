@@ -5,7 +5,7 @@ from django.db import connection, transaction
 from django import db
 import json
 import time
-from ...models import Paper, Author
+from ...models import Paper, Author, AuthorPaper
 
 import os
 
@@ -111,7 +111,7 @@ def load_authors(files, limit, batch, verbosity=1):
 
     cursor = connection.cursor()
     cursor.execute("""
-        TRUNCATE graphgenerator_author;
+        TRUNCATE graphgenerator_author, graphgenerator_authorpaper;
         ALTER TABLE graphgenerator_author DISABLE TRIGGER ALL;
     """)
     if verbosity > 1: print('Reading authors (saving)...')
@@ -140,45 +140,47 @@ def connect_authors(files, limit, batch, verbosity=1):
     """
     if verbosity > 1: print('Reading authors (connecting)...')
 
-    ThroughModel = Paper.authors.through
+    ThroughModel = AuthorPaper #Paper.authors.through
 
     cursor = connection.cursor()
-    cursor.execute("""
-        DROP INDEX IF EXISTS public.graphgenerator_paper_authors_author_id_736e7be2;
-        DROP INDEX IF EXISTS public.graphgenerator_paper_authors_paper_id_591aff60;
-        DROP INDEX IF EXISTS public.graphgenerator_paper_authors_paper_id_591aff60_like;
-        ALTER TABLE graphgenerator_author DISABLE TRIGGER ALL;
-        """)
+    #cursor.execute("""
+    #    DROP INDEX IF EXISTS public.graphgenerator_paper_authors_author_id_736e7be2;
+    #    DROP INDEX IF EXISTS public.graphgenerator_paper_authors_paper_id_591aff60;
+    #    DROP INDEX IF EXISTS public.graphgenerator_paper_authors_paper_id_591aff60_like;
+    #    ALTER TABLE graphgenerator_author DISABLE TRIGGER ALL;
+    #    """)
 
 
     for path in files:
         with open(path) as file:
             
             object_gen = itertools.islice((json.loads(line) for line in file), limit)
-            author_through_gen = tqdm((ThroughModel(paper_id=data['id'],
-                    author_id=author['ids'][0] if len(author['ids']) > 0 else data['id']
-                ) for data in object_gen for author in data['authors']))
+            author_through_gen = tqdm((ThroughModel(
+                    paper_id=data['id'],
+                    author_id=author['ids'][0] if len(author['ids']) > 0 else data['id'],
+                    order=idx
+                ) for data in object_gen for idx, author in enumerate(data['authors'])))
 
             for through in batchify(author_through_gen, batch):
                 ThroughModel.objects.bulk_create(filter(lambda x:x!=None, through), ignore_conflicts=True)
                 db.reset_queries()
 
-    cursor.execute("""  CREATE INDEX graphgenerator_paper_authors_author_id_736e7be2
-                            ON public.graphgenerator_paper_authors USING btree
-                            (author_id COLLATE pg_catalog."default" ASC NULLS LAST)
-                            TABLESPACE pg_default;
-
-                        CREATE INDEX graphgenerator_paper_authors_paper_id_591aff60
-                            ON public.graphgenerator_paper_authors USING btree
-                            (paper_id COLLATE pg_catalog."default" ASC NULLS LAST)
-                            TABLESPACE pg_default;
-                        
-                        CREATE INDEX graphgenerator_paper_authors_paper_id_591aff60_like
-                            ON public.graphgenerator_paper_authors USING btree
-                            (paper_id COLLATE pg_catalog."default" varchar_pattern_ops ASC NULLS LAST)
-                            TABLESPACE pg_default;
-                            
-                        ALTER TABLE graphgenerator_author ENABLE TRIGGER ALL;""")
+    #cursor.execute("""  CREATE INDEX graphgenerator_paper_authors_author_id_736e7be2
+    #                        ON public.graphgenerator_paper_authors USING btree
+    #                        (author_id COLLATE pg_catalog."default" ASC NULLS LAST)
+    #                        TABLESPACE pg_default;
+#
+##                        CREATE INDEX graphgenerator_paper_authors_paper_id_591aff60
+ #                           ON public.graphgenerator_paper_authors USING btree
+   #                         (paper_id COLLATE pg_catalog."default" ASC NULLS LAST)
+    #                        TABLESPACE pg_default;
+     #                   
+      #                  CREATE INDEX graphgenerator_paper_authors_paper_id_591aff60_like
+       #                     ON public.graphgenerator_paper_authors USING btree
+        #                    (paper_id COLLATE pg_catalog."default" varchar_pattern_ops ASC NULLS LAST)
+         #                   TABLESPACE pg_default;
+          #                  
+           #             ALTER TABLE graphgenerator_author ENABLE TRIGGER ALL;""")
 
 def connect_citations(files, limit, batch, verbosity=1):
     """
