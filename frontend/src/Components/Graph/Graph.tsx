@@ -7,6 +7,7 @@ import { PaperNode, PapersAndSimilarities, PaperGraphData, SimilarityLinkObject 
 import { GetMinAndMaxFromMatrix, Normalize } from './GraphHelperfunctions';
 
 import './Graph.css'
+import {Link} from "react-router-dom";
 
 // maximum number that can be selected on a slider
 const totalSliderValue: number = 100;
@@ -229,9 +230,9 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                                     Open in Semantic Scholar
                                 </Button>
                             </p>
-                            <p style={{color:'grey'}}>{selectedNode.year}{selectedNode.authors.map(author => <>, {author.name}</>)}
+                            <p style={{color:'grey'}}>{selectedNode.year}, {selectedNode.authors.map<React.ReactNode>(obj => (<Link to={`/author/${obj.ids}`}>{obj.name}</Link>)).reduce((prev, curr) => [prev, ', ', curr])}
                                 <br/> Citations: {selectedNode.inCitations.length}, References: {selectedNode.outCitations.length}
-                                <br/><p style={{color:selectedNode.color}}>Field: {selectedNode.fieldsOfStudy.map(field => <> {field}</>)} </p>
+                                <br/><p style={{color:selectedNode.color}}>Field: {selectedNode.fieldsOfStudy.join(" ,")} </p>
                             </p>
                             <p>{selectedNode.paperAbstract}</p>
                         </Drawer.Body>
@@ -253,7 +254,7 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                                     } else {
                                         setNode((node as PaperNode));
                                         setPaperDrawer(true);
-                                    };
+                                    }
                                 }}
                                 onBackgroundClick={(e) => {
                                     e.preventDefault()
