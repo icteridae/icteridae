@@ -3,7 +3,7 @@ import React from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
 import { Button, Drawer, Slider, InputNumber, Loader, Icon } from 'rsuite';
 
-import { Paper, PapersAndSimilarities, PaperGraphData, SimilarityLinkObject } from './GraphTypes';
+import { PaperNode, PapersAndSimilarities, PaperGraphData, SimilarityLinkObject } from './GraphTypes';
 import { GetMinAndMaxFromMatrix, Normalize } from './GraphHelperfunctions';
 
 import './Graph.css'
@@ -251,7 +251,7 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                                     if (node.id === selectedNode.id) {
                                         setPaperDrawer(!paperDrawer);
                                     } else {
-                                        setNode((node as Paper));
+                                        setNode((node as PaperNode));
                                         setPaperDrawer(true);
                                     };
                                 }}
@@ -272,7 +272,7 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                                 }}
                                 // Remove nodeCanvasObject to get normal circular nodes
                                 nodeCanvasObject={(node, ctx, globalScale) => {
-                                    let authorName = (node as Paper).authors[0].name.split(' ');
+                                    let authorName = (node as PaperNode).authors[0].name.split(' ');
                                     const label = authorName[authorName.length - 1];    
                                     const fontSize = 12/globalScale;
                                     ctx.font = `${fontSize}px Sans-Serif`;
@@ -283,7 +283,7 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                                     ctx.fillStyle = 'rgba(122, 201, 171, 1)';
                                     ctx.beginPath();
                                     //Node shape (arc creates a cirle at coordinate (node.x, node.y) with radius (radiusmagie). Last 2 Parameters are needed to draw a full circle)
-                                    ctx.arc(node.x!, node.y!, Math.log((node as Paper).inCitations.length + logBulk) * nodeBaseSize, 0, 2 * Math.PI);
+                                    ctx.arc(node.x!, node.y!, Math.log((node as PaperNode).inCitations.length + logBulk) * nodeBaseSize, 0, 2 * Math.PI);
                                     //Circle Edge Color. The color doesnt matter since Alpha is 0 und thus the Edge is transparent
                                     ctx.strokeStyle = 'rgba(122, 201, 171, 0)';
                                     ctx.stroke();
