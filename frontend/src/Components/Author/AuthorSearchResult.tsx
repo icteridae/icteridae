@@ -59,7 +59,6 @@ export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
                 <div className="author-details">
                     <div className="author-name">{selectedAuthor.name}</div>
                     <div><b>Publications: </b>{authorPapers != null && authorPapers.length}</div>
-                    <div><b>Citations:</b> TODO</div>
                 </div>
                 <div className="paper-list">
                     <div className="publications">Publications</div>
