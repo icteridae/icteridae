@@ -73,3 +73,8 @@ function GetPaperIds(tree : Array<TreeNode>) {
     }
     return ids;
 }
+
+export function addRecentPaper(id: string): void {
+    let lst = getRecentPapers();
+    setRecentPapers(lst ? [id].concat(lst.filter(x=>x!==id)).slice(0,10) : [id]);
+  }
