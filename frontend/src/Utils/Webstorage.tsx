@@ -79,7 +79,7 @@ export function addRecentPaper(id: string): void {
     setRecentPapers(lst ? [id].concat(lst.filter(x=>x!==id)).slice(0,10) : [id]);
   }
 
-export function getSavedSliders() {
+export function getSavedSliders(): number[] {
     return JSON.parse(localStorage.getItem("slider") as string) as Array<number>;
 }
 
