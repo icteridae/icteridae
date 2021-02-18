@@ -2,8 +2,9 @@ import React from 'react';
 
 import { PapersAndSimilarities } from './GraphTypes';
 import Config from '../../Utils/Config';
+import { addRecentPaper } from '../../Utils/Webstorage';
 
-import { Graph } from './Graph';
+import Graph from './Graph';
 import { useParams } from 'react-router-dom';
 
 /**
@@ -95,12 +96,15 @@ export const GraphFetch: React.FC = () => {
 
     const {id} = useParams<{id : string}>();
 
+
     /*
     ** EffectHook for the initial Load of the graph
     */
     React.useEffect(() => {
         //loadData();
         let requestURL = Config.base_url + '/api/generate_graph/?paper_id=' + id;
+
+        addRecentPaper(id);
 
         fetch(requestURL)//f0afdccf2903039d202085a771953a171dfd57b1')nicer Graph //204e3073870fae3d05bcbc2f6a8e263d9b72e776')Attention is all you need
             .then(res => res.json())

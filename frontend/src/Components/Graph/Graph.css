@@ -89,14 +89,3 @@ h4 {
 .rs-slider-handle::before {
     border: 2px solid #7ac9ab;
 }
-
-.graph-footer {
-    height: 10vh;
-    background-color: #161C27;   
-    min-width: 100%;
-    padding:2vh;
-}
-
-.graph-footer img {
-    height: 6vh;
-}

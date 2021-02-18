@@ -2,13 +2,12 @@ import React from 'react';
 
 import ForceGraph2D from 'react-force-graph-2d';
 import { Button, Drawer, Slider, InputNumber, Loader, Icon, Footer } from 'rsuite';
+import sizeMe from 'react-sizeme'
 
 import { Paper, PapersAndSimilarities, PaperGraphData, SimilarityLinkObject } from './GraphTypes';
 import { GetMinAndMaxFromMatrix, Normalize } from './GraphHelperfunctions';
 
 import './Graph.css'
-
-import logo from '../../icon.png'
 
 // Node Params
 // Added inside log(inCitations) to shift the logarithm
@@ -117,7 +116,7 @@ const initNode = {
  * main Method for generating the Graph
  * @returns everything that is displayed under the Graph Tab
  */
-export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
+const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : number, 'height' : number}}> = (props) => {
 
     // total number of Sliders needed base on the number of similarity metrics applied
     const sliderCount: number = props.data.tensor.length;
@@ -277,7 +276,8 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                         <ForceGraph2D 
                                     ref = {fgRef}
                                     graphData={graphData}
-                                    height={containerHeight}
+                                    height={props.size.height}
+                                    width={props.size.width}
                                     onNodeClick={(node, e) => {
                                         e.preventDefault();
                                         if (node.id === selectedNode.id) {
@@ -352,9 +352,8 @@ export const Graph: React.FC<{'data' : PapersAndSimilarities}> = (props) => {
                     size='md'
                     />}
             </div>
-            <Footer className='graph-footer'>
-                <img src={logo} alt="Logo"/> &copy; {new Date().getFullYear()} Icteridae
-            </Footer>
         </div>
     )
 }
+
+export default sizeMe({ monitorHeight: true })(Graph);
