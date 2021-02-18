@@ -26,7 +26,6 @@ class Paper(models.Model):  # Independent
     title = models.TextField(blank=True) 
     paperAbstract = models.TextField(blank=True)
 
-    authors = models.ManyToManyField('Author')
     inCitations = models.ManyToManyField('self', symmetrical=False, related_name='outCitations')
     # outCitations not needed as they are implied by inCitations
     year = models.IntegerField(null=True)
@@ -59,7 +58,6 @@ class Paper(models.Model):  # Independent
         indexes = [GinIndex(fields=['search_vector']),
                    GinIndex(name='graph_paper_ln_gin_idx', fields=['title'], opclasses=['gin_trgm_ops'])]
 
-
 class Author(models.Model):  # Independent
     name = models.CharField(max_length=200)
     id = models.CharField(max_length=100, primary_key=True)
@@ -67,6 +65,13 @@ class Author(models.Model):  # Independent
     def __str__(self):
         return self.name
 
+class AuthorPaper(models.Model):
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='papers')
+    paper = models.ForeignKey(Paper, on_delete=models.CASCADE, related_name='authors')
+    order = models.IntegerField()
+
+    class Meta:
+        ordering = ['order',]
 
 class FieldOfStudy(models.Model):  # Independent
     field = models.CharField(max_length=100, primary_key=True)
