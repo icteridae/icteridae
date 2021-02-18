@@ -41,6 +41,7 @@
     "react-force-graph-2d": "^1.18.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
+    "react-sizeme": "^2.6.12",
     "react-spinners": "^0.10.4",
     "rsuite": "^4.8.6",
     "typescript": "^4.0.3",

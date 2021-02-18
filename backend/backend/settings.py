@@ -141,3 +141,10 @@ ELASTICSEARCH_DSL = {
         'hosts' : 'elastic:9200'
     },
 }
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'graph_cache',
+    }
+}

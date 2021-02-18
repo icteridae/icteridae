@@ -3,6 +3,8 @@ import json
 from django import http
 from django.contrib.postgres.search import SearchQuery, SearchRank  # , SearchVector,TrigramSimilarity
 from rest_framework.decorators import api_view
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 
 from elasticsearch_dsl import query as dsl_query
 
@@ -62,6 +64,7 @@ def search(request):
         safe=False)
 
 @api_view(['GET'])
+@cache_page(60*60*12)
 def generate_graph(request):
     """
     finds relevant papers
