@@ -124,8 +124,6 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
     // reference to the Graph used for TODO: insert Usage  
     const fgRef = React.useRef();
 
-    const graphContainerRef = React.useRef<HTMLInputElement>(null);  
-
     // slider values
     const [sliders, setSliders] = React.useState(Array(sliderCount).fill(totalSliderValue / sliderCount))
     
@@ -140,9 +138,6 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
 
     // load an empty Graph until the real Data is fetched
     const [graphData, setGraphData] = React.useState<PaperGraphData>({nodes : [], links : []})
-
-    // used to determine the height of the graph container since the library only allows height in pixels
-    const [containerHeight, setContainerHeight] = React.useState(0);
 
     React.useEffect(() => {
         setSliders(Array(sliderCount).fill(totalSliderValue / sliderCount))
@@ -172,16 +167,9 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
         }
     }, [sliders]);
 
-    // Effecthook for determining the Height of the Graph Container
-    React.useEffect(() => {
-        if(graphContainerRef.current !== null) {
-            setContainerHeight(graphContainerRef.current.clientHeight);
-        }
-      }, []);
-
     return(
         <div>
-            <div className='graph-container' ref={graphContainerRef}>         
+            <div className='graph-container'>         
                 <div className='show-slider-icon'>
                     <Icon 
                         size='4x'
@@ -211,27 +199,30 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                             <Drawer.Body>
                                 <div className='slider-popup'>
                                     {sliders.map((sliderVal, index) => (
-                                        <div className='slider-with-input-number' key={index}>
-                                                <Slider
-                                                    step= {0.1}
-                                                    progress
-                                                    style={{ marginTop: 16, marginLeft: 20, marginRight: 10 }}
-                                                    handleStyle={{ paddingTop: 7 }}
-                                                    value={sliderVal}
-                                                    onChange={value => {
-                                                        setSliders(changeSlider(index, value, sliders));
-                                                    }}
+                                        <div className='slider'>
+                                            {props.data.similarities[index].name + ':'}
+                                            <div className='slider-with-input-number' key={index}>
+                                                    <Slider
+                                                        step= {0.1}
+                                                        progress
+                                                        style={{ marginTop: 16, marginRight: 10 }}
+                                                        handleStyle={{ paddingTop: 7 }}
+                                                        value={sliderVal}
+                                                        onChange={value => {
+                                                            setSliders(changeSlider(index, value, sliders));
+                                                        }}
+                                                        />
+                                                    <InputNumber
+                                                        min={0}
+                                                        max={totalSliderValue}
+                                                        value={sliderVal}
+                                                        onChange={value => {
+                                                            if (0 <= value && 100 >= value){
+                                                            setSliders(changeSlider(index, value as number, sliders));
+                                                            }
+                                                        }}
                                                     />
-                                                <InputNumber
-                                                    min={0}
-                                                    max={totalSliderValue}
-                                                    value={sliderVal}
-                                                    onChange={value => {
-                                                        if (0 <= value && 100 >= value){
-                                                        setSliders(changeSlider(index, value as number, sliders));
-                                                        }
-                                                    }}
-                                                />
+                                                </div>
                                         </div>)
                                     )}
                                 </div>
