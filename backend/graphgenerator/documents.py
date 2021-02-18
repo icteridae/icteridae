@@ -16,6 +16,12 @@ class PaperDocument(Document):
 
     citations = FuckThis(attr = 'get_citations') # RankFeature for citation field
 
+    authors = fields.ObjectField(
+        properties={
+            'name': fields.TextField(),
+        }
+    )
+
     class Index:
 
         name = 'papers'

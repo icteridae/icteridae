@@ -25,6 +25,7 @@ class Paper(models.Model):  # Independent
 
     title = models.TextField(blank=True) 
     paperAbstract = models.TextField(blank=True)
+    authors = models.ManyToManyField('Author', through='AuthorPaper', related_name='papers')
 
     inCitations = models.ManyToManyField('self', symmetrical=False, related_name='outCitations')
     # outCitations not needed as they are implied by inCitations
@@ -66,8 +67,8 @@ class Author(models.Model):  # Independent
         return self.name
 
 class AuthorPaper(models.Model):
-    author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='papers')
-    paper = models.ForeignKey(Paper, on_delete=models.CASCADE, related_name='authors')
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    paper = models.ForeignKey(Paper, on_delete=models.CASCADE)
     order = models.IntegerField()
 
     class Meta:
