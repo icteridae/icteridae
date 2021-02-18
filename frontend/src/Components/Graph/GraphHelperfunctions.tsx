@@ -33,7 +33,8 @@ export const GetMinAndMaxFromMatrix = (matrix : number[][]) => {
  * @param max largest value in the matrix
  */
 export const Normalize = (matrix : number[][], min : number, max : number) => {
-     return matrix.map((row : number[]) => row.map((n : number) => (n - min) / (max - min)));
+    if (min === max) return matrix.map((row : number[]) => row.map((n : number) => 0));
+    return matrix.map((row : number[]) => row.map((n : number) => (n - min) / (max - min)));
 }
 
 /**
