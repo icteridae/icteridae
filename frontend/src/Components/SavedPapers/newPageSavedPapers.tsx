@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 
-import { Button, Tree } from 'rsuite';
+import { Button, Loader, Tree } from 'rsuite';
 import { DropData } from 'rsuite/lib/TreePicker';
 
 import * as TreeTypes from './TreeTypes';
 import * as PaperFunctions from './PageSavedPapersFunctions';
 import * as GeneralTypes from '../../Utils/GeneralTypes';
 import { RenamableDirectory } from './RenameableDirectory';
+import { Link } from 'react-router-dom';
+
+import './paper.css'
 
 const testData: TreeTypes.StrippedPaperOrDirectoryNode[] = 
 [
@@ -46,7 +49,7 @@ export const NewPageSavedPapers: React.FC = () => {
             ...node, 
             label: <RenamableDirectory name={directoryNames.hasOwnProperty(node.value) ? directoryNames[node.value] : 'Loading...'} 
                                        setName={(val) => setDirectoryNames((directoryNames) => ({...directoryNames, [node.value]: val}))}/>//<><Icon icon='folder'/> {node.directoryName}</>
-        } : {...node, value: node.paperId}
+        } : {...node, value: node.paperId, label: <Loader/>}
         )
         );
 
@@ -103,8 +106,8 @@ export const NewPageSavedPapers: React.FC = () => {
                         Delete
                     </Button>
                 )}
-                {TreeTypes.isDirectoryNode(selectedTreeNode) && (
-                    <Button onClick={() => PaperFunctions.renameDirectory("d2", "testname", treeData, setTreeData)}>Rename</Button>
+                {TreeTypes.isPaperNode(selectedTreeNode) && (
+                    <Link to={`/graph/${selectedTreeNode.paperId}`}>Load Graph</Link>
                 )}
             </div>
         </div>

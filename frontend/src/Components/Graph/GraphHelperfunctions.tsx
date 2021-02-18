@@ -102,6 +102,8 @@ export const GraphFetch: React.FC = () => {
     */
     React.useEffect(() => {
         //loadData();
+
+        setGraph({tensor: [], paper: [], similarities: []})
         let requestURL = Config.base_url + '/api/generate_graph/?paper_id=' + id;
 
         addRecentPaper(id);
@@ -111,7 +113,7 @@ export const GraphFetch: React.FC = () => {
             .then(res => {
               setGraph(res);
             }).catch(() => console.log("Couldn't load graph"));
-    },[]);
+    }, [id]);
 
     /*
     ** loadData fetches the graph_Data from the backend and saves the generated Graph in the State Hook graph

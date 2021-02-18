@@ -8,6 +8,8 @@ import { PaperNode, PapersAndSimilarities, PaperGraphData, SimilarityLinkObject 
 import { GetMinAndMaxFromMatrix, Normalize } from './GraphHelperfunctions';
 
 import './Graph.css'
+import { addPaper } from '../../Utils/Webstorage';
+import { useHistory } from 'react-router-dom';
 
 // Node Params
 // Added inside log(inCitations) to shift the logarithm
@@ -136,6 +138,8 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
     // load an empty Graph until the real Data is fetched
     const [graphData, setGraphData] = React.useState<PaperGraphData>({nodes : [], links : []})
 
+    let history = useHistory()
+
     React.useEffect(() => {
         setSliders(Array(sliderCount).fill(totalSliderValue / sliderCount))
     }, [sliderCount])
@@ -246,6 +250,14 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                     <Button color='cyan' appearance='ghost' href={selectedNode.s2Url} target='_blank'>
                                         Open in Semantic Scholar
                                     </Button>
+
+                                    <Button color='cyan' appearance='ghost' onClick={() => addPaper(selectedNode.id)}>
+                                        Save Paper
+                                    </Button>
+
+                                    <Button color='cyan' appearance='ghost' onClick={() => {history.push(`/`);history.push(`/graph/${selectedNode.id}`)}}>
+                                        Generate Graph
+                                    </Button>
                                 </p>
                                 <p style={{color:'grey'}}>{selectedNode.year}{selectedNode.authors.map(author => <>, {author.name}</>)}
                                     <br/> Citations: {selectedNode.inCitations.length}, References: {selectedNode.outCitations.length}
@@ -271,7 +283,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                         if (node.id === selectedNode.id) {
                                             setPaperDrawer(!paperDrawer);
                                         } else {
-                                            setNode((node as Paper));
+                                            setNode((node as PaperNode));
                                             setPaperDrawer(true);
                                         };
                                     }}
@@ -292,8 +304,8 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                     }}
                                     // Remove nodeCanvasObject to get normal circular nodes
                                     nodeCanvasObject={(node, ctx, globalScale) => {
-                                        let authorName = (node as Paper).authors[0].name.split(' ');
-                                        const label = authorName[authorName.length - 1]
+                                        let authorName = (node as PaperNode).authors[0].name.split(' ');
+                                        const label = authorName[authorName.length - 1] + ' ' + (node as PaperNode).year
                                         const fontSize = 12/globalScale;
                                         ctx.font = `${fontSize}px Sans-Serif`;
                                         const textWidth = ctx.measureText(label as string).width;
@@ -301,18 +313,18 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                         
                                         //Node Color
                                         //console.log((((node as Paper).year - (new Date().getFullYear() - 20) < 0 ? 5 : ((node as Paper).year - (new Date().getFullYear() - 20)))/20));
-                                        ctx.fillStyle = `rgba(122, 201, 171, ${(((node as Paper).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as Paper).year - new Date().getFullYear()) + 1))})`;
+                                        ctx.fillStyle = `rgba(97, 132, 125, ${(((node as PaperNode).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as PaperNode).year - new Date().getFullYear()) + 1))})`;
                                         ctx.beginPath();
                                         //Node shape (arc creates a cirle at coordinate (node.x, node.y) with radius (radiusmagie). Last 2 Parameters are needed to draw a full circle)
-                                        ctx.arc(node.x!, node.y!, Math.log((node as Paper).inCitations.length + logBulk) * nodeBaseSize, 0, 2 * Math.PI);
+                                        ctx.arc(node.x!, node.y!, Math.log((node as PaperNode).inCitations.length + logBulk) * nodeBaseSize, 0, 2 * Math.PI);
                                         //Circle Edge Color. The color doesnt matter since Alpha is 0 und thus the Edge is transparent
-                                        ctx.strokeStyle = 'rgba(122, 201, 171, 0)';
+                                        ctx.strokeStyle = 'rgba(97, 132, 125, 1)';
                                         ctx.stroke();
                                         ctx.fill();
                             
                                         ctx.textAlign = 'center';
                                         ctx.textBaseline = 'middle';
-                                        ctx.fillStyle = 'rgba(255, 0, 0, 0.8)';//(node as Paper).color;
+                                        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';//(node as Paper).color;
                                         ctx.fillText(label as string, node.x!, node.y!);
                             
                                         //node.__bckgDimensions = bckgDimensions; // to re-use in nodePointerAreaPaint

@@ -52,7 +52,7 @@ export function addPaper(id : string)
 {
     let savedPapers = getSavedPapers();
 
-    savedPapers.push({ value: new Date().valueOf().toString(), id: id });
+    savedPapers.push({paperId: id });
 
     setSavedPapers(savedPapers);
 }
@@ -78,3 +78,13 @@ export function addRecentPaper(id: string): void {
     let lst = getRecentPapers();
     setRecentPapers(lst ? [id].concat(lst.filter(x=>x!==id)).slice(0,10) : [id]);
   }
+
+export function getSavedSliders() {
+    return JSON.parse(localStorage.getItem("slider") as string) as Array<number>;
+}
+
+export function setSavedSliders(slider: Array<number>) {
+    if(typeof(slider) !== "undefined") {
+        localStorage.setItem("slider", JSON.stringify(slider));
+    }
+}
