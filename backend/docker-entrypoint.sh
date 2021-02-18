@@ -10,6 +10,10 @@ done
 echo "Apply database migrations"
 python manage.py migrate
 
+# Create local cache
+echo "Create local cache"
+python manage.py createcachetable
+
 # Start server
 echo "Starting server"
 python manage.py runserver 0.0.0.0:8000
