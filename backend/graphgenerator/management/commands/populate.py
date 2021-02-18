@@ -14,5 +14,5 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         load(options['limit'], options['batch'] if options['batch'] else 1000, options['verbosity'], options['files'])
 
-        if not options['noelastic']: call_command('search_index', '--rebuild', '-f', '--verbosity', options['verbosity'])
+        if not options['noelastic']: call_command('search_index', '--rebuild', '--parallel', '-f', '--verbosity', options['verbosity'])
         if options['verbosity'] > 1: self.stdout.write('Done populating.')
