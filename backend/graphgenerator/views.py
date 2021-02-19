@@ -130,6 +130,6 @@ def get_paper_bulk(request):
 
     try:
         papers = Paper.objects.in_bulk(id_list=paper_ids, field_name='id')
-        return http.JsonResponse(PaperSerializer([papers[id] for id in paper_ids], many=True).data, safe=False)
+        return http.JsonResponse(PaperSerializer([papers[id] for id in paper_ids if id in papers], many=True).data, safe=False)
     except:
         return http.HttpResponseBadRequest('Paper not found')
