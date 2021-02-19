@@ -102,7 +102,7 @@ export const NewPageSavedPapers: React.FC = () => {
                     Reset localStorage
                 </Button>
                 {selectedTreeNode != null && (
-                    <Button onClick={() => PaperFunctions.deleteTreeNode(selectedTreeNode.value, treeData, setTreeData)}>
+                    <Button onClick={() => setTreeData(PaperFunctions.deleteTreeNode(selectedTreeNode.value, treeData))}>
                         Delete
                     </Button>
                 )}
