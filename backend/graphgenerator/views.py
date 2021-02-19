@@ -40,8 +40,10 @@ def search(request):
     pagesize = int(pagesize)
 
 
-    #match_query = dsl_query.Match(title={'query': query})
-    match_query = dsl_query.MultiMatch(query=query, fields=['title', 'authors.name'])
+    title_query = dsl_query.Match(title={'query': query})
+    author_query = dsl_query.Match(authors__name={'query': query})
+
+    match_query = title_query | author_query #dsl_query.MultiMatch(query=query, fields=['title', 'authors.name'])
     citation_query = dsl_query.RankFeature(field='citations', saturation={'pivot': SATURATION_PIVOT}, boost=BOOST_MAGNITUDE) # Create query to boost results with high citations
 
     full_query = match_query & citation_query # Combine two queries above
