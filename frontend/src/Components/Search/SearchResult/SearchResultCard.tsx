@@ -1,14 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Icon, IconButton } from 'rsuite';
+import { addSavedPaper, getSavedPapersList } from '../../../Utils/Webstorage';
+import { Bookmark } from '../../General/Bookmark';
 import './styles/SearchResultCard.css';
 import { DataInterface } from './Types';
 
 interface SearchResultCardProps {
     /**function used to raise state, takes DataInterface as argument */
     raiseStateSelected: React.Dispatch<React.SetStateAction<DataInterface | undefined>>,
-    highlightCard: (dataKey:number) => void,
+    highlightCard: (dataKey:string) => void,
     data: DataInterface,
-    dataKey: number
+    dataKey: string
 }
 
 export const SearchResultCard : React.FC<SearchResultCardProps> = (props) => {
@@ -23,6 +26,7 @@ export const SearchResultCard : React.FC<SearchResultCardProps> = (props) => {
                 >
                 <h3 className="title">
                     <Link to={`/graph/${props.data.id}`}>{props.data.title}</Link>
+                    <Bookmark paper_id={props.data.id}/>
                 </h3>
                 <span className="author">{props.data.authors.map<React.ReactNode>(obj => (<Link to={`/author/${obj.id}`}>{obj.name}</Link>)).reduce((prev, curr) => [prev, ', ', curr])}</span>
                 <span>{props.data.fieldsOfStudy.join(" ,")}</span>

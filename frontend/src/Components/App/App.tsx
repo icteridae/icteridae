@@ -1,12 +1,19 @@
 import React from 'react';
+import { Footer, Button, Alert } from 'rsuite';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+
 import { NavBarInstance } from '../Navbar/Navbar';
 import { FrontPage } from '../Front/FrontPage';
 import { PageImprint } from '../Privacy/PageImprint';
 import { GraphFetch } from '../Graph/GraphHelperfunctions';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { PageSavedPapers } from '../SavedPapers/PageSavedPapers';
 import { PageSearchResult } from '../Search/SearchResult/PageSearchResult';
 import { SavedPapers } from '../SavedPapers/PageSavedPapersLocalstorage';
 import {AuthorSearchResult} from "../Author/AuthorSearchResult";
+
+import './App.css';
+
+import logo from '../../icon.png'
 
  export const App: React.FC = () => (
     <BrowserRouter>
@@ -22,5 +29,10 @@ import {AuthorSearchResult} from "../Author/AuthorSearchResult";
           <Route exact path='/author' component={AuthorSearchResult}/>
           {/* TODO: insert other routes. See paths in Navbar.tsx */}
       </Switch>
+      
+      <Footer className='footer'>
+                <img src={logo} alt="Logo"/> &copy; {new Date().getFullYear()} Icteridae
+                <Button className='impressum' onClick={() => Alert.info('There is no impressum yet', 5000)} appearance='link'>Impressum</Button>
+      </Footer>
     </BrowserRouter>
   );

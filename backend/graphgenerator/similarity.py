@@ -67,10 +67,28 @@ class CocitationSimilarity(PairwiseSimilarity):
                                     WHERE from_paper_id = %s) as l2;
         """, [p1.id, p2.id])
 
-        #res = cursor.fetchone()[0]**(0.1)
-        #res = math.log(cursor.fetchone()[0]+1)
         res = cursor.fetchone()[0]
-        #print('result', res)
+        return res
+
+
+class RelativeCocitationSimilarity(PairwiseSimilarity):
+    
+    name = 'Relative Co-citation Similarity'
+    description = 'See https://en.wikipedia.org/wiki/Co-citation. Normalized using paper citation product'
+
+    def similarity(self, p1: Paper, p2: Paper):
+
+        cursor = connection.cursor()
+        cursor.execute("""  SELECT COUNT(*) FROM 
+                                (SELECT to_paper_id 
+                                    FROM "graphgenerator_paper_inCitations" 
+                                    WHERE from_paper_id = %s) as l1
+                                NATURAL JOIN (SELECT to_paper_id 
+                                    FROM "graphgenerator_paper_inCitations" 
+                                    WHERE from_paper_id = %s) as l2;
+        """, [p1.id, p2.id])
+
+        res = cursor.fetchone()[0] / math.sqrt(p2.citations * p1.citations)
         return res
 
 
@@ -91,10 +109,7 @@ class BibliographicCouplingSimilarity(PairwiseSimilarity):
                                     WHERE to_paper_id = %s) as l2;
         """, [p1.id, p2.id])
 
-        #res = cursor.fetchone()[0]**(0.1)
         res = math.log(cursor.fetchone()[0]+1)
-        #res = cursor.fetchone()[0]
-        #print('result', res)
         return res
 
-USING_SIMILARITIES = [BibliographicCouplingSimilarity, CocitationSimilarity]
+USING_SIMILARITIES = [BibliographicCouplingSimilarity, CocitationSimilarity, RelativeCocitationSimilarity]

@@ -64,7 +64,7 @@ export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
                     <div className="publications">Publications</div>
                     {
                         (authorPapers != null) && authorPapers.map((entry, index) => {
-                            return <SearchResultCard highlightCard={() => null} raiseStateSelected={() => null} key={entry.id} dataKey={index} data={entry}/>
+                            return <SearchResultCard highlightCard={() => null} raiseStateSelected={() => null} key={entry.id} dataKey={index.toString()} data={entry}/>
                         })
                     }
                 </div>

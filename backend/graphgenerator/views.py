@@ -3,6 +3,8 @@ import json
 from django import http
 from django.contrib.postgres.search import SearchQuery, SearchRank  # , SearchVector,TrigramSimilarity
 from rest_framework.decorators import api_view
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 
 from elasticsearch_dsl import query as dsl_query
 
@@ -40,7 +42,10 @@ def search(request):
     pagesize = int(pagesize)
 
 
-    match_query = dsl_query.Match(title={'query': query})
+    title_query = dsl_query.Match(title={'query': query})
+    author_query = dsl_query.Match(authors__name={'query': query})
+
+    match_query = title_query | author_query #dsl_query.MultiMatch(query=query, fields=['title', 'authors.name'])
     citation_query = dsl_query.RankFeature(field='citations', saturation={'pivot': SATURATION_PIVOT}, boost=BOOST_MAGNITUDE) # Create query to boost results with high citations
 
     full_query = match_query & citation_query # Combine two queries above
@@ -64,6 +69,7 @@ def search(request):
         safe=False)
 
 @api_view(['GET'])
+@cache_page(60*60*12)
 def generate_graph(request):
     """
     finds relevant papers
@@ -126,7 +132,7 @@ def get_paper_bulk(request):
 
     try:
         papers = Paper.objects.in_bulk(id_list=paper_ids, field_name='id')
-        return http.JsonResponse(PaperSerializer([papers[id] for id in paper_ids], many=True).data, safe=False)
+        return http.JsonResponse(PaperSerializer([papers[id] for id in paper_ids if id in papers], many=True).data, safe=False)
     except:
         return http.HttpResponseBadRequest('Paper not found')
 

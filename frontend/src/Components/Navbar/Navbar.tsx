@@ -25,15 +25,13 @@ export const NavBarInstance: React.FC<NavbarProps> = (props) => {
                         <Nav.Item componentClass={Link} to='/author' eventKey="author" icon={<Icon icon="search-peoples" />}>Author</Nav.Item>
                         <Nav.Item componentClass={Link} to='/papers' eventKey="SavedPaper" icon={<Icon icon="bookmark" /> }>My Papers</Nav.Item>
                         <Nav.Item componentClass={Link} to='/graph' eventKey="graph" icon={<Icon icon="circle-thin" /> }>Graph</Nav.Item>
-                        <Nav.Item componentClass={Link} to='/privacy' eventKey="privacy" icon={<Icon icon="circle-thin" />}>Privacy</Nav.Item>
-                        <Dropdown eventKey="dropdown" title="About" icon={<Icon icon="info" />} toggleComponentClass={Button} appearance="default">
-                            <Dropdown.Item componentClass={Link} to='/description/' eventKey="description" icon={<Icon icon="file-text" />} >Description</Dropdown.Item>
-                            <Dropdown.Item componentClass={Link} to='/contact/' eventKey="contact" icon={<Icon icon="group" />} >Contact</Dropdown.Item>
-                        </Dropdown>
+                        {/*<Nav.Item componentClass={Link} to='/privacy' eventKey="privacy" icon={<Icon icon="circle-thin" />}>Privacy</Nav.Item>*/}
+                        <Nav.Item componentClass={Link} to='/description' eventKey="about" icon={<Icon icon="info" /> }>About</Nav.Item>
+                        
                     </Nav>
                     <Nav pullRight>
                         <Nav.Item eventKey="github" icon={<Icon icon={"github"} />} href={"https://github.com/icteridae/icteridae"} target="_blank" > Github </Nav.Item>
-                        <Nav.Item eventkey="settings" icon={<Icon icon="cog" />} onClick={() => setShowSettings(true)}>Settings</Nav.Item>
+                        {/*<Nav.Item eventkey="settings" icon={<Icon icon="cog" />} onClick={() => setShowSettings(true)}>Settings</Nav.Item>*/}
                     </Nav>
                 </Navbar.Body>
             </Navbar>

@@ -92,9 +92,6 @@ export const FrontPage: React.FC = () => {
                     {loaderOrRecentPapers}
                 </div>
             </div>
-            <footer className="frontpage-footer">
-                <img src={logo} alt="Logo"/> &copy; {new Date().getFullYear()} Icteridae
-            </footer>
         </div>
     );
 }

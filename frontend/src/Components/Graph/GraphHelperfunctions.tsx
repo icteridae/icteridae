@@ -2,8 +2,9 @@ import React from 'react';
 
 import { PapersAndSimilarities } from './GraphTypes';
 import Config from '../../Utils/Config';
+import { addRecentPaper } from '../../Utils/Webstorage';
 
-import { Graph } from './Graph';
+import Graph from './Graph';
 import { useParams } from 'react-router-dom';
 
 /**
@@ -33,13 +34,14 @@ export const GetMinAndMaxFromMatrix = (matrix : number[][]) => {
  * @param max largest value in the matrix
  */
 export const Normalize = (matrix : number[][], min : number, max : number) => {
-   return matrix.map((row : number[]) => row.map((n : number) => (n - min) / (max - min)));
+    if (min === max) return matrix.map((row : number[]) => row.map((n : number) => 0));
+    return matrix.map((row : number[]) => row.map((n : number) => (n - min) / (max - min)));
 }
 
 /**
  * Returns true if the provided threshold for Link Generation results in a fully connected Graph. In other Words, that no node ends up without a link
- * @param mat contains the Link-value for each Pair of Nodes
- * @param thr is the threshold to determine if the link will be included in the graph or not
+ * @param matrix contains the Link-value for each Pair of Nodes
+ * @param threshold is the threshold to determine if the link will be included in the graph or not
  */
 export const CheckConnections = (matrix : number[][], threshold : number) => {
     let matrix_c = JSON.parse(JSON.stringify(matrix));
@@ -94,19 +96,24 @@ export const GraphFetch: React.FC = () => {
 
     const {id} = useParams<{id : string}>();
 
+
     /*
     ** EffectHook for the initial Load of the graph
     */
     React.useEffect(() => {
         //loadData();
+
+        setGraph({tensor: [], paper: [], similarities: []})
         let requestURL = Config.base_url + '/api/generate_graph/?paper_id=' + id;
+
+        addRecentPaper(id);
 
         fetch(requestURL)//f0afdccf2903039d202085a771953a171dfd57b1')nicer Graph //204e3073870fae3d05bcbc2f6a8e263d9b72e776')Attention is all you need
             .then(res => res.json())
             .then(res => {
               setGraph(res);
             }).catch(() => console.log("Couldn't load graph"));
-    },[]);
+    }, [id]);
 
     /*
     ** loadData fetches the graph_Data from the backend and saves the generated Graph in the State Hook graph
