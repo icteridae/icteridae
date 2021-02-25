@@ -8,7 +8,7 @@ export const NavbarSearch : React.FC = () => {
     const [input, setInput] = useState('');
 
     return (
-        <div className="navbar-search navbar-item">
+        <div className="navbar-search navbar-item" onClick={(e) => {(document.querySelector(".navbar-search input[type=search]") as HTMLInputElement).focus()}}>
             <form id="navbar-search-form" onSubmit={() => history.push(`/results/${input}`)}>
                 <Icon icon='search'/>
                 <input type="search" placeholder="Search" onChange={(e) => setInput(e.target.value)}></input>
