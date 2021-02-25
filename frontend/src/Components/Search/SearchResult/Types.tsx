@@ -2,7 +2,7 @@
  * Interface for Data returned by the API
  */
 export interface DataInterface {
-    id: number;
+    id: string;
     title: string;
     authors: {name: string, ids:number[]}[];
     year: number;

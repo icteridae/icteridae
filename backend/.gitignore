@@ -109,9 +109,6 @@ media/
 
 # Ignore Django Migrations in Development if you are working on team
 
-# Data
-*.json
-
 # Only for Development only
 # **/migrations/**
 # !**/migrations

@@ -14,7 +14,7 @@ interface ResultListProps {
 
 export const SearchResultList : React.FC<ResultListProps> = (props) => {
     const [searchResults, setSearchResults] = useState<DataInterface[]>();
-    const [lastHighlighted, setLastHighlighted] = useState<number>();
+    const [lastHighlighted, setLastHighlighted] = useState<string>();
     const [activePage, setActivePage] = useState<number>(1);
     const [maxPages, setMaxPages] = useState<number>();
 
@@ -22,7 +22,7 @@ export const SearchResultList : React.FC<ResultListProps> = (props) => {
      * Highlight a card with the given key and unhighlight the card that was last highlighted
      * @param {number} key The data-key value of the card to be highlighted
      */
-    function highlightCard(key: number) {
+    function highlightCard(key: string) {
         document.querySelector(`[data-key="${lastHighlighted}"]`)?.classList.remove("card-selected");
         document.querySelector(`[data-key="${key}"]`)?.classList.add("card-selected");
         setLastHighlighted(key);
@@ -75,7 +75,7 @@ export const SearchResultList : React.FC<ResultListProps> = (props) => {
             {
                 // short-circuit eval, if searchResults null don't render
                 (searchResults != null) && searchResults.map((entry: DataInterface, index: number) => {
-                    return <SearchResultCard highlightCard={highlightCard} raiseStateSelected={props.raiseStateSelected} key={entry.id} dataKey={index} data={entry}/>
+                    return <SearchResultCard highlightCard={highlightCard} raiseStateSelected={props.raiseStateSelected} key={entry.id} dataKey={index.toString()} data={entry}/>
                 })
                 
             }

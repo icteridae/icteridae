@@ -10,8 +10,8 @@ class AuthorSerializer(serializers.ModelSerializer):
 
 class PaperSerializer(serializers.ModelSerializer):
     outCitations = serializers.SerializerMethodField('getOutCitations')
-    authors = AuthorSerializer(many=True, read_only=True) #serializers.PrimaryKeyRelatedField(queryset=Author.objects.all(), many=True)
-
+    authors = AuthorSerializer(many=True, read_only=True)
+    
     def getOutCitations(self, paper):
         return [paper.id for paper in paper.outCitations.all()]
 

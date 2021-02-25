@@ -5,8 +5,8 @@ import { NavbarSearch } from "./NavbarSearch";
 import './styles/Navbar.css'
 
 /**
- * The Navbar hold links to the different sites of the application
- * @param props are the standard NabrbarProps from ruite
+ * The Navbar holds links to the different sites of the application
+ * @param props are the standard NavbarProps from rsuite
  * @returns the navbar with links to the Search-, My Papers-, Graph-, Privacy- and Aboutpages and a link to Github and to the settings
  */
 export const NavBar: React.FC = (props) => {
@@ -21,7 +21,6 @@ export const NavBar: React.FC = (props) => {
             <div className="navbar-right">
                 <NavbarItem extern icon="github" label="Github" path="https://github.com/icteridae/icteridae/" className="navbar-github"/>
             </div>
-            
         </div>
     )
 }
