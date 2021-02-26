@@ -137,3 +137,7 @@ a.navbar-item, a.navbar-item:hover {
 .navbar-search input:focus::placeholder {
     color: gray;
 }
+
+::-webkit-search-decoration {
+    display: none;
+}
