@@ -4,18 +4,23 @@ from django_elasticsearch_dsl.registries import registry
 from elasticsearch_dsl import field
 from .models import Paper
 
-class FuckThis(fields.DEDField, field.RankFeature):
-    """Implements a RankFeature for django-elasticsearch-dsl as the current version does not support the given Class
+class CitaionsRankField(fields.DEDField, field.RankFeature):
+    """
+    Implements a RankFeature for django-elasticsearch-dsl as the current version does not support RankFeatures
+    This class just needs to extend DEDField and RankFeature
     """
     pass
 
 @registry.register_document
 class PaperDocument(Document):
-    """Class for indexing Paper Elements in elasticsearch
+    """
+    Class for indexing Paper elements in elasticsearch
     """
 
-    citations = FuckThis(attr = 'get_citations') # RankFeature for citation field
+    # Citation field for boosting popular papers
+    citations = CitaionsRankField(attr = 'get_citations') # RankFeature for citation field
 
+    # Nested authors field to allow search for authors complementing title search 
     authors = fields.ObjectField(
         properties={
             'name': fields.TextField(),
@@ -26,6 +31,7 @@ class PaperDocument(Document):
 
         name = 'papers'
 
+        # Elasticsearch settings
         settings = {
             'number_of_shards': 1,
             'number_of_replicas': 0
@@ -35,6 +41,7 @@ class PaperDocument(Document):
 
         model = Paper
 
+        # Fields to index additionally to citations and authors defined above
         fields = [
             'title',
             'year',
