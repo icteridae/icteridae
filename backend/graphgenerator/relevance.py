@@ -5,8 +5,33 @@ from django.db.models import Count, F, Value
 from django.db.models import Q
 from django.db import connection
 
-MAX_ELEMENTS = 20
+"""
+Developer Interface for introducing new relevance metrics. 
 
+Example relevance metrics are defined below.
+
+What is a relevance metric?
+- relevance metrics are used to determine which papers to include in the graph.
+
+How is a relevance metric defined?
+- relevance metrics are defined as functions of the root node and a queryset or all nodes. They should return an iterable of relevant papers. 
+
+Which relevance metric is used?
+- the relevance metric is defined in the USING_RELEVANCE variable at the bottom of this file. Set the variable to a reference of the chosen function.
+
+What should I consider in a relevance function?
+- the given queryset is very large. strongly consider runtime when designing a relevance metric.
+
+How can I use multiple relevance metrics?
+- Combining multiple metrics can be done in many ways. Define a new relevance metric that combines the previous metrics.
+
+What do I return when there are now relevant papers?
+- The value "None" can be returned to signal that there are no relevant papers.
+
+"""
+
+# This variable sets the number of returned elements for predefined relevance metrics. You may use this variable in new metrics.
+MAX_ELEMENTS = 20 
 
 def title_similarity(root: Paper, query_set: QuerySet):
     search_result = Paper.objects.annotate(
