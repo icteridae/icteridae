@@ -20,7 +20,7 @@
 }
 
 /*reset default link styling*/
-#navbar a, #navbar a:hover {
+a.navbar-item, a.navbar-item:hover {
     color: inherit;
     text-decoration: none;
 }
