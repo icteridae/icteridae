@@ -1,10 +1,12 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useHistory } from 'react-router-dom';
 import {Icon, IconProps} from 'rsuite';
 
 export const NavbarItem : React.FC<{icon?: IconProps["icon"], label?: string, path: string, extern?: boolean, className?: string}> = (props) => {
+    let history = useHistory();
+
     return (
-        <div className={"navbar-item " + (props.className || '')}>
+        <div onClick={(props.extern) ? () => {} : () => {history.push(props.path)}} className={"navbar-item " + (props.className || '')}>
             {(props.extern) ? 
             (
                 <a href={props.path} target="_blank" rel="noreferrer">
