@@ -98,11 +98,12 @@ a.navbar-item, a.navbar-item:hover {
     outline: none;
 }
 
-.navbar-search ::placeholder {
+.navbar-search ::placeholder , .navbar-search ::-moz-placeholder {
     font-family: "Segoe UI", Arial, sans-serif;
     font-weight: lighter;
     font-size: 17px;
     color: #e9ebf0;
+    opacity: 1;
 }
 
 .navbar-search input[type=search] {
