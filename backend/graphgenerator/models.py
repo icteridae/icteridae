@@ -18,13 +18,15 @@ from django.contrib.postgres.fields import ArrayField, JSONField
 
 class Paper(models.Model):  # Independent
     """
-    Model for a single paper
+    Model for a single paper.
+    Fields are as defined in the SemanticScholar Open Research Corpus (http://s2-public-api-prod.us-west-2.elasticbeanstalk.com/corpus/).
     """
 
     id = models.CharField(max_length=40, primary_key=True)
 
     title = models.TextField(blank=True) 
     paperAbstract = models.TextField(blank=True)
+    authors = models.ManyToManyField('Author', through='AuthorPaper', related_name='papers')
 
     inCitations = models.ManyToManyField('self', symmetrical=False, related_name='outCitations')
     # outCitations not needed as they are implied by inCitations
@@ -37,8 +39,6 @@ class Paper(models.Model):  # Independent
     doi = models.TextField(blank=True)
     pdfUrls = ArrayField(base_field=models.URLField(), default=list)
     doiUrl = models.URLField(null=True)
-    # pmid # there is no documentation on what pmid is so well save that for when it is needed
-    # fieldsOfStudy = models.ManyToManyField('FieldOfStudy')
     fieldsOfStudy = ArrayField(base_field=models.CharField(max_length=100), default=list)
     magId = models.TextField(blank=True)
     # s2PdUrl # deprecated since 2019 (see semanticscholar)
@@ -55,6 +55,7 @@ class Paper(models.Model):  # Independent
         return self.citations + 1 # +1 needed as rank_features have to be strictly positive (>0)
 
     class Meta(object):
+        # indexes for faster search and similarity metrics
         indexes = [GinIndex(fields=['search_vector']),
                    GinIndex(name='graph_paper_ln_gin_idx', fields=['title'], opclasses=['gin_trgm_ops'])]
 
@@ -66,14 +67,19 @@ class Author(models.Model):  # Independent
         return self.name
 
 class AuthorPaper(models.Model):
-    author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='papers')
-    paper = models.ForeignKey(Paper, on_delete=models.CASCADE, related_name='authors')
+    """
+    Custom Through table for Author-Paper many-to-many relation with order attribute.
+    This table is needed as author order is not given in usual many-to-many relationships.
+    """
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    paper = models.ForeignKey(Paper, on_delete=models.CASCADE)
     order = models.IntegerField()
 
     class Meta:
         ordering = ['order',]
 
 class FieldOfStudy(models.Model):  # Independent
+    # This class is probably not needed anymore
     field = models.CharField(max_length=100, primary_key=True)
 
     def __str__(self):

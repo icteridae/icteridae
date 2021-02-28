@@ -1,3 +1,4 @@
+import { deepFilter, deleteTreeNode, getSubtreePaperIds } from "../Components/SavedPapers/PageSavedPapersFunctions";
 import { TreeNode } from "../Components/SavedPapers/PaperTree";
 
 /**
@@ -48,13 +49,27 @@ export function setSavedPapers(savedPapers: Array<TreeNode>)
  * Adds a Paper id to the saved Paper tree
  * @param id of the saved paper
  */
-export function addPaper(id : string)
+export function addSavedPaper(id : string)
 {
     let savedPapers = getSavedPapers();
+    const paper_ids = getSubtreePaperIds(savedPapers);
+    
+    if (id in paper_ids) {
+        return
+    }
 
     savedPapers.push({paperId: id });
 
     setSavedPapers(savedPapers);
+}
+
+export function removeSavedPaper(id: string) {
+    const savedPapers = getSavedPapers();
+    setSavedPapers(deepFilter(savedPapers, (node) => node.paperId !== id))
+}
+
+export function getSavedPapersList() {
+    return getSubtreePaperIds(getSavedPapers())
 }
 
 /**
@@ -79,7 +94,7 @@ export function addRecentPaper(id: string): void {
     setRecentPapers(lst ? [id].concat(lst.filter(x=>x!==id)).slice(0,10) : [id]);
   }
 
-export function getSavedSliders() {
+export function getSavedSliders(): number[] {
     return JSON.parse(localStorage.getItem("slider") as string) as Array<number>;
 }
 

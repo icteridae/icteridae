@@ -100,7 +100,7 @@ export function renameDirectory(value: string, newName: string, treeData: TreeTy
     setTreeData(temp);
 }
 
-export function deleteTreeNode(value: string, treeData: TreeTypes.PaperOrDirectoryNode[], setTreeData: React.Dispatch<React.SetStateAction<TreeTypes.PaperOrDirectoryNode[]>>) {
+export function deleteTreeNode(value: string, treeData: TreeTypes.PaperOrDirectoryNode[]) {
     function filterNodeRecursively(nodes: TreeTypes.PaperOrDirectoryNode[], value: string) : TreeTypes.PaperOrDirectoryNode[] {
         let r = nodes
             .filter(node => node.value !== value)
@@ -113,24 +113,9 @@ export function deleteTreeNode(value: string, treeData: TreeTypes.PaperOrDirecto
                     : node
             );
         return r;
-    
-        /*let r = nodes.filter((node) => {
-            if(TreeTypes.isDirectoryNode(node)) {
-                if(node.children)
-                    node.children.map(o => filterNodeRecursively(o, value));
-                
-                return node.value !== value;
-            } else if(TreeTypes.isPaperNode(node)) {
-                return node.value !== value;
-            }
-        })
-        */
     }
-    
-    let temp = [...treeData];
-    temp = filterNodeRecursively(temp, value);
 
-    setTreeData(temp);
+    return filterNodeRecursively(treeData, value);
 }
 
 export function flattenPapers(tree: TreeTypes.PaperOrDirectoryNode[]): TreeTypes.PaperOrDirectoryNode[] {
@@ -157,6 +142,13 @@ export function deepMap<T extends TreeTypes.BaseTreeNode>(tree: T[], method: (pa
     return tree.map(node => 
         TreeTypes.hasChildren(node) ? {...method(node), children: deepMap<T>((node.children as T[])!, method)} 
         : method(node))
+}
+
+export function deepFilter<T extends TreeTypes.BaseTreeNode>(tree: T[], method: (param: T) => boolean): T[] {
+    return tree.filter(node => method(node))    
+                .map(node => 
+                    TreeTypes.hasChildren(node) ? {...node, children: deepFilter<T>((node.children as T[])!, method)} 
+                    : node)
 }
 
 export function deepReduce<T>(tree: TreeTypes.PaperOrDirectoryNode[], method: (accumulator: T, value: TreeTypes.PaperOrDirectoryNode) => T, base: T): T {

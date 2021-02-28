@@ -1,20 +1,21 @@
 from rest_framework import serializers
 from .models import Paper, Author
 
-
 class AuthorSerializer(serializers.ModelSerializer):
-
+    """
+    Serializer for authors
+    """
     class Meta:
         model = Author
         fields = '__all__'
 
 class PaperSerializer(serializers.ModelSerializer):
+    """
+    Serializer for papers. Includes nested authors and outCitations as they are not included by default
+    """
     outCitations = serializers.SerializerMethodField('getOutCitations')
-    authors = serializers.SerializerMethodField('getAuthors')
+    authors = AuthorSerializer(many=True, read_only=True)
     
-    def getAuthors(self, paper):
-        return AuthorSerializer(Author.objects.filter(papers__in = paper.authors.all()), many=True).data
-
     def getOutCitations(self, paper):
         return [paper.id for paper in paper.outCitations.all()]
 

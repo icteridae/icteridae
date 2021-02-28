@@ -8,8 +8,9 @@ import { PaperNode, PapersAndSimilarities, PaperGraphData, SimilarityLinkObject 
 import { GetMinAndMaxFromMatrix, Normalize } from './GraphHelperfunctions';
 
 import './Graph.css'
-import { addPaper } from '../../Utils/Webstorage';
+import { addSavedPaper, getSavedSliders, setSavedSliders } from '../../Utils/Webstorage';
 import { useHistory } from 'react-router-dom';
+import { Bookmark } from '../General/Bookmark';
 
 // Node Params
 // Added inside log(inCitations) to shift the logarithm
@@ -30,6 +31,14 @@ const squish: number = 0.25;
 // Slider Params
 // Maximum number that can be selected on a slider
 const totalSliderValue: number = 100;
+
+function ChoosingSliderValues(sliderCount : number) {
+    const SavedSliders = getSavedSliders();
+    console.log(SavedSliders?.length + "   " +   sliderCount);
+    if(SavedSliders?.length !== sliderCount)
+        return Array(sliderCount).fill(totalSliderValue / sliderCount);
+    return SavedSliders;
+}
 
 /**
  * This method generates the graph for the provided graphsAndSimilarities Object
@@ -141,7 +150,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
     let history = useHistory()
 
     React.useEffect(() => {
-        setSliders(Array(sliderCount).fill(totalSliderValue / sliderCount))
+        setSliders(ChoosingSliderValues(sliderCount))
     }, [sliderCount])
 
     React.useEffect(() => {
@@ -210,7 +219,9 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                                         handleStyle={{ paddingTop: 7 }}
                                                         value={sliderVal}
                                                         onChange={value => {
-                                                            setSliders(changeSlider(index, value, sliders));
+                                                            const newSliders = changeSlider(index, value, sliders);
+                                                            setSliders(newSliders);
+                                                            setSavedSliders(newSliders);
                                                         }}
                                                         />
                                                     <InputNumber
@@ -219,7 +230,9 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                                         value={sliderVal}
                                                         onChange={value => {
                                                             if (0 <= value && 100 >= value){
-                                                            setSliders(changeSlider(index, value as number, sliders));
+                                                                let newSliders = changeSlider(index, value as number, sliders)
+                                                                setSliders(newSliders);
+                                                                setSavedSliders(newSliders);
                                                             }
                                                         }}
                                                     />
@@ -242,7 +255,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                         >
                             <Drawer.Header>
                                 <Drawer.Title>
-                                    {selectedNode.title}
+                                    <Bookmark paper_id={selectedNode.id}/>{selectedNode.title}
                                 </Drawer.Title>
                             </Drawer.Header>
                             <Drawer.Body>
@@ -251,11 +264,12 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                         Open in Semantic Scholar
                                     </Button>
 
-                                    <Button color='cyan' appearance='ghost' onClick={() => addPaper(selectedNode.id)}>
+
+                                    <Button color='cyan' appearance='ghost' onClick={() => addSavedPaper(selectedNode.id)}>
                                         Save Paper
                                     </Button>
 
-                                    <Button color='cyan' appearance='ghost' onClick={() => {history.push(`/`);history.push(`/graph/${selectedNode.id}`)}}>
+                                    <Button color='cyan' appearance='ghost' onClick={() => {history.push(`/graph/${selectedNode.id}`)}}>
                                         Generate Graph
                                     </Button>
                                 </p>
@@ -332,12 +346,10 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                     nodeAutoColorBy='fieldsOfStudy'
                                     nodeLabel='title'
                                     linkLabel={(link) => (link as SimilarityLinkObject).label}
-                                    linkWidth={(link) => {
-                                        if((link as SimilarityLinkObject).isHovered){
-                                            return linkOnHoverWidth;
-                                        }else{
-                                            return ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y)*3);
-                                        }}}
+                                    linkWidth={(link) => (link as SimilarityLinkObject).isHovered ? linkOnHoverWidth 
+                                        : ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y)*3)}
+                                    linkVisibility={(link) => 
+                                        ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y) !== 0)}
                                     linkCurvature='curvature'
                                     linkDirectionalArrowLength='arrowLen'
                                     linkDirectionalParticles='dirParticles'

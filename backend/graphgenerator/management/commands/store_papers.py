@@ -130,7 +130,7 @@ def connect_authors(files, limit, batch, verbosity=1):
     """
     if verbosity > 1: print('Reading authors (connecting)...')
 
-    ThroughModel = AuthorPaper #Paper.authors.through
+    ThroughModel = Paper.authors.through # AuthorPaper #Paper.authors.through
 
     cursor = connection.cursor()
     cursor.execute("""
