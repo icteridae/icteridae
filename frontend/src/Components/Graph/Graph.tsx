@@ -53,15 +53,15 @@ const generateGraph = (data : PapersAndSimilarities) : PaperGraphData =>{
         target: data.paper[y].id,
         color: `rgba(150,150,150,${similarityMatrix[x][y]})`,
         similarity: data.similarities.map((similiarity, index) => normalized_tensor[index][x][y]),
-        label: data.similarities.map((similiarity, index) => normalized_tensor[index][x][y]).toString(),
+        label: "",//data.similarities.map((similiarity, index) => normalized_tensor[index][x][y]).toString(),
         isHovered: false,
     })))).flat();
 
     const nodes = data.paper.map((paper, index) => ({
         ...paper,
         color: '',
-        originSim: similarityMatrix[0][index],
         val: Math.log(paper.inCitations.length + logBulk) * nodeBaseSize,
+        isHovered: false,
     }));
 
     return ({    
@@ -110,6 +110,7 @@ const initNode = {
     entities: [''],
 
     color: '',
+    isHovered: false,
 };
 
 /**
@@ -171,11 +172,9 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
         <div>
             <div className='graph-container'>         
                 <div className='show-slider-icon'>
-                    <Icon 
-                        size='4x'
-                        icon='angle-right'
-                        onMouseEnter={() => setSliderDrawer(true)}
-                        />
+                    <div className='show-slider-text' onMouseEnter={() => setSliderDrawer(true)}>
+                        Slider
+                    </div>
                 </div>
 
                 {props.data.tensor.length > 0 ? 
@@ -278,6 +277,14 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                             setPaperDrawer(true);
                                         };
                                     }}
+                                    onNodeHover={(node, prevNode) => {
+                                        if(!(prevNode === null)){
+                                            (prevNode as Paper).isHovered = false;
+                                        }
+                                        if(!(node === null)){
+                                            (node as Paper).isHovered = true;
+                                        }
+                                    }}
                                     onBackgroundClick={(e) => {
                                         e.preventDefault()
                                         setPaperDrawer(false)
@@ -295,30 +302,36 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                     }}
                                     // Remove nodeCanvasObject to get normal circular nodes
                                     nodeCanvasObject={(node, ctx, globalScale) => {
-                                        let authorName = (node as Paper).authors[0].name.split(' ');
-                                        const label = authorName[authorName.length - 1]
+                                        let paperName = (node as Paper).title;
+                                        const label = paperName.length > 25 ? paperName.substring(0, 20).concat("...") : paperName;
                                         const fontSize = 12/globalScale;
                                         ctx.font = `${fontSize}px Sans-Serif`;
                                         const textWidth = ctx.measureText(label as string).width;
-                                        const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.2); // some padding
                                         
                                         //Node Color
                                         //console.log((((node as Paper).year - (new Date().getFullYear() - 20) < 0 ? 5 : ((node as Paper).year - (new Date().getFullYear() - 20)))/20));
-                                        ctx.fillStyle = `rgba(122, 201, 171, ${(((node as Paper).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as Paper).year - new Date().getFullYear()) + 1))})`;
+                                        if((node as Paper).id === props.data.paper[0].id){
+                                            ctx.fillStyle = `rgba(146, 122, 201, ${(((node as Paper).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as Paper).year - new Date().getFullYear()) + 1))})`;
+                                        }else{
+                                            ctx.fillStyle = `rgba(122, 201, 171, ${(((node as Paper).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as Paper).year - new Date().getFullYear()) + 1))})`;
+                                        }
                                         ctx.beginPath();
                                         //Node shape (arc creates a cirle at coordinate (node.x, node.y) with radius (radiusmagie). Last 2 Parameters are needed to draw a full circle)
                                         ctx.arc(node.x!, node.y!, Math.log((node as Paper).inCitations.length + logBulk) * nodeBaseSize, 0, 2 * Math.PI);
-                                        //Circle Edge Color. The color doesnt matter since Alpha is 0 und thus the Edge is transparent
-                                        ctx.strokeStyle = 'rgba(122, 201, 171, 0)';
+                                        if((node as Paper).isHovered){
+                                            //Circle Edge Color when the Node is hovered
+                                            ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+                                        }else{
+                                            //Circle Edge Color. The color doesnt matter since Alpha is 0 und thus the Edge is transparent
+                                            ctx.strokeStyle = 'rgba(122, 201, 171, 0)';
+                                        }
                                         ctx.stroke();
                                         ctx.fill();
                             
                                         ctx.textAlign = 'center';
                                         ctx.textBaseline = 'middle';
-                                        ctx.fillStyle = 'rgba(255, 0, 0, 0.8)';//(node as Paper).color;
+                                        ctx.fillStyle = 'rgba(230, 230, 230, 0.8)';//(node as Paper).color;
                                         ctx.fillText(label as string, node.x!, node.y!);
-                            
-                                        //node.__bckgDimensions = bckgDimensions; // to re-use in nodePointerAreaPaint
                                     }}
                                     nodeAutoColorBy='fieldsOfStudy'
                                     nodeLabel='title'
