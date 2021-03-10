@@ -45,6 +45,12 @@
     z-index: 2;
 }
 
+.show-slider-text {
+    font-size: 20px;
+    writing-mode: vertical-lr;
+    transform: rotate(180deg);
+}
+
 .force-graph-container {
     z-index: 1;
 }
