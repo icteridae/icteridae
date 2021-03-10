@@ -61,6 +61,30 @@
     border-radius: 20px;
 }
 
+.node-color-legend {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    bottom: 2vh;
+    right: 2vw;
+    width: 20vw;
+    z-index: 2;
+}
+
+.legend-color-bar {
+    height: 2vh;
+    background: linear-gradient(90deg,#7AC9AB80,#7AC9ABFF);
+}
+
+.legend-years {
+    display: flex;
+    justify-content: space-between;
+}
+
+.last-year {
+    margin-left: auto;
+}
+
 .force-graph-container {
     z-index: 1;
 }

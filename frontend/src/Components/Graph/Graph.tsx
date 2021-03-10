@@ -1,7 +1,7 @@
 import React from 'react';
 
 import ForceGraph2D from 'react-force-graph-2d';
-import { Button, Drawer, Slider, InputNumber, Loader } from 'rsuite';
+import { Button, Drawer, Slider, InputNumber, Loader, Icon, Popover, Whisper } from 'rsuite';
 import sizeMe from 'react-sizeme'
 
 import { PaperNode, PapersAndSimilarities, PaperGraphData, SimilarityLinkObject } from './GraphTypes';
@@ -20,7 +20,7 @@ const nodeBaseSize: number = 4;
 // Lowest Node Oppacity for all Nodes
 const lowerBoundForNodeOppacity: number = 0.5;
 // How many years backwards will have their oppacity scaled. Any Paper older than currentYear - paperOppacityYearRange will get the lowerBound value
-const paperOppacityYearRange: number = 10;
+const paperOppacityYearRange: number = 20;
 
 // Link Parameters
 // Size of Link that the Cursor hovers over
@@ -190,6 +190,13 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                         Slider
                     </div>
                 </div>
+                <div className='node-color-legend'>
+                    <div className='legend-color-bar'></div>
+                    <div className='legend-years'>
+                        <span>{new Date().getFullYear() - paperOppacityYearRange}</span>
+                        <span className='last-year'>{new Date().getFullYear()}</span>
+                    </div>
+                </div>
 
                 {props.data.tensor.length > 0 ? 
                     <>
@@ -213,7 +220,12 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                 <div className='slider-popup'>
                                     {sliders.map((sliderVal, index) => (
                                         <div className='slider'>
-                                            {props.data.similarities[index].name + ':'}
+                                            <div>{props.data.similarities[index].name + ':  '}
+                                                <Whisper placement="right" trigger="hover" speaker={<Popover title={props.data.similarities[index].name}>
+                                                        <p>{props.data.similarities[index].description}</p>
+                                                    </Popover>} enterable>
+                                                    <Icon icon="info"/>
+                                                </Whisper></div>
                                             <div className='slider-with-input-number' key={index}>
                                                     <Slider
                                                         step= {0.1}
@@ -276,9 +288,9 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                         Generate Graph
                                     </Button>
                                 </p>
-                                <p style={{color:'grey'}}>{selectedNode.year + ', '}{selectedNode.authors.length <= maxAuthors ? selectedNode.authors.map(author => author.name).join(', ') : selectedNode.authors.slice(0, maxAuthors).map(author => author.name).join(', ') + ', +' + selectedNode.authors.length + ' others'}
+                                <p style={{color:'grey'}}>{selectedNode.year + ', '}{selectedNode.authors.length <= maxAuthors + 1 ? selectedNode.authors.map(author => author.name).join(', ') : selectedNode.authors.slice(0, maxAuthors).map(author => author.name).join(', ') + ', +' + (selectedNode.authors.length - maxAuthors) + ' others'}
                                     <br/> Citations: {selectedNode.inCitations.length}, References: {selectedNode.outCitations.length}
-                                    <br/><p style={{color:selectedNode.color}}>Field: {selectedNode.fieldsOfStudy.map(field => <> {field}</>)} </p>
+                                    <br/><p style={{color:selectedNode.color}}>Field: {selectedNode.fieldsOfStudy.map(field => field).join(', ')} </p>
                                 </p>
                                 <p>{selectedNode.paperAbstract}</p>
                             </Drawer.Body>
@@ -344,7 +356,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                         }
                                         ctx.beginPath();
                                         //Node shape (arc creates a cirle at coordinate (node.x, node.y) with radius (radiusmagie). Last 2 Parameters are needed to draw a full circle)
-                                        ctx.arc(node.x!, node.y!, Math.log((node as PaperNode).inCitations.length + logBulk) * nodeBaseSize, 0, 2 * Math.PI);
+                                        ctx.arc(node.x!, node.y!, Math.sqrt(Math.max(0, Math.log((node as PaperNode).inCitations.length + logBulk) * nodeBaseSize || 1)) * 4, 0 , 2 * Math.PI);
                                         if((node as PaperNode).isHovered){
                                             //Circle Edge Color when the Node is hovered
                                             ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
