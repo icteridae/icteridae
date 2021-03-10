@@ -12,7 +12,7 @@ import { addSavedPaper, getSavedSliders, setSavedSliders } from '../../Utils/Web
 import { useHistory } from 'react-router-dom';
 import { Bookmark } from '../General/Bookmark';
 
-// Node Params
+// Node Parameters
 // Added inside log(inCitations) to shift the logarithm
 const logBulk: number = 2;
 // Linear Factor to increase each Nodes size
@@ -22,15 +22,19 @@ const lowerBoundForNodeOppacity: number = 0.5;
 // How many years backwards will have their oppacity scaled. Any Paper older than currentYear - paperOppacityYearRange will get the lowerBound value
 const paperOppacityYearRange: number = 10;
 
-// Link Params
+// Link Parameters
 // Size of Link that the Cursor hovers over
 const linkOnHoverWidth: number = 4;
 // squish can be between 0 and 1. Adjusts how strong the link force pulls the nodes together where 0 is no LinkForce at all
 const squish: number = 0.25;
 
-// Slider Params
+// Slider Parameters
 // Maximum number that can be selected on a slider
 const totalSliderValue: number = 100;
+
+// Display Parameters
+// Max number of Authors shown for selected Paper
+const maxAuthors: number = 3;
 
 function ChoosingSliderValues(sliderCount : number) {
     const SavedSliders = getSavedSliders();
@@ -272,7 +276,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                         Generate Graph
                                     </Button>
                                 </p>
-                                <p style={{color:'grey'}}>{selectedNode.year}{selectedNode.authors.map(author => <>, {author.name}</>)}
+                                <p style={{color:'grey'}}>{selectedNode.year + ', '}{selectedNode.authors.length <= maxAuthors ? selectedNode.authors.map(author => author.name).join(', ') : selectedNode.authors.slice(0, maxAuthors).map(author => author.name).join(', ') + ', +' + selectedNode.authors.length + ' others'}
                                     <br/> Citations: {selectedNode.inCitations.length}, References: {selectedNode.outCitations.length}
                                     <br/><p style={{color:selectedNode.color}}>Field: {selectedNode.fieldsOfStudy.map(field => <> {field}</>)} </p>
                                 </p>
