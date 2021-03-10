@@ -1,7 +1,7 @@
 import React from 'react';
 
 import ForceGraph2D from 'react-force-graph-2d';
-import { Button, Drawer, Slider, InputNumber, Loader, Icon, Footer } from 'rsuite';
+import { Button, Drawer, Slider, InputNumber, Loader } from 'rsuite';
 import sizeMe from 'react-sizeme'
 
 import { PaperNode, PapersAndSimilarities, PaperGraphData, SimilarityLinkObject } from './GraphTypes';
@@ -329,7 +329,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                         const label = paperName.length > 25 ? paperName.substring(0, 20).concat("...") : paperName;
                                         const fontSize = 12/globalScale;
                                         ctx.font = `${fontSize}px Sans-Serif`;
-                                        const textWidth = ctx.measureText(label as string).width;
+                                        //const textWidth = ctx.measureText(label as string).width;
                                         
                                         //Node Color
                                         //console.log((((node as Paper).year - (new Date().getFullYear() - 20) < 0 ? 5 : ((node as Paper).year - (new Date().getFullYear() - 20)))/20));
