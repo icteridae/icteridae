@@ -9,7 +9,7 @@ import * as GeneralTypes from '../../Utils/GeneralTypes';
 import { RenamableDirectory } from './RenameableDirectory';
 import { Link } from 'react-router-dom';
 
-import './paper.css'
+import './paper.scss'
 
 const testData: TreeTypes.StrippedPaperOrDirectoryNode[] = 
 [
@@ -104,9 +104,6 @@ export const NewPageSavedPapers: React.FC = () => {
                 </Button>
                 <Button onClick={() => localStorage.setItem('savedpapers', JSON.stringify(testData))}>
                     Reset localStorage
-                </Button>
-                <Button onClick={() => console.log(directoryNames)}>
-                    Get Dir names
                 </Button>
                 {selectedTreeNode != null && (
                     <Button onClick={() => setTreeData(PaperFunctions.deleteTreeNode(selectedTreeNode.value, treeData))}>

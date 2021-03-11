@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './FrontPage.css'
+import './FrontPage.scss'
 import logo from '../../icon.png'
 
 import { DataInterface } from '../Search/SearchResult/Types';
