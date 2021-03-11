@@ -7,7 +7,7 @@ export interface Paper {
     paperAbstract: string,
     s2Url: string,
     pdfUrls: string[],
-    authors: {name: string, ids : string[]}[],
+    authors: {name: string, id : string}[],
     inCitations: string[],
     outCitations: string[],
     fieldsOfStudy: string[],

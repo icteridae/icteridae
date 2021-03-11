@@ -9,6 +9,7 @@ import { GetMinAndMaxFromMatrix, Normalize } from './GraphHelperfunctions';
 
 import './Graph.css'
 
+import {Link} from "react-router-dom";
 import { addSavedPaper, getSavedSliders, setSavedSliders } from '../../Utils/Webstorage';
 import { useHistory } from 'react-router-dom';
 import { Bookmark } from '../General/Bookmark';
@@ -104,7 +105,7 @@ const initNode = {
     paperAbstract: '',
     s2Url: '',
     pdfUrls: [''],
-    authors: [{name: 'John Glanz', 'ids':['321534234']}],
+    authors: [{name: 'John Glanz', id:'321534234'}],
     inCitations: ['asdasd', 'aisdingk'],
     outCitations: ['fadg'],
     fieldsOfStudy: ['Materials Science'],
@@ -274,9 +275,9 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                         Generate Graph
                                     </Button>
                                 </p>
-                                <p style={{color:'grey'}}>{selectedNode.year}{selectedNode.authors.map(author => <>, {author.name}</>)}
+                                <p style={{color:'grey'}}>{selectedNode.year}, {selectedNode.authors.map<React.ReactNode>(obj => (<Link to={`/author/${obj.id}`}>{obj.name}</Link>)).reduce((prev, curr) => [prev, ', ', curr])}
                                     <br/> Citations: {selectedNode.inCitations.length}, References: {selectedNode.outCitations.length}
-                                    <br/><p style={{color:selectedNode.color}}>Field: {selectedNode.fieldsOfStudy.map(field => <> {field}</>)} </p>
+                                    <br/><p style={{color:'grey'}}>Field: {selectedNode.fieldsOfStudy.join(", ")} </p>
                                 </p>
                                 <p>{selectedNode.paperAbstract}</p>
                             </Drawer.Body>
