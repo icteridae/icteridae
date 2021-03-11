@@ -20,7 +20,7 @@ const logBulk: number = 2;
 // Linear Factor to increase each Nodes size
 const nodeBaseSize: number = 4;
 // Lowest Node Oppacity for all Nodes
-const lowerBoundForNodeOppacity: number = 0.5;
+const lowerBoundForNodeOppacity: number = 0.251;
 // How many years backwards will have their oppacity scaled. Any Paper older than currentYear - paperOppacityYearRange will get the lowerBound value
 const paperOppacityYearRange: number = 20;
 // Use our Standard Accent Color for all Papers that only have the Computer Science Field of Study
@@ -226,7 +226,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                         >
                             <Drawer.Header>
                                 <Drawer.Title>
-                                    Slider
+                                    Similarities
                                 </Drawer.Title>
                             </Drawer.Header>
                             <Drawer.Body>
@@ -270,9 +270,10 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                     <Divider />
                                     <div className='graph-settings'>
                                         <span className='graph-settings-title'>Settings</span>
+                                        <span className='graph-settings-subtitle'>Node Label</span>
                                         <ButtonGroup>
-                                            <Button appearance='ghost' onClick={() => setShowTitle(true)}>Title</Button>
-                                            <Button appearance='ghost' onClick={() => setShowTitle(false)}>Author, Year</Button>
+                                            <Button appearance={showTitle ? 'primary' : 'default'} onClick={() => setShowTitle(true)}>Title</Button>
+                                            <Button appearance={showTitle ? 'default' : 'primary'} onClick={() => setShowTitle(false)}>Author, Year</Button>
                                         </ButtonGroup>
                                         <span className='graph-settings-subtitle'>Weak Link Filter</span>
                                         <Slider className='graph-settings-weak-links'
@@ -293,9 +294,6 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                     onSelect={setPallette}/>
 
                             </Drawer.Body>
-                            <Drawer.Footer>
-
-                            </Drawer.Footer>
                         </Drawer>
                         {/**
                          * Drawer displays the selected Paper
@@ -331,9 +329,6 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                 </p>
                                 <p>{selectedNode.paperAbstract}</p>
                             </Drawer.Body>
-                            <Drawer.Footer>
-
-                            </Drawer.Footer>
                         </Drawer>
                         {/**
                          * ForceGraph2D renders the actual graph
