@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Divider, FlexboxGrid, Icon, Input, InputGroup, Modal, Panel, Tooltip, Whisper } from 'rsuite';
-import './styles/Settings.css'
+import './styles/Settings.scss'
 
 interface SettingsProps {
     showSettings: boolean;

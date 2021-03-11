@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './PageImprint.css'
+import './PageImprint.scss'
 
 export const PageImprint : React.FC = () => {
     return(

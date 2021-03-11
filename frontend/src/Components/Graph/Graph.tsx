@@ -7,7 +7,7 @@ import sizeMe from 'react-sizeme'
 import { PaperNode, PapersAndSimilarities, PaperGraphData, SimilarityLinkObject } from './GraphTypes';
 import { GetMinAndMaxFromMatrix, Normalize } from './GraphHelperfunctions';
 
-import './Graph.css'
+import './Graph.scss'
 import { addSavedPaper, getSavedSliders, setSavedSliders } from '../../Utils/Webstorage';
 import { useHistory } from 'react-router-dom';
 import { Bookmark } from '../General/Bookmark';

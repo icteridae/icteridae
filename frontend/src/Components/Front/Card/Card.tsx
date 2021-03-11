@@ -2,7 +2,7 @@ import React from "react";
 import {Panel} from "rsuite";
 import {Link} from 'react-router-dom';
 
-import './Card.css';
+import './Card.scss';
 
 /**
  * This Interface represents a subset of the metadata. This subset is shown in the recent paper cards

@@ -1,4 +1,5 @@
 @import '../../../../node_modules/rsuite/dist/styles/rsuite-dark.css';
+@import '../../../Utils/colors';
 
 .navbar-brand {
        padding: 18px 20px;
@@ -10,13 +11,13 @@
 }
 
 #navbar {
-       background-color: #161C27;
+       background-color: $color-background-light;
 }
 
 .rs-nav-item-active > .rs-nav-item-content{
-       color: #7ac9ab !important;
+       color: $color-accent !important;
 }
 
 .rs-navbar.rs-navbar-subtle .rs-dropdown .rs-dropdown-toggle {
-       background-color: #161C27;
+       background-color: $color-background-light;
 }

@@ -10,7 +10,7 @@ import { PageSavedPapers } from '../SavedPapers/PageSavedPapers';
 import { PageSearchResult } from '../Search/SearchResult/PageSearchResult';
 import { SavedPapers } from '../SavedPapers/PageSavedPapersLocalstorage';
 
-import './App.css';
+import './App.scss';
 
 import logo from '../../icon.png'
 
