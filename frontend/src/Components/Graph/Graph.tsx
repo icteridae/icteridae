@@ -283,16 +283,15 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                                 setweakLinkFilter(value/100);
                                             }}
                                         />
+                                        <span className='graph-settings-subtitle'>Colorblindness Pallettes</span>
+                                        <SelectPicker 
+                                        data={pallettes.map(x => ({value: x, label: x[0]}))}
+                                        searchable={false}
+                                        cleanable={false}
+                                        value={pallette}
+                                        onSelect={setPallette}/>
                                     </div>
                                 </div>
-
-                                <SelectPicker 
-                                    data={pallettes.map(x => ({value: x, label: x[0]}))}
-                                    searchable={false}
-                                    cleanable={false}
-                                    value={pallette}
-                                    onSelect={setPallette}/>
-
                             </Drawer.Body>
                         </Drawer>
                         {/**

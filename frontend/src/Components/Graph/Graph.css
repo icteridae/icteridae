@@ -160,5 +160,5 @@
 
 .graph-settings-weak-links {
     margin-left: 6px;
-    width: 100%;
+    width: calc(100% - 6px);
 }
