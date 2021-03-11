@@ -29,7 +29,7 @@ export const SearchResultCard : React.FC<SearchResultCardProps> = (props) => {
                     <Bookmark paper_id={props.data.id}/>
                 </h3>
                 <span className="author">{props.data.authors.map(obj => obj.name).join(", ")}</span>
-                <span>{props.data.fieldsOfStudy.join(" ,")}</span>
+                <span>{props.data.fieldsOfStudy.join(", ")}</span>
                 <span className="date">{props.data.year}</span>
                 <span className="preview-text">{(props.data.paperAbstract === "") ? "no Abstract available" : (props.data.paperAbstract.substr(0, 320) + "...")}</span>
             </div>
