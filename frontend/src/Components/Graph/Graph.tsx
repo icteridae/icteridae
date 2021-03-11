@@ -1,10 +1,9 @@
 import React from 'react';
 
 import ForceGraph2D from 'react-force-graph-2d';
-import { Button, Drawer, Slider, InputNumber, Loader, Icon, Popover, Whisper, ButtonGroup, Divider } from 'rsuite';
+import { Button, Drawer, Slider, InputNumber, Loader, Icon, Popover, Whisper, ButtonGroup, Divider, SelectPicker } from 'rsuite';
 import sizeMe from 'react-sizeme'
 import Linkify from 'react-linkify';
-import pallette from 'colorkind/dist/12';
 
 import { PaperNode, PapersAndSimilarities, PaperGraphData, SimilarityLinkObject } from './GraphTypes';
 import { GetMinAndMaxFromMatrix, Normalize, hash, hexToRGB } from './GraphHelperfunctions';
@@ -13,6 +12,7 @@ import './Graph.css'
 import { addSavedPaper, getSavedSliders, setSavedSliders } from '../../Utils/Webstorage';
 import { useHistory } from 'react-router-dom';
 import { Bookmark } from '../General/Bookmark';
+import { pallettes } from './Colors';
 
 // Node Parameters
 // Added inside log(inCitations) to shift the logarithm
@@ -162,6 +162,9 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
     // weak Link Filter Slider value
     const [weakLinkFilter, setweakLinkFilter] = React.useState<number>(0);
 
+    // selected pallette
+    const [pallette, setPallette] = React.useState<[string, string[]]>(pallettes[0]);
+
     let history = useHistory()
 
     React.useEffect(() => {
@@ -281,6 +284,14 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                         />
                                     </div>
                                 </div>
+
+                                <SelectPicker 
+                                    data={pallettes.map(x => ({value: x, label: x[0]}))}
+                                    searchable={false}
+                                    cleanable={false}
+                                    value={pallette}
+                                    onSelect={setPallette}/>
+
                             </Drawer.Body>
                             <Drawer.Footer>
 
@@ -380,7 +391,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                             if((node as PaperNode).fieldsOfStudy.toString() === defaultFieldOfStudy){
                                                 ctx.fillStyle = `rgba(122, 201, 171, ${(((node as PaperNode).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as PaperNode).year - new Date().getFullYear()) + 1))})`;  
                                             }else{
-                                                ctx.fillStyle = hexToRGB(pallette[hash((node as PaperNode).fieldsOfStudy.toString()) % pallette.length], (((node as PaperNode).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as PaperNode).year - new Date().getFullYear()) + 1)).toString());
+                                                ctx.fillStyle = hexToRGB(pallette[1][hash((node as PaperNode).fieldsOfStudy.toString()) % pallette[1].length], (((node as PaperNode).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as PaperNode).year - new Date().getFullYear()) + 1)).toString());
                                             }
                                         }
                                         ctx.beginPath();
