@@ -1,5 +1,7 @@
+@import '../../../Utils/colors';
+
 input#search-bar {
-    background-color: #161C27;
+    background-color: $color-background-light;
 }
 
 #search-bar-group {
@@ -8,8 +10,8 @@ input#search-bar {
 }
 
 .rs-input-group:hover {
-    border-color: #61847D !important;
+    border-color: $color-search-border !important;
 }
 .rs-input-group-focus {
-    border-color: #61847D !important;
+    border-color: $color-search-border !important;
 }

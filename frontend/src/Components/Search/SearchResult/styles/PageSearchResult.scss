@@ -1,8 +1,10 @@
+@import '../../../../Utils/colors';
+
 .page-search-result {
     display: flex;
     flex-direction: row;
     width: 100%;
-    background-color: #0F131A;
+    background-color: $color-background;
 }
 
 .page-search-result .wrapper {
@@ -15,12 +17,12 @@
     font-weight: unset;
     font-size: 1.9vw;
     line-height: 5.2vh;
-    color: #a4a9b3;
+    color: $color-title-font;
     margin: 20px 0 0 20px;
 }
 
 .page-search-result #query-title .line {
-    border-bottom: 2px #61847D solid;
+    border-bottom: 2px $color-search-border solid;
     width: 80%;
     height: 10px;
     margin-left: 20px;
@@ -42,18 +44,18 @@
     font-size: 1.4vw;
     padding: 0 20px;
 
-    background-color: #0F131A;
+    background-color: $color-background;
     margin: 5vh 0 3vh 11vw;
     overflow-y: scroll;
 
     border-radius: 20px;
-    border-left: 0.4vw outset #61847D;
+    border-left: 0.4vw outset $color-search-border;
 }
 
 .page-search-result .abstract-view h1 {
     font-family: "Segoe UI",Arial,sans-serif;
     font-weight: lighter;
-    color: #96d4bc;
+    color: $color-imprint;
     
     line-height: inherit;
 }
