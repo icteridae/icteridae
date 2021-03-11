@@ -1,11 +1,13 @@
 import React from 'react';
 
 import ForceGraph2D from 'react-force-graph-2d';
-import { Button, Drawer, Slider, InputNumber, Loader, Icon, Popover, Whisper } from 'rsuite';
+import { Button, Drawer, Slider, InputNumber, Loader, Icon, Popover, Whisper, ButtonGroup, Divider } from 'rsuite';
 import sizeMe from 'react-sizeme'
+import Linkify from 'react-linkify';
+import pallette from 'colorkind/dist/12';
 
 import { PaperNode, PapersAndSimilarities, PaperGraphData, SimilarityLinkObject } from './GraphTypes';
-import { GetMinAndMaxFromMatrix, Normalize } from './GraphHelperfunctions';
+import { GetMinAndMaxFromMatrix, Normalize, hash, hexToRGB } from './GraphHelperfunctions';
 
 import './Graph.css'
 import { addSavedPaper, getSavedSliders, setSavedSliders } from '../../Utils/Webstorage';
@@ -21,6 +23,8 @@ const nodeBaseSize: number = 4;
 const lowerBoundForNodeOppacity: number = 0.5;
 // How many years backwards will have their oppacity scaled. Any Paper older than currentYear - paperOppacityYearRange will get the lowerBound value
 const paperOppacityYearRange: number = 20;
+// Use our Standard Accent Color for all Papers that only have the Computer Science Field of Study
+const defaultFieldOfStudy: string = 'Computer Science';
 
 // Link Parameters
 // Size of Link that the Cursor hovers over
@@ -68,7 +72,7 @@ const generateGraph = (data : PapersAndSimilarities) : PaperGraphData =>{
         target: data.paper[y].id,
         color: `rgba(150,150,150,${similarityMatrix[x][y]})`,
         similarity: data.similarities.map((similiarity, index) => normalized_tensor[index][x][y]),
-        label: "",//data.similarities.map((similiarity, index) => normalized_tensor[index][x][y]).toString(),
+        label: '',//data.similarities.map((similiarity, index) => normalized_tensor[index][x][y]).toString(),
         isHovered: false,
     })))).flat();
 
@@ -134,7 +138,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
     // total number of Sliders needed base on the number of similarity metrics applied
     const sliderCount: number = props.data.tensor.length;
 
-    // reference to the Graph used for TODO: insert Usage  
+    // reference to the Graph
     const fgRef = React.useRef();
 
     // slider values
@@ -151,6 +155,12 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
 
     // load an empty Graph until the real Data is fetched
     const [graphData, setGraphData] = React.useState<PaperGraphData>({nodes : [], links : []})
+
+    // boolean to decide wheter the Title or the author and year should be displayed on the nodes
+    const [showTitle, setShowTitle] = React.useState<Boolean>(true);
+
+    // weak Link Filter Slider value
+    const [weakLinkFilter, setweakLinkFilter] = React.useState<number>(0);
 
     let history = useHistory()
 
@@ -213,7 +223,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                         >
                             <Drawer.Header>
                                 <Drawer.Title>
-                                    {'Slider'}
+                                    Slider
                                 </Drawer.Title>
                             </Drawer.Header>
                             <Drawer.Body>
@@ -222,7 +232,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                         <div className='slider'>
                                             <div>{props.data.similarities[index].name + ':  '}
                                                 <Whisper placement="right" trigger="hover" speaker={<Popover title={props.data.similarities[index].name}>
-                                                        <p>{props.data.similarities[index].description}</p>
+                                                        <Linkify><p>{props.data.similarities[index].description}</p></Linkify>
                                                     </Popover>} enterable>
                                                     <Icon icon="info"/>
                                                 </Whisper></div>
@@ -254,6 +264,22 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                                 </div>
                                         </div>)
                                     )}
+                                    <Divider />
+                                    <div className='graph-settings'>
+                                        <span className='graph-settings-title'>Settings</span>
+                                        <ButtonGroup>
+                                            <Button appearance='ghost' onClick={() => setShowTitle(true)}>Title</Button>
+                                            <Button appearance='ghost' onClick={() => setShowTitle(false)}>Author, Year</Button>
+                                        </ButtonGroup>
+                                        <span className='graph-settings-subtitle'>Weak Link Filter</span>
+                                        <Slider className='graph-settings-weak-links'
+                                            progress
+                                            defaultValue={0}
+                                            onChange={value => {
+                                                setweakLinkFilter(value/100);
+                                            }}
+                                        />
+                                    </div>
                                 </div>
                             </Drawer.Body>
                             <Drawer.Footer>
@@ -342,21 +368,24 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                     // Remove nodeCanvasObject to get normal circular nodes
                                     nodeCanvasObject={(node, ctx, globalScale) => {
                                         let paperName = (node as PaperNode).title;
-                                        const label = paperName.length > 25 ? paperName.substring(0, 20).concat("...") : paperName;
+                                        let authorName = (node as PaperNode).authors[0].name.split(' ');
+                                        const label = showTitle ? (paperName.length > 25 ? paperName.substring(0, 20).trim() + '...' : paperName) : authorName[authorName.length-1] + ', ' + (node as PaperNode).year;
                                         const fontSize = 12/globalScale;
                                         ctx.font = `${fontSize}px Sans-Serif`;
-                                        //const textWidth = ctx.measureText(label as string).width;
                                         
                                         //Node Color
-                                        //console.log((((node as Paper).year - (new Date().getFullYear() - 20) < 0 ? 5 : ((node as Paper).year - (new Date().getFullYear() - 20)))/20));
                                         if((node as PaperNode).id === props.data.paper[0].id){
-                                            ctx.fillStyle = `rgba(146, 122, 201, ${(((node as PaperNode).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as PaperNode).year - new Date().getFullYear()) + 1))})`;
+                                            ctx.fillStyle = `rgba(136, 46, 114, ${(((node as PaperNode).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as PaperNode).year - new Date().getFullYear()) + 1))})`;
                                         }else{
-                                            ctx.fillStyle = `rgba(122, 201, 171, ${(((node as PaperNode).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as PaperNode).year - new Date().getFullYear()) + 1))})`;
+                                            if((node as PaperNode).fieldsOfStudy.toString() === defaultFieldOfStudy){
+                                                ctx.fillStyle = `rgba(122, 201, 171, ${(((node as PaperNode).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as PaperNode).year - new Date().getFullYear()) + 1))})`;  
+                                            }else{
+                                                ctx.fillStyle = hexToRGB(pallette[hash((node as PaperNode).fieldsOfStudy.toString()) % pallette.length], (((node as PaperNode).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as PaperNode).year - new Date().getFullYear()) + 1)).toString());
+                                            }
                                         }
                                         ctx.beginPath();
-                                        //Node shape (arc creates a cirle at coordinate (node.x, node.y) with radius (radiusmagie). Last 2 Parameters are needed to draw a full circle)
-                                        ctx.arc(node.x!, node.y!, Math.sqrt(Math.max(0, Math.log((node as PaperNode).inCitations.length + logBulk) * nodeBaseSize || 1)) * 4, 0 , 2 * Math.PI);
+                                        //Node shape (arc creates a cirle at coordinate (node.x, node.y) with radius (radiusmagic). Last 2 Parameters are needed to draw a full circle)
+                                        ctx.arc(node.x!, node.y!, Math.sqrt(Math.max(0, Math.log((node as PaperNode).citations + logBulk) * nodeBaseSize || 1)) * 4, 0 , 2 * Math.PI);
                                         if((node as PaperNode).isHovered){
                                             //Circle Edge Color when the Node is hovered
                                             ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
@@ -372,16 +401,12 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                         ctx.fillStyle = 'rgba(230, 230, 230, 0.8)';//(node as Paper).color;
                                         ctx.fillText(label as string, node.x!, node.y!);
                                     }}
-                                    nodeAutoColorBy='fieldsOfStudy'
-                                    nodeLabel='title'
                                     linkLabel={(link) => (link as SimilarityLinkObject).label}
                                     linkWidth={(link) => (link as SimilarityLinkObject).isHovered ? linkOnHoverWidth 
                                         : ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y)*3)}
                                     linkVisibility={(link) => 
-                                        ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y) !== 0)}
-                                    linkCurvature='curvature'
-                                    linkDirectionalArrowLength='arrowLen'
-                                    linkDirectionalParticles='dirParticles'
+                                        ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y) !== 0) &&
+                                        ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y)) > weakLinkFilter/3}
                                     d3VelocityDecay={0.95}
                                     cooldownTicks={100}
                                     //onEngineStop={() => (fgRef.current as any).zoomToFit(400, 100)}
