@@ -15,7 +15,7 @@ import { Bookmark } from '../General/Bookmark';
 import { pallettes } from './Colors';
 
 // Node Parameters
-// Added inside log(inCitations) to shift the logarithm
+// Added inside log(inCitations) to shift the logarithm. Can not be less than 1!
 const logBulk: number = 2;
 // Linear Factor to increase each Nodes size
 const nodeBaseSize: number = 4;
@@ -25,6 +25,10 @@ const lowerBoundForNodeOppacity: number = 0.251;
 const paperOppacityYearRange: number = 20;
 // Use our Standard Accent Color for all Papers that only have the Computer Science Field of Study
 const defaultFieldOfStudy: string = 'Computer Science';
+// Size of the Node with the least Citations
+const smallestNodeSize: number = 10;
+// Size of the Node with the most Citations
+const largestNodeSize: number = 100;
 
 // Link Parameters
 // Size of Link that the Cursor hovers over
@@ -76,10 +80,13 @@ const generateGraph = (data : PapersAndSimilarities) : PaperGraphData =>{
         isHovered: false,
     })))).flat();
 
+    let leastCitations = Math.log(data.paper.reduce((paper, smallest) => (paper.citations < smallest.citations) ? paper : smallest ).citations + logBulk);
+    let mostCitations = Math.log(data.paper.reduce((paper, largest) => (paper.citations > largest.citations) ? paper : largest).citations + logBulk);
+
     const nodes = data.paper.map((paper, index) => ({
         ...paper,
         color: '',
-        val: Math.log(paper.inCitations.length + logBulk) * nodeBaseSize,
+        val: (((Math.log(paper.citations + logBulk) - leastCitations) / (mostCitations - leastCitations)) * (largestNodeSize - smallestNodeSize)) + smallestNodeSize,
         isHovered: false,
     }));
 
@@ -165,6 +172,9 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
     // selected pallette
     const [pallette, setPallette] = React.useState<[string, string[]]>(pallettes[0]);
 
+    // used to increase/decrease the Node Repelling Force (ManyBodyForce)
+    const [nodeRepelling, setNodeRepelling] = React.useState<number>(0);
+
     let history = useHistory()
 
     React.useEffect(() => {
@@ -182,10 +192,10 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
         if (fg) {
             fg.d3Force('charge').strength(-100);
             fg.d3Force('charge').distanceMin(10);
-            fg.d3Force('link').distance((link : SimilarityLinkObject) => 100 / (link.similarity.map((element, index) => element * sliders[index] / 100).reduce((x,y) => x+y) + squish));
+            fg.d3Force('link').distance((link : SimilarityLinkObject) => 100 / (link.similarity.map((element, index) => element * sliders[index] / 100).reduce((x,y) => x+y) + squish)+nodeRepelling*2);
             fg.d3Force('link').strength((link : SimilarityLinkObject) => (link.similarity.map((element, index) => element * sliders[index] / 100).reduce((x,y) => x+y) + squish));
         }
-        }, [sliders]);
+        }, [sliders, nodeRepelling]);
 
     // EffectHook for rerendering upon slider changes
     React.useEffect(() => {
@@ -193,7 +203,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
         if (fg) {
             fg.d3ReheatSimulation();
         }
-    }, [sliders]);
+    }, [sliders, nodeRepelling]);
 
     return(
         <div>
@@ -285,11 +295,19 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                         />
                                         <span className='graph-settings-subtitle'>Colorblindness Pallettes</span>
                                         <SelectPicker 
-                                        data={pallettes.map(x => ({value: x, label: x[0]}))}
-                                        searchable={false}
-                                        cleanable={false}
-                                        value={pallette}
-                                        onSelect={setPallette}/>
+                                            data={pallettes.map(x => ({value: x, label: x[0]}))}
+                                            searchable={false}
+                                            cleanable={false}
+                                            value={pallette}
+                                            onSelect={setPallette}/>
+                                        <span className='graph-settings-subtitle'>Node Repelling Force</span>
+                                        <Slider className='graph-settings-node-repelling'
+                                            progress
+                                            defaultValue={0}
+                                            onChange={value => {
+                                                setNodeRepelling(value);
+                                            }}
+                                        />
                                     </div>
                                 </div>
                             </Drawer.Body>
@@ -390,7 +408,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                         }
                                         ctx.beginPath();
                                         //Node shape (arc creates a cirle at coordinate (node.x, node.y) with radius (radiusmagic). Last 2 Parameters are needed to draw a full circle)
-                                        ctx.arc(node.x!, node.y!, Math.sqrt(Math.max(0, Math.log((node as PaperNode).citations + logBulk) * nodeBaseSize || 1)) * 4, 0 , 2 * Math.PI);
+                                        ctx.arc(node.x!, node.y!, Math.sqrt(Math.max(0, (node as PaperNode).val || 1)) * 4, 0 , 2 * Math.PI);
                                         if((node as PaperNode).isHovered){
                                             //Circle Edge Color when the Node is hovered
                                             ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
