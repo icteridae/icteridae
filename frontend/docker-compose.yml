@@ -5,8 +5,8 @@ services:
   web:
     container_name: icteridae-react
     build: .
-    command: "yarn start"
-    volumes: 
+    volumes:
       - .:/app
+      - /app/node_modules/
     ports: 
       - "3000:3000"

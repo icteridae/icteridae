@@ -75,8 +75,12 @@ export const NewPageSavedPapers: React.FC = () => {
     useEffect(() => {
         setTreeData(treeData => PaperFunctions.deepMap(treeData,
             node => (
-                TreeTypes.isDirectoryNode(node) && directoryNames.hasOwnProperty(node.value) ? {...node, label: <RenamableDirectory name={directoryNames.hasOwnProperty(node.value) ? directoryNames[node.value] : 'Loading...'} 
-                setName={(val) => setDirectoryNames((directoryNames) => ({...directoryNames, [node.value]: val}))}/>} 
+                TreeTypes.isDirectoryNode(node) && directoryNames.hasOwnProperty(node.value) ? {
+                    ...node, 
+                    label: <RenamableDirectory name={directoryNames.hasOwnProperty(node.value) ? directoryNames[node.value] : 'Loading...'} 
+                                setName={(val) => setDirectoryNames((directoryNames) => ({...directoryNames, [node.value]: val}))}/>,
+                    directoryName: directoryNames[node.value]
+            } 
                 : node
             )))
     }, [directoryNames])
@@ -100,6 +104,9 @@ export const NewPageSavedPapers: React.FC = () => {
                 </Button>
                 <Button onClick={() => localStorage.setItem('savedpapers', JSON.stringify(testData))}>
                     Reset localStorage
+                </Button>
+                <Button onClick={() => console.log(directoryNames)}>
+                    Get Dir names
                 </Button>
                 {selectedTreeNode != null && (
                     <Button onClick={() => setTreeData(PaperFunctions.deleteTreeNode(selectedTreeNode.value, treeData))}>

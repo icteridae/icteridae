@@ -13,8 +13,8 @@ export interface PaperNode extends NodeObject, Paper {
     /** The color of the node */
     color: string,
 
-    /** Paper Similarity to selected Paper/Graph Origin */
-    originSim: number,
+    /** Boolean if the node is hovered */
+    isHovered: boolean,
 }
 
 /**
