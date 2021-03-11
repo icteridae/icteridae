@@ -1,6 +1,8 @@
+@import '../../Utils/colors';
+
 .rs-drawer-content {
-    background-color: #161C27;
-}
+    background-color: $color-background-light;
+} 
 
 .rs-drawer-right.rs-drawer-sm, .rs-drawer-left.rs-drawer-sm {
     width: 25%;
@@ -92,8 +94,7 @@
 }
 
 .rs-drawer-header .rs-drawer-title {
-    font-size: 2vh;
-    color: #a4a9b3;
+    color: $color-title-font;
 }
 
 .rs-drawer-body {
@@ -107,7 +108,7 @@
 }
 
 .slider {
-    color: #c5cad4;
+    color: $color-slider;
 }
 
 .slider-with-input-number {
@@ -124,20 +125,20 @@
 }
 
 .rs-slider-bar {
-    background-color: #a9a9a9 !important;
+    background-color: $color-accent-monochrome !important;
 }
 
 .rs-slider-progress-bar {
-    background-color: #7ac9ab !important;
+    background-color: $color-accent !important;
 }
 
 .rs-input-number {
     width: 70px;
-    border-color: #7ac9ab !important;
+    border-color: $color-accent !important;
 }
 
 .rs-slider-handle::before {
-    border: 2px solid #7ac9ab;
+    border: 2px solid $color-accent;
 }
 
 .graph-settings {

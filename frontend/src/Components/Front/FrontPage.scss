@@ -1,3 +1,5 @@
+@import '../../Utils/colors';
+
 ::-webkit-scrollbar {
     display: none;
 }
@@ -8,7 +10,7 @@
     align-items: center;
     flex: 1;
 
-    background-color: #0F131A;
+    background-color: $color-background;
 }
 
 .frontpage-content {
@@ -38,7 +40,7 @@
 
 
 .frontpage-footer {
-    background-color: #161C27;
+    background-color: $color-background-light;
     height: 10vh;
     min-width: 100%;
     padding:2vh;

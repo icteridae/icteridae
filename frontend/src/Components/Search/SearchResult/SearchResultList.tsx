@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import './styles/SearchResultList.css';
+import './styles/SearchResultList.scss';
 import { SearchResultCard } from "./SearchResultCard";
 import { DataInterface } from './Types';
 import Config from '../../../Utils/Config';

@@ -8,7 +8,7 @@ import Linkify from 'react-linkify';
 import { PaperNode, PapersAndSimilarities, PaperGraphData, SimilarityLinkObject } from './GraphTypes';
 import { GetMinAndMaxFromMatrix, Normalize, hash, hexToRGB } from './GraphHelperfunctions';
 
-import './Graph.css'
+import './Graph.scss'
 import { addSavedPaper, getSavedSliders, setSavedSliders } from '../../Utils/Webstorage';
 import { useHistory } from 'react-router-dom';
 import { Bookmark } from '../General/Bookmark';

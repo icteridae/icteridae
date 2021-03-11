@@ -9,7 +9,7 @@ import * as GeneralTypes from '../../Utils/GeneralTypes';
 import { RenamableDirectory } from './RenameableDirectory';
 import { Link } from 'react-router-dom';
 
-import './paper.css'
+import './paper.scss'
 
 const testData: TreeTypes.StrippedPaperOrDirectoryNode[] = 
 [
@@ -75,8 +75,12 @@ export const NewPageSavedPapers: React.FC = () => {
     useEffect(() => {
         setTreeData(treeData => PaperFunctions.deepMap(treeData,
             node => (
-                TreeTypes.isDirectoryNode(node) && directoryNames.hasOwnProperty(node.value) ? {...node, label: <RenamableDirectory name={directoryNames.hasOwnProperty(node.value) ? directoryNames[node.value] : 'Loading...'} 
-                setName={(val) => setDirectoryNames((directoryNames) => ({...directoryNames, [node.value]: val}))}/>} 
+                TreeTypes.isDirectoryNode(node) && directoryNames.hasOwnProperty(node.value) ? {
+                    ...node, 
+                    label: <RenamableDirectory name={directoryNames.hasOwnProperty(node.value) ? directoryNames[node.value] : 'Loading...'} 
+                                setName={(val) => setDirectoryNames((directoryNames) => ({...directoryNames, [node.value]: val}))}/>,
+                    directoryName: directoryNames[node.value]
+            } 
                 : node
             )))
     }, [directoryNames])

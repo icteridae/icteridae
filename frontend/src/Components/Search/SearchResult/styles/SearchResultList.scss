@@ -1,3 +1,5 @@
+@import '../../../../Utils/colors';
+
 .result-list {
     display: flex;
     flex-direction: column;
@@ -13,16 +15,16 @@
 
 .result-list > div {
     margin-bottom: 20px;
-    border-left: 0.4vw outset #61847D33;
+    border-left: 0.4vw outset $color-search-border;
 }
 
 #test {
     align-self: center;
-    border-bottom: 3px solid #96d4bc;
+    border-bottom: 3px solid $color-imprint;
     margin-bottom: 20px;
 }
 
 #test .rs-pagination-btn-active > a {
-    color: #96d4bc;
+    color: $color-imprint;
 }
 
