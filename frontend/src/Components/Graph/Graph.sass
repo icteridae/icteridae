@@ -30,12 +30,12 @@
     flex-direction: column
     align-items: center
     justify-content: center
-    height: calc(90vh - 56px)
+    height: calc(100vh - 56px)
 
 
 .graph-container 
     overflow: hidden
-    height: calc(90vh - 56px)
+    height: calc(100vh - 56px)
     min-width: 100%
 
 
@@ -55,14 +55,14 @@
     align-items: center
     font-size: 1.5em
     font-weight: lighter
-    background-color: #212c4100
+    background-color: $color-background
     padding-top: 20vh
     padding-bottom: 20vh
     writing-mode: vertical-rl
     transform: rotate(180deg)
-    border-left: 0.2vw outset #61847D
+    border-left: 0.2vw outset $color-search-border
     border-radius: 20px
-    color: #61847D
+    color: $color-search-border
 
 
 .legend 
@@ -74,17 +74,22 @@
     width: 20vw
     z-index: 2
 
-.legend-link-width
+
+.legend-link-width-container
+    display: flex
+    height: 4px
+
+
+.legend-link-width    
     position: absolute
     display: block
-    top: 0
-    bottom: 0
     width: 100%
-    height: 10%
-    background: #007bff
+    height: 4px
+    background: $color-accent-light
     -webkit-clip-path: polygon(100% 0, 100% 100%, 0 50%)
     clip-path: polygon(100% 0, 100% 100%, 0 50%)
 
+    
 .legend-circles 
     display: flex
     flex-direction: row
@@ -93,7 +98,7 @@
 
 
 .circle 
-    background-color: #7AC9ABFF
+    background-color: $color-accent-light
     border-radius: 50%
 
     &--1 
@@ -129,23 +134,35 @@
     &--6 
         @extend .circle
         width: 35px
-        height: 35px
-    
+        height: 35px  
 
 
 .legend-color-bar 
     height: 2vh
-    background: linear-gradient(90deg,#7AC9AB40,#7AC9ABFF)
+    background: linear-gradient(90deg,rgba($color-accent-light, .40),$color-accent-light)
 
 
-.legend-description 
-    display: flex
-    justify-content: space-between
+.legend-description
+    position: relative
+    height: 2vh
     margin-bottom: 2vh
 
 
-.legend-description-right 
-    margin-left: auto
+.legend-description-child
+    position: absolute
+
+    &1
+        @extend .legend-description-child
+        left: 0
+
+    &2
+        @extend .legend-description-child
+        left: 50%
+        transform: translatex(-50%)
+
+    &3
+        @extend .legend-description-child
+        right: 0
 
 
 .force-graph-container 
@@ -207,23 +224,50 @@
 
 .graph-settings-title 
     font-size: 2vh
-    color: #a4a9b3
+    color: $color-title-font
     margin-bottom: 1vh
 
 
 .graph-settings-subtitle 
     font-size: 1.5vh
-    color: #a4a9b3
-    margin-top: 2vh    
+    color: $color-title-font
+    margin-top: 1.5vh    
     margin-bottom: 0.5vh
 
 
 .graph-settings-subtitle-first 
     font-size: 1.5vh
-    color: #a4a9b3  
+    color: $color-title-font
     margin-bottom: 0.5vh
+
+
+.switch-button-2
+    background-color: $color-background-light
+
+
+.rs-btn-primary, .rs-btn-primary:not(.rs-btn-disabled):hover, .rs-btn-primary:focus, .rs-btn-primary:active, .rs-btn-primary:active:focus
+    background-color: $color-accent-light
+
+
+.rs-btn-ghost
+    color: $color-accent-light
+    border: 1px solid lighten($color-accent-light, 20%)
+
+
+.rs-btn-ghost:hover, .rs-btn-ghost:active, .rs-btn-ghost:focus, .rs-btn-ghost:active:hover, .rs-btn-ghost:active:focus
+    color: lighten($color-accent-light, 20%)
+    border: 1px solid lighten($color-accent-light, 20%)
 
 
 .graph-settings-slider 
     margin-left: 6px
     width: calc(100% - 6px)
+
+
+.rs-picker-toggle-value
+    color: $color-accent-light !important
+
+
+.rs-picker-select-menu-item.rs-picker-select-menu-item-active, .rs-picker-select-menu-item.rs-picker-select-menu-item-active:hover
+    color: $color-accent-light
+    background-color: rgba($color-accent-light, .2)

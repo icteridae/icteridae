@@ -183,6 +183,9 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
     // most Citations of a Paper in the generated Graph
     const [mostCitations, setMostCitations] = React.useState<number>(0);
 
+    // boolean to decide wheter the legend should be displayed or not
+    const [showLegend, setShowLegend] = React.useState<boolean>(true);
+
     let history = useHistory()
 
     React.useEffect(() => {
@@ -225,11 +228,17 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                         Slider
                     </div>
                 </div>
-                <div className='legend'>
-                    <div className='legend-link-width'></div>
+                {showLegend && <div className='legend'>
                     <div className='legend-description'>
-                        <span>Low Similarity Link</span>
-                        <span className='legend-description-right'>High Similarity Link</span>
+                        <span>Distinct Colors = Distinct Fields Of Study</span>
+                    </div>
+                    <div className='legend-link-width-container'>
+                        <div className='legend-link-width'></div>
+                    </div>
+                    <div className='legend-description'>
+                        <span className='legend-description-child1'>Low</span>
+                        <span className='legend-description-child2'>Link Similarity</span>
+                        <span className='legend-description-child3'>High</span>
                     </div>
                     <div className='legend-circles'>
                         <div className='circle--1'></div>
@@ -239,15 +248,17 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                         <div className='circle--5'></div>
                     </div>
                     <div className='legend-description'>
-                        <span>{leastCitations + ' Citations'}</span>
-                        <span className='legend-description-right'>{mostCitations + ' Citations'}</span>
+                        <span className='legend-description-child1'>{leastCitations}</span>
+                        <span className='legend-description-child2'>Citations</span>
+                        <span className='legend-description-child3'>{mostCitations}</span>
                     </div>
                     <div className='legend-color-bar'></div>
                     <div className='legend-description'>
-                        <span>{new Date().getFullYear() - paperOppacityYearRange}</span>
-                        <span className='legend-description-right'>{new Date().getFullYear()}</span>
+                        <span className='legend-description-child1'>{new Date().getFullYear() - paperOppacityYearRange}</span>
+                        <span className='legend-description-child2'>Year</span>
+                        <span className='legend-description-child3'>{new Date().getFullYear()}</span>
                     </div>
-                </div>
+                </div>}
 
                 {props.data.tensor.length > 0 ? 
                     <>
@@ -311,8 +322,13 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                         <span className='graph-settings-title'>Settings</span>
                                         <span className='graph-settings-subtitle-first'>Node Label</span>
                                         <ButtonGroup>
-                                            <Button appearance={showTitle ? 'primary' : 'default'} onClick={() => setShowTitle(true)}>Title</Button>
-                                            <Button appearance={showTitle ? 'default' : 'primary'} onClick={() => setShowTitle(false)}>Author, Year</Button>
+                                            <Button className='switch-button-2' appearance={showTitle ? 'primary' : 'ghost'} onClick={() => setShowTitle(true)}>Title</Button>
+                                            <Button className='switch-button-2' appearance={showTitle ? 'ghost' : 'primary'} onClick={() => setShowTitle(false)}>Author, Year</Button>
+                                        </ButtonGroup>
+                                        <span className='graph-settings-subtitle'>Legend</span>
+                                        <ButtonGroup>
+                                            <Button className='switch-button-2' appearance={showLegend ? 'primary' : 'ghost'} onClick={() => setShowLegend(true)}>On</Button>
+                                            <Button className='switch-button-2' appearance={showLegend ? 'ghost' : 'primary'} onClick={() => setShowLegend(false)}>Off</Button>
                                         </ButtonGroup>
                                         <span className='graph-settings-subtitle'>Weak Link Filter</span>
                                         <Slider className='graph-settings-slider'
@@ -430,9 +446,9 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                             ctx.fillStyle = `rgba(136, 46, 114, ${(((node as PaperNode).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as PaperNode).year - new Date().getFullYear()) + 1))})`;
                                         }else{
                                             if((node as PaperNode).fieldsOfStudy.toString() === defaultFieldOfStudy){
-                                                ctx.fillStyle = `rgba(122, 201, 171, ${(((node as PaperNode).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as PaperNode).year - new Date().getFullYear()) + 1))})`;  
+                                                ctx.fillStyle = `rgba(231, 156, 69, ${(((node as PaperNode).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as PaperNode).year - new Date().getFullYear()) + 1))})`;  
                                             }else{
-                                                ctx.fillStyle = hexToRGB(pallette[1][hash((node as PaperNode).fieldsOfStudy.toString()) % pallette[1].length], (((node as PaperNode).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as PaperNode).year - new Date().getFullYear()) + 1)).toString());
+                                                ctx.fillStyle = hexToRGB(pallette[1][hash((node as PaperNode).fieldsOfStudy.slice().sort().toString()) % pallette[1].length], (((node as PaperNode).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as PaperNode).year - new Date().getFullYear()) + 1)).toString());
                                             }
                                         }
                                         ctx.beginPath();
@@ -453,6 +469,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                         ctx.fillStyle = 'rgba(230, 230, 230, 0.8)';//(node as Paper).color;
                                         ctx.fillText(label as string, node.x!, node.y!);
                                     }}
+                                    nodeLabel='title'
                                     linkLabel={(link) => (link as SimilarityLinkObject).label}
                                     linkWidth={(link) => (link as SimilarityLinkObject).isHovered ? linkOnHoverWidth 
                                         : ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y)*3)}
