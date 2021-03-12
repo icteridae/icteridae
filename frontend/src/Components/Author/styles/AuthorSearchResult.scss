@@ -1,14 +1,11 @@
+@import '../../../Utils/colors';
+
 .wrapper {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
 
     width: 100%;
-    background-color: #0F131A;
-}
-
-.wrapper .search-bar {
-    margin: 30px auto 0 auto;
 }
 
 .author-search-result {
@@ -33,7 +30,7 @@
 .author-name {
     font-size: 3.5vw;
     line-height: 9vh;
-    color: #96d4bc;
+    color: $color-imprint;
 }
 
 .paper-list {

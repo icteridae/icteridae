@@ -1,12 +1,17 @@
 @import '../../../Utils/colors';
 
 .rs-input-group {
-    margin: 30px auto 0 auto;
+    margin: 40px auto 0 auto;
 }
-.page-search-result {
+#author-search-result{
     display: block;
 }
-.result-list {
+
+#author-list-wrapper {
+    width: 100%;
+}
+
+#author-result-list {
     font-family: "Segoe UI",Arial,sans-serif;
     font-size: 1.46vw;
     font-weight: lighter;

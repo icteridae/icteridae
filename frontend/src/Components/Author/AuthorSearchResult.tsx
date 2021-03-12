@@ -6,7 +6,7 @@ import {DataInterface} from "../Search/SearchResult/Types";
 import {AuthorInterface} from "./AuthorInterface";
 import {SearchResultCard} from "../Search/SearchResult/SearchResultCard";
 import {AutoComplete, Icon, InputGroup} from "rsuite";
-import {useParams} from "react-router-dom";
+import {useHistory, useParams} from "react-router-dom";
 
 interface AuthorResultProps {
     text?: string;
@@ -15,25 +15,15 @@ interface AuthorResultProps {
 
 export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
     let {id} = useParams<{id: string}>();
+    let history = useHistory();
 
     // Searchbar input
     const [input, setInput] = useState('');
-    // Searchbar autocomplete data
-    const [authorAutocompleteList, setAuthorAutocompleteList] = useState<AuthorInterface[]>();
     // Currently displayed author
     const [selectedAuthor, setSelectedAuthor] = useState<AuthorInterface>()
     // Papers depending on selected author
     const [authorPapers, setAuthorPapers] = useState<DataInterface[]>();
 
-
-    // Effect hook for fetching author list from search API
-    useEffect(() => {
-        let requestURL = Config.base_url + '/api/search_author/?query=' + input;
-
-        fetch(requestURL)
-            .then(res => res.json())
-            .then(result => setAuthorAutocompleteList(result.data)).catch(() => console.log("Can't access " + requestURL));
-    }, [input]);
 
     // Effect hook for setting author and fetching paper data from search API
     useEffect(() => {
@@ -49,6 +39,10 @@ export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
             .then(res => res.json())
             .then(result => setAuthorPapers(result.data)).catch(() => console.log("Can't access " + requestURLAuthorPapers));
     }, [id]);
+
+    const buttonClick = () => {
+        history.push(`/authorsearch/${input}`);
+    }
 
 
     // Display data only if author is selected
@@ -76,10 +70,10 @@ export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
         <div className="wrapper">
             <div className="search-bar">
                 {props.text? <><div className='text'>{props.text} </div> <br /></> : null}
-                <form>
+                <form onSubmit={buttonClick}>
                     <InputGroup id="search-bar-group">
-                        <AutoComplete placeholder={props.placeholder} data={authorAutocompleteList?.map((author) => {return {label: author.name, value: author.id}})} value={input} onChange={(e) => setInput(e)} onSelect={(e) => window.location.href=`/author/${e.value}`}/>
-                        <InputGroup.Button type="submit" onClick={() => window.location.href = '/author/' + selectedAuthor?.id}>
+                        <AutoComplete placeholder={props.placeholder} value={input} onChange={(e) => setInput(e)} />
+                        <InputGroup.Button type="submit" onClick={buttonClick}>
                             <Icon icon="search" />
                         </InputGroup.Button>
                     </InputGroup>
