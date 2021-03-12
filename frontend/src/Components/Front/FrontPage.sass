@@ -1,0 +1,52 @@
+@import '../../Utils/colors'
+
+::-webkit-scrollbar 
+    display: none
+
+
+.frontpage 
+    display: flex
+    flex-direction: column
+    align-items: center
+    flex: 1
+
+    background-color: $color-background
+
+
+    .frontpage-content 
+        display: flex
+        flex-direction: column
+        align-items: center
+        flex: 1
+        font-family: "Segoe UI",Arial,sans-serif
+
+        h1 
+            font-weight: lighter
+            margin-top: 17vh
+            margin-bottom: 2vh
+
+
+    .recent-papers 
+        margin-top: 30vh
+        width: 50vw
+
+
+    .recent-papers > h3 
+        font-weight: lighter
+        margin-bottom: 2vh
+
+    .frontpage-footer 
+        background-color: $color-background-light
+        height: 10vh
+        min-width: 100%
+        padding: 2vh
+
+    .frontpage-footer img 
+        height: 6vh
+
+    .sync-loader
+        margin-top: 30vh
+
+    span > span // Colors the loader without using javascript. Need to be this way as the loaders somehow used obfucated classes
+        background-color: $color-accent
+
