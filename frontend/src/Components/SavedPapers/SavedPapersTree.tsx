@@ -9,9 +9,10 @@ import * as GeneralTypes from '../../Utils/GeneralTypes';
 import { RenamableDirectory } from './RenameableDirectory';
 import { Link } from 'react-router-dom';
 
-import './paper.scss'
+import './SavedPapers.sass'
 
-export const NewPageSavedPapers: React.FC = () => {
+
+export const SavedPapersTree: React.FC = () => {
     
     const [selectedTreeNode, setSelectedTreeNode] = useState<TreeTypes.PaperOrDirectoryNode>();
     const [loadedPapers, setLoadedPapers] = useState<{ [id: string] : GeneralTypes.Paper}>({})
@@ -41,7 +42,14 @@ export const NewPageSavedPapers: React.FC = () => {
     useEffect(() => {
         setTreeData(treeData => PaperFunctions.deepMap(treeData, 
             node => (
-                TreeTypes.isPaperNode(node) && loadedPapers.hasOwnProperty(node.paperId) ? {...node, label: <>{loadedPapers[node.paperId].title}</>} 
+                TreeTypes.isPaperNode(node) && loadedPapers.hasOwnProperty(node.paperId) ? 
+                    {...node, label: 
+                        <>{loadedPapers[node.paperId].title 
+                            + ' (' 
+                            + loadedPapers[node.paperId].authors[0].name.split(' ').slice(-1)[0] 
+                            + ' ' 
+                            + loadedPapers[node.paperId].year 
+                            + ')'} </>} 
                 : node
                 )))
     }, [loadedPapers])
@@ -64,7 +72,7 @@ export const NewPageSavedPapers: React.FC = () => {
     }, [treeData, directoryNames])
 
     return (
-        <div className="page-my-papers">
+        <div className="saved-papers-tree">
             <Tree
                 data={treeData}
                 draggable
