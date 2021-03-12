@@ -9,6 +9,7 @@ import { SearchResultCard } from '../Search/SearchResult/SearchResultCard';
 import Config from '../../Utils/Config'
 
 import SyncLoader from "react-spinners/SyncLoader";
+import { Alert, Button, Divider, Footer } from 'rsuite';
 
 /**
  * Frontpage is shown when the user the Web-Application. If exists it shows the recently opened papers
@@ -55,10 +56,14 @@ export const FrontPage: React.FC = () => {
     return (
         <div className="frontpage">
             <div className="frontpage-content">
-                <h1>
-                    Welcome to Icteridae!
-                </h1>
-                <SearchBar/>
+                <div className='full-view'>
+                    <h1>
+                        Icteridae
+                    </h1>
+                    <SearchBar placeholder='Begin exploring research...'/>
+                </div>
+                <div id='recent-papers-superscript'>scroll to see recent papers</div>
+                <Divider/>
                 <div>  
                     {recentlyOpenedPapers !== null && 
                         (recentlyOpenedPapers.length === 0 ? 
@@ -84,6 +89,10 @@ export const FrontPage: React.FC = () => {
                     }
                 </div>
             </div>
+            <Footer className='footer'>
+                <img src={logo} alt="Logo"/> &copy; {new Date().getFullYear()} Icteridae
+                <Button className='impressum' onClick={() => Alert.info('There is no impressum yet', 5000)} appearance='link'>Impressum</Button>
+            </Footer>
         </div>
     );
 }

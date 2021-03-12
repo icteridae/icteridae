@@ -5,31 +5,45 @@
 
 
 .frontpage 
-    display: flex
-    flex-direction: column
-    align-items: center
-    flex: 1
+    
+    padding: auto
 
     background-color: $color-background
 
+    .rs-divider .rs-divider-horizontal
+
+        color: #fff
 
     .frontpage-content 
-        display: flex
-        flex-direction: column
-        align-items: center
-        flex: 1
+
+        margin: auto
+        padding-bottom: 5vh
+        width: 60em
         font-family: "Segoe UI",Arial,sans-serif
 
-        h1 
-            font-weight: lighter
-            margin-top: 17vh
-            margin-bottom: 2vh
 
+        .full-view
+            height: 86vh
+            text-align: center
+
+            #search-bar-group
+                margin: auto
+
+            h1 
+                font-weight: lighter
+                padding-top: 30vh
+                padding-bottom: 2vh
+
+        #recent-papers-superscript
+            text-align: center
+            color: gray
+
+        .rs-divider-horizontal
+            margin-top: 12px
 
     .recent-papers 
-        margin-top: 30vh
-        width: 50vw
-
+        margin-top: 10vh
+        //width: 50vw
 
     .recent-papers > h3 
         font-weight: lighter
@@ -45,7 +59,9 @@
         height: 6vh
 
     .sync-loader
-        margin-top: 30vh
+        margin: auto
+        width: 0%
+        margin-top: 10vh
 
     span > span // Colors the loader without using javascript. Need to be this way as the loaders somehow used obfucated classes
         background-color: $color-accent
