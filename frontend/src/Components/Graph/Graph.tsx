@@ -226,10 +226,13 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                     </div>
                 </div>
                 <div className='legend'>
-                    <div className='legend-link-width'></div>
+                    <div className='legend-link-width-container-weil-block-und-position-kagge-sind'>
+                        <div className='legend-link-width'></div>
+                    </div>
                     <div className='legend-description'>
-                        <span>Low Similarity Link</span>
-                        <span className='legend-description-right'>High Similarity Link</span>
+                        <span>Low</span>
+                        <span>Link Similarity</span>
+                        <span>High</span>
                     </div>
                     <div className='legend-circles'>
                         <div className='circle--1'></div>
@@ -239,13 +242,15 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                         <div className='circle--5'></div>
                     </div>
                     <div className='legend-description'>
-                        <span>{leastCitations + ' Citations'}</span>
-                        <span className='legend-description-right'>{mostCitations + ' Citations'}</span>
+                        <span>{leastCitations}</span>
+                        <span>Citations</span>
+                        <span>{mostCitations}</span>
                     </div>
                     <div className='legend-color-bar'></div>
                     <div className='legend-description'>
                         <span>{new Date().getFullYear() - paperOppacityYearRange}</span>
-                        <span className='legend-description-right'>{new Date().getFullYear()}</span>
+                        <span>Year</span>
+                        <span>{new Date().getFullYear()}</span>
                     </div>
                 </div>
 
@@ -311,8 +316,8 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                         <span className='graph-settings-title'>Settings</span>
                                         <span className='graph-settings-subtitle-first'>Node Label</span>
                                         <ButtonGroup>
-                                            <Button appearance={showTitle ? 'primary' : 'default'} onClick={() => setShowTitle(true)}>Title</Button>
-                                            <Button appearance={showTitle ? 'default' : 'primary'} onClick={() => setShowTitle(false)}>Author, Year</Button>
+                                            <Button className='switch-button-2' appearance={showTitle ? 'primary' : 'default'} onClick={() => setShowTitle(true)}>Title</Button>
+                                            <Button className='switch-button-2' appearance={showTitle ? 'default' : 'primary'} onClick={() => setShowTitle(false)}>Author, Year</Button>
                                         </ButtonGroup>
                                         <span className='graph-settings-subtitle'>Weak Link Filter</span>
                                         <Slider className='graph-settings-slider'
