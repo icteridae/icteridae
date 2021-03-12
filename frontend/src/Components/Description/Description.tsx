@@ -46,8 +46,7 @@ export const Description: React.FC = () => {
                     Just as with similarities, relevance metrics can be exchanged using a simple Python interface.
                 </p>
 
-                
-            
+
             </Content>
         </Container>
     );

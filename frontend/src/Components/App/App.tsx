@@ -1,12 +1,10 @@
 import React from 'react';
-import { Footer, Button, Alert } from 'rsuite';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 import { NavBarInstance } from '../Navbar/Navbar';
 import { FrontPage } from '../Front/FrontPage';
 import { PageImprint } from '../Privacy/PageImprint';
 import { GraphFetch } from '../Graph/GraphHelperfunctions';
-import { PageSavedPapers } from '../SavedPapers/PageSavedPapers';
 import { PageSearchResult } from '../Search/SearchResult/PageSearchResult';
 import { SavedPapers } from '../SavedPapers/PageSavedPapersLocalstorage';
 import { Description } from '../Description/Description';
