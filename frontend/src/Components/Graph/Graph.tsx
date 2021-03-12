@@ -230,9 +230,9 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                         <div className='legend-link-width'></div>
                     </div>
                     <div className='legend-description'>
-                        <span>Low</span>
-                        <span>Link Similarity</span>
-                        <span>High</span>
+                        <span className='legend-description-child1'>Low</span>
+                        <span className='legend-description-child2'>Link Similarity</span>
+                        <span className='legend-description-child3'>High</span>
                     </div>
                     <div className='legend-circles'>
                         <div className='circle--1'></div>
@@ -242,15 +242,15 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                         <div className='circle--5'></div>
                     </div>
                     <div className='legend-description'>
-                        <span>{leastCitations}</span>
-                        <span>Citations</span>
-                        <span>{mostCitations}</span>
+                        <span className='legend-description-child1'>{leastCitations}</span>
+                        <span className='legend-description-child2'>Citations</span>
+                        <span className='legend-description-child3'>{mostCitations}</span>
                     </div>
                     <div className='legend-color-bar'></div>
                     <div className='legend-description'>
-                        <span>{new Date().getFullYear() - paperOppacityYearRange}</span>
-                        <span>Year</span>
-                        <span>{new Date().getFullYear()}</span>
+                        <span className='legend-description-child1'>{new Date().getFullYear() - paperOppacityYearRange}</span>
+                        <span className='legend-description-child2'>Year</span>
+                        <span className='legend-description-child3'>{new Date().getFullYear()}</span>
                     </div>
                 </div>
 

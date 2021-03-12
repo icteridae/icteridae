@@ -143,10 +143,25 @@
     background: linear-gradient(90deg,rgba($color-accent-light, .40),$color-accent-light)
 
 
-.legend-description 
-    display: flex
-    justify-content: space-between
+.legend-description
+    position: relative
+    height: 2vh
     margin-bottom: 2vh
+
+
+.legend-description-child1
+    position: absolute
+    left: 0
+
+
+.legend-description-child2
+    position: absolute
+    left: 50%
+    transform: translatex(-50%)
+
+.legend-description-child3
+    position: absolute
+    right: 0
 
 
 .force-graph-container 
@@ -236,3 +251,16 @@
 .graph-settings-slider 
     margin-left: 6px
     width: calc(100% - 6px)
+
+
+.rs-picker-default:not(.rs-picker-disabled) .rs-picker-toggle:hover, .rs-picker-default:not(.rs-picker-disabled) .rs-picker-toggle.active
+    border-color: $color-accent-light
+
+
+.rs-picker-toggle-value
+    color: $color-accent-light !important
+
+
+.rs-picker-select-menu-item.rs-picker-select-menu-item-active, .rs-picker-select-menu-item.rs-picker-select-menu-item-active:hover
+    color: $color-accent-light
+    background-color: rgba($color-accent-light, .2)
