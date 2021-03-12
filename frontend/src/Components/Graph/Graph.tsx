@@ -8,7 +8,7 @@ import Linkify from 'react-linkify';
 import { PaperNode, PapersAndSimilarities, PaperGraphData, SimilarityLinkObject } from './GraphTypes';
 import { GetMinAndMaxFromMatrix, Normalize, hash, hexToRGB } from './GraphHelperfunctions';
 
-import './Graph.scss'
+import './Graph.sass'
 import { addSavedPaper, getSavedSliders, setSavedSliders } from '../../Utils/Webstorage';
 import { useHistory } from 'react-router-dom';
 import { Bookmark } from '../General/Bookmark';
@@ -57,7 +57,7 @@ function ChoosingSliderValues(sliderCount : number) {
  * @param data contains all papers, similarities and similarities between papers
  * @returns a GraphData object consisting of nodes[] and links[]
  */
-const generateGraph = (data : PapersAndSimilarities) : PaperGraphData =>{
+const generateGraph = (data : PapersAndSimilarities) : [PaperGraphData, number, number] =>{
     let similarityMatrix : number[][] = new Array(data.paper.length);
 
     const normalized_tensor = data.tensor.map(matrix => {
@@ -80,20 +80,22 @@ const generateGraph = (data : PapersAndSimilarities) : PaperGraphData =>{
         isHovered: false,
     })))).flat();
 
-    let leastCitations = Math.log(data.paper.reduce((paper, smallest) => (paper.citations < smallest.citations) ? paper : smallest ).citations + logBulk);
-    let mostCitations = Math.log(data.paper.reduce((paper, largest) => (paper.citations > largest.citations) ? paper : largest).citations + logBulk);
+    let leastCitations = data.paper.reduce((paper, smallest) => (paper.citations < smallest.citations) ? paper : smallest ).citations;
+    let mostCitations = data.paper.reduce((paper, largest) => (paper.citations > largest.citations) ? paper : largest).citations;
 
     const nodes = data.paper.map((paper, index) => ({
         ...paper,
         color: '',
-        val: (((Math.log(paper.citations + logBulk) - leastCitations) / (mostCitations - leastCitations)) * (largestNodeSize - smallestNodeSize)) + smallestNodeSize,
+        val: (((Math.log(paper.citations + logBulk) - Math.log(leastCitations + logBulk)) / (Math.log(mostCitations + logBulk) - Math.log(leastCitations + logBulk))) * (largestNodeSize - smallestNodeSize)) + smallestNodeSize,
         isHovered: false,
     }));
 
-    return ({    
+    return ([{    
         nodes: nodes,
         links: links,
-    });
+    },
+    leastCitations,
+    mostCitations]);
 }
 
 /**
@@ -175,6 +177,12 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
     // used to increase/decrease the Node Repelling Force (ManyBodyForce)
     const [nodeRepelling, setNodeRepelling] = React.useState<number>(0);
 
+    // least Citations of a Paper in the generated Graph
+    const [leastCitations, setLeastCitations] = React.useState<number>(0);
+
+    // most Citations of a Paper in the generated Graph
+    const [mostCitations, setMostCitations] = React.useState<number>(0);
+
     let history = useHistory()
 
     React.useEffect(() => {
@@ -182,8 +190,12 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
     }, [sliderCount])
 
     React.useEffect(() => {
-        if (props.data.tensor.length > 0)
-            setGraphData(generateGraph(props.data));
+        if (props.data.tensor.length > 0){
+            let graphData = generateGraph(props.data);
+            setGraphData(graphData[0]);
+            setLeastCitations(graphData[1]);
+            setMostCitations(graphData[2]);
+        }
     }, [props.data])
 
     // EffectHook for playing with forces
@@ -213,11 +225,27 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                         Slider
                     </div>
                 </div>
-                <div className='node-color-legend'>
+                <div className='legend'>
+                    <div className='legend-link-width'></div>
+                    <div className='legend-description'>
+                        <span>Low Similarity Link</span>
+                        <span className='legend-description-right'>High Similarity Link</span>
+                    </div>
+                    <div className='legend-circles'>
+                        <div className='circle--1'></div>
+                        <div className='circle--2'></div>
+                        <div className='circle--3'></div>
+                        <div className='circle--4'></div>
+                        <div className='circle--5'></div>
+                    </div>
+                    <div className='legend-description'>
+                        <span>{leastCitations + ' Citations'}</span>
+                        <span className='legend-description-right'>{mostCitations + ' Citations'}</span>
+                    </div>
                     <div className='legend-color-bar'></div>
-                    <div className='legend-years'>
+                    <div className='legend-description'>
                         <span>{new Date().getFullYear() - paperOppacityYearRange}</span>
-                        <span className='last-year'>{new Date().getFullYear()}</span>
+                        <span className='legend-description-right'>{new Date().getFullYear()}</span>
                     </div>
                 </div>
 
@@ -236,11 +264,12 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                         >
                             <Drawer.Header>
                                 <Drawer.Title>
-                                    Similarities
+                                    Graph Controller
                                 </Drawer.Title>
                             </Drawer.Header>
                             <Drawer.Body>
                                 <div className='slider-popup'>
+                                    <span className='graph-settings-title'>Similarites</span>
                                     {sliders.map((sliderVal, index) => (
                                         <div className='slider'>
                                             <div>{props.data.similarities[index].name + ':  '}
@@ -280,17 +309,25 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                     <Divider />
                                     <div className='graph-settings'>
                                         <span className='graph-settings-title'>Settings</span>
-                                        <span className='graph-settings-subtitle'>Node Label</span>
+                                        <span className='graph-settings-subtitle-first'>Node Label</span>
                                         <ButtonGroup>
                                             <Button appearance={showTitle ? 'primary' : 'default'} onClick={() => setShowTitle(true)}>Title</Button>
                                             <Button appearance={showTitle ? 'default' : 'primary'} onClick={() => setShowTitle(false)}>Author, Year</Button>
                                         </ButtonGroup>
                                         <span className='graph-settings-subtitle'>Weak Link Filter</span>
-                                        <Slider className='graph-settings-weak-links'
+                                        <Slider className='graph-settings-slider'
                                             progress
                                             defaultValue={0}
                                             onChange={value => {
                                                 setweakLinkFilter(value/100);
+                                            }}
+                                        />
+                                        <span className='graph-settings-subtitle'>Node Repelling Force</span>
+                                        <Slider className='graph-settings-slider'
+                                            progress
+                                            defaultValue={0}
+                                            onChange={value => {
+                                                setNodeRepelling(value);
                                             }}
                                         />
                                         <span className='graph-settings-subtitle'>Colorblindness Pallettes</span>
@@ -300,14 +337,6 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                             cleanable={false}
                                             value={pallette}
                                             onSelect={setPallette}/>
-                                        <span className='graph-settings-subtitle'>Node Repelling Force</span>
-                                        <Slider className='graph-settings-node-repelling'
-                                            progress
-                                            defaultValue={0}
-                                            onChange={value => {
-                                                setNodeRepelling(value);
-                                            }}
-                                        />
                                     </div>
                                 </div>
                             </Drawer.Body>
