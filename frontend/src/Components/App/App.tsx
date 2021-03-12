@@ -26,10 +26,5 @@ import logo from '../../icon.png'
           <Route exact path='/results/paper/:id' component={FrontPage}/>
           {/* TODO: insert other routes. See paths in Navbar.tsx */}
       </Switch>
-      
-      {/*<Footer className='footer'>
-                <img src={logo} alt="Logo"/> &copy; {new Date().getFullYear()} Icteridae
-                <Button className='impressum' onClick={() => Alert.info('There is no impressum yet', 5000)} appearance='link'>Impressum</Button>
- </Footer>*/}
     </BrowserRouter>
   );
