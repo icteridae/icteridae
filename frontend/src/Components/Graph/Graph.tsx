@@ -372,16 +372,16 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                             </Drawer.Header>
                             <Drawer.Body>
                                 <p>
-                                    <Button color='cyan' appearance='ghost' href={selectedNode.s2Url} target='_blank'>
+                                    <Button appearance='ghost' href={selectedNode.s2Url} target='_blank'>
                                         Open in Semantic Scholar
                                     </Button>
 
 
-                                    <Button color='cyan' appearance='ghost' onClick={() => addSavedPaper(selectedNode.id)}>
+                                    <Button appearance='ghost' onClick={() => addSavedPaper(selectedNode.id)}>
                                         Save Paper
                                     </Button>
 
-                                    <Button color='cyan' appearance='ghost' onClick={() => {history.push(`/graph/${selectedNode.id}`)}}>
+                                    <Button appearance='ghost' onClick={() => {history.push(`/graph/${selectedNode.id}`)}}>
                                         Generate Graph
                                     </Button>
                                 </p>
