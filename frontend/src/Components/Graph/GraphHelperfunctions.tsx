@@ -6,6 +6,8 @@ import { addRecentPaper } from '../../Utils/Webstorage';
 
 import Graph from './Graph';
 import { useParams } from 'react-router-dom';
+import { NoGraph } from './NoGraph';
+import { Loader } from 'rsuite';
 
 /**
  * Function to determine the smallest and largest number in a matrix
@@ -131,7 +133,7 @@ export const GraphFetch: React.FC = () => {
     /*
     ** useState Hook to save the graphData 
     */
-    const [graph, setGraph] = React.useState<PapersAndSimilarities>({tensor: [], paper: [], similarities: []});
+    const [graph, setGraph] = React.useState<PapersAndSimilarities | undefined>();
 
     const {id} = useParams<{id : string}>();
 
@@ -140,9 +142,7 @@ export const GraphFetch: React.FC = () => {
     ** EffectHook for the initial Load of the graph
     */
     React.useEffect(() => {
-        //loadData();
-
-        setGraph({tensor: [], paper: [], similarities: []})
+      
         let requestURL = Config.base_url + '/api/generate_graph/?paper_id=' + id;
 
         addRecentPaper(id);
@@ -165,6 +165,12 @@ export const GraphFetch: React.FC = () => {
     };*/
 
     return (
-        <Graph data={graph}/>
+        !graph ? <Loader 
+          className='loader' 
+          content='Loading...'
+          size='md'
+        />
+        : graph.paper.length === 0 ? <NoGraph/> 
+        : <Graph data={graph}/> 
     );
 }

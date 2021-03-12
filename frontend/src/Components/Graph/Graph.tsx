@@ -160,7 +160,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
     const [sliderDrawer, setSliderDrawer] = React.useState(false);
     
     // selected Node to display on drawer
-    const [selectedNode, setNode] = React.useState(initNode);
+    const [selectedNode, setNode] = React.useState(props.data.paper[0]);
 
     // load an empty Graph until the real Data is fetched
     const [graphData, setGraphData] = React.useState<PaperGraphData>({nodes : [], links : []})
@@ -190,7 +190,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
     }, [sliderCount])
 
     React.useEffect(() => {
-        if (props.data.tensor.length > 0){
+        if (props.data.paper.length > 0){
             let graphData = generateGraph(props.data);
             setGraphData(graphData[0]);
             setLeastCitations(graphData[1]);
