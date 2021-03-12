@@ -12,7 +12,6 @@ import { Link } from 'react-router-dom';
 import './paper.scss'
 
 export const NewPageSavedPapers: React.FC = () => {
-
     
     const [selectedTreeNode, setSelectedTreeNode] = useState<TreeTypes.PaperOrDirectoryNode>();
     const [loadedPapers, setLoadedPapers] = useState<{ [id: string] : GeneralTypes.Paper}>({})
