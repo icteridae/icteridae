@@ -1,0 +1,229 @@
+@import '../../Utils/colors'
+
+.rs-drawer-content 
+    background-color: $color-background-light
+ 
+
+.rs-drawer-right.rs-drawer-sm, .rs-drawer-left.rs-drawer-sm 
+    width: 25%
+
+
+.rs-drawer-left 
+    top: auto
+    bottom: 0
+    height: calc(100% - 56px)
+
+
+.rs-drawer-right 
+    top: auto
+    bottom: 0
+    right: 0
+    height: calc(100% - 56px)
+
+
+.rs-loader-has-content 
+    height: 100%
+
+
+.loader 
+    display: flex
+    flex-direction: column
+    align-items: center
+    justify-content: center
+    height: calc(90vh - 56px)
+
+
+.graph-container 
+    overflow: hidden
+    height: calc(90vh - 56px)
+    min-width: 100%
+
+
+.show-slider-icon 
+    display: flex
+    flex-direction: column
+    justify-content: center
+    position: absolute
+    width: 2.5vw
+    height: 100%
+    z-index: 2
+
+
+.show-slider-text 
+    display: flex
+    flex-direction: row
+    align-items: center
+    font-size: 1.5em
+    font-weight: lighter
+    background-color: #212c4100
+    padding-top: 20vh
+    padding-bottom: 20vh
+    writing-mode: vertical-rl
+    transform: rotate(180deg)
+    border-left: 0.2vw outset #61847D
+    border-radius: 20px
+    color: #61847D
+
+
+.legend 
+    display: flex
+    flex-direction: column
+    position: absolute
+    bottom: 0vh
+    right: 2vw
+    width: 20vw
+    z-index: 2
+
+.legend-link-width
+    position: absolute
+    display: block
+    top: 0
+    bottom: 0
+    width: 100%
+    height: 10%
+    background: #007bff
+    -webkit-clip-path: polygon(100% 0, 100% 100%, 0 50%)
+    clip-path: polygon(100% 0, 100% 100%, 0 50%)
+
+.legend-circles 
+    display: flex
+    flex-direction: row
+    justify-content: space-between
+    align-items: center
+
+
+.circle 
+    background-color: #7AC9ABFF
+    border-radius: 50%
+
+    &--1 
+        @extend .circle
+        width: 10px
+        height: 10px
+    
+    
+    &--2 
+        @extend .circle
+        width: 15px
+        height: 15px
+    
+
+    &--3 
+        @extend .circle
+        width: 20px
+        height: 20px
+    
+
+    &--4 
+        @extend .circle
+        width: 25px
+        height: 25px
+    
+
+    &--5 
+        @extend .circle
+        width: 30px
+        height: 30px
+    
+
+    &--6 
+        @extend .circle
+        width: 35px
+        height: 35px
+    
+
+
+.legend-color-bar 
+    height: 2vh
+    background: linear-gradient(90deg,#7AC9AB40,#7AC9ABFF)
+
+
+.legend-description 
+    display: flex
+    justify-content: space-between
+    margin-bottom: 2vh
+
+
+.legend-description-right 
+    margin-left: auto
+
+
+.force-graph-container 
+    z-index: 1
+
+
+.rs-drawer-header .rs-drawer-title 
+    color: $color-title-font
+
+
+.rs-drawer-body 
+    margin: 0px 0px
+    padding: 30px 20px
+
+
+.slider-popup 
+    display: flex
+    flex-direction: column
+
+
+.slider 
+    color: $color-slider
+
+
+.slider-with-input-number 
+    display: flex
+    flex-direction: row
+    justify-content: space-between
+    padding-top: 3px
+    padding-bottom: 3px
+    margin-left: 6px
+
+
+.rs-slider 
+    width: calc(100% - 80px)
+
+
+.rs-slider-bar 
+    background-color: $color-accent-monochrome !important
+
+
+.rs-slider-progress-bar 
+    background-color: $color-accent !important
+
+
+.rs-input-number 
+    width: 70px
+    border-color: $color-accent !important
+
+
+.rs-slider-handle::before 
+    border: 2px solid $color-accent
+
+
+.graph-settings 
+    display: flex
+    flex-direction: column
+
+
+.graph-settings-title 
+    font-size: 2vh
+    color: #a4a9b3
+    margin-bottom: 1vh
+
+
+.graph-settings-subtitle 
+    font-size: 1.5vh
+    color: #a4a9b3
+    margin-top: 2vh    
+    margin-bottom: 0.5vh
+
+
+.graph-settings-subtitle-first 
+    font-size: 1.5vh
+    color: #a4a9b3  
+    margin-bottom: 0.5vh
+
+
+.graph-settings-slider 
+    margin-left: 6px
+    width: calc(100% - 6px)
