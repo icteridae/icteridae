@@ -1,5 +1,5 @@
-import './AuthorSearchResult.css'
-import '../Search/SearchBar/SearchBar.css'
+import './styles/AuthorSearchResult.scss'
+import '../Search/SearchBar/SearchBar.scss'
 import React, {useEffect, useState} from "react";
 import Config from "../../Utils/Config";
 import {DataInterface} from "../Search/SearchResult/Types";

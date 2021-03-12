@@ -1,0 +1,20 @@
+@import '../../../Utils/colors';
+
+.rs-input-group {
+    margin: 30px auto 0 auto;
+}
+.page-search-result {
+    display: block;
+}
+.result-list {
+    font-family: "Segoe UI",Arial,sans-serif;
+    font-size: 1.46vw;
+    font-weight: lighter;
+}
+a {
+  color: $color-imprint;
+}
+
+a:hover {
+    color: $color-accent-light;
+}

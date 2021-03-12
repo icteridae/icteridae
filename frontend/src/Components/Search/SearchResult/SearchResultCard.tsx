@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Icon, IconButton } from 'rsuite';
 import { addSavedPaper, getSavedPapersList } from '../../../Utils/Webstorage';
 import { Bookmark } from '../../General/Bookmark';
-import './styles/SearchResultCard.css';
+import './styles/SearchResultCard.scss';
 import { DataInterface } from './Types';
 
 interface SearchResultCardProps {

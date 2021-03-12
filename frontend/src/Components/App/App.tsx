@@ -9,6 +9,7 @@ import { PageSearchResult } from '../Search/SearchResult/PageSearchResult';
 import { SavedPapers } from '../SavedPapers/PageSavedPapersLocalstorage';
 import { Description } from '../Description/Description';
 import {AuthorSearchResult} from "../Author/AuthorSearchResult";
+import {AuthorSearch} from "../Author/AuthorSearch";
 
 import './App.scss';
 
@@ -26,7 +27,8 @@ import logo from '../../icon.png'
           <Route exact path='/graph/:id' component={GraphFetch}/>
           <Route exact path='/results/paper/:id' component={FrontPage}/>
           <Route exact path='/author/:id' component={AuthorSearchResult}/>
-          <Route exact path='/author' component={AuthorSearchResult}/>
+          <Route exact path='/authorsearch' component={AuthorSearch}/>
+          <Route exact path='/authorsearch/:query' component={AuthorSearch}/>
           {/* TODO: insert other routes. See paths in Navbar.tsx */}
       </Switch>
       
