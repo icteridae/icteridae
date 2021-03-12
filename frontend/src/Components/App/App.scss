@@ -1,6 +1,8 @@
+@import '../../Utils/colors';
+
 .footer {
     height: 10vh;
-    background-color: #161C27;   
+    background-color: $color-background-light;   
     min-width: 100%;
     padding:2vh;
 }

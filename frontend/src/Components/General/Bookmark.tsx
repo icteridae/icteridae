@@ -13,7 +13,7 @@ export const Bookmark: React.FC<{paper_id: string, savedPapers?: string[]}> = (p
     return (
         <IconButton 
         size="xs" 
-        icon={<Icon icon={isSaved ? "star" : "star-o"} />} 
+        icon={<Icon icon={isSaved ? "bookmark" : "bookmark-o"} />} 
         appearance="subtle" 
         onClick={() => {
             if (isSaved) {removeSavedPaper(props.paper_id); setIsSaved(false)} 

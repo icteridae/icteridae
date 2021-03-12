@@ -1,5 +1,7 @@
+@import '../../../../Utils/colors';
+
 .search-result-card {
-    background-color: #0F131A;
+    background-color: $color-background;
     transition: 0.5s;
     border-radius: 6px;
     padding: 20px;
@@ -7,7 +9,7 @@
 }
 
 .search-result-card.card-selected {
-    border-left: 0.4vw outset #61847D;
+    border-left: 0.4vw outset $color-search-border;
     border-radius: 20px;
 }
 
@@ -35,9 +37,9 @@
 }
 
 .search-result-card a {
-    color: #96d4bc;
+    color: $color-imprint;
 }
 
 .search-result-card a:hover {
-    color:#A8DCC8;
+    color:$color-accent-light;
 }

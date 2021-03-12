@@ -23,7 +23,7 @@ export interface Paper {
 
     citations: number,
     references: number,
-
+    val: number,
 }
 
 export interface Similarity {

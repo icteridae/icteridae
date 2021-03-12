@@ -1,0 +1,40 @@
+
+@import '../../Utils/colors'
+
+
+.saved-papers-tree  
+
+    .rs-tree 
+        max-height: unset // As rsuite somehow sets a maximum height on trees. I don't know why :(
+        background-color: unset
+
+    .rs-tree-node-active .rs-tree-node-label .rs-tree-node-label-content
+        color: #e6caab
+        background-color: $color-background-light !important
+
+    .rs-tree-node-label-content
+        border-radius: 10px
+
+    .rs-tree-children 
+        margin-left: 40px
+        border-left: 2px solid $color-search-border
+        border-bottom-left-radius: 10px
+        border-top-left-radius: 3px
+
+        .rs-tree-node 
+            padding-left: unset !important
+
+            .rs-tree-node-label
+                padding-left: 5px
+
+.saved-papers-sidebar
+    padding-left: 5px
+    min-height: 60em
+    border-left: 2px solid $color-search-border
+    border-top-left-radius: 10px
+    border-bottom-left-radius: 10px
+
+
+            
+
+    

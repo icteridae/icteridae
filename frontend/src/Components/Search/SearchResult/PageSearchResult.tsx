@@ -6,7 +6,7 @@ import { SearchResultList, setAbstractViewToCorrectHeight } from './SearchResult
 
 import { useParams } from 'react-router-dom';
 
-import './styles/PageSearchResult.css';
+import './styles/PageSearchResult.scss';
 
 
 export const PageSearchResult : React.FC = () => {

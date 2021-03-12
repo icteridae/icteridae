@@ -6,6 +6,8 @@ import { addRecentPaper } from '../../Utils/Webstorage';
 
 import Graph from './Graph';
 import { useParams } from 'react-router-dom';
+import { NoGraph } from './NoGraph';
+import { Loader } from 'rsuite';
 
 /**
  * Function to determine the smallest and largest number in a matrix
@@ -86,13 +88,52 @@ export const  FindBoundary = (matrix : number[][]) => {
 }
 
 /**
+ * Simple Hashfunction. These Variables dont have a real Meaning and the function will only be used to generate colors.
+ * @param s is a string that we want to hash
+ * @returns the hash Value of s
+ */
+export const hash = (s : string) : number => {
+  /* Simple hash function. */
+  var a = 1, c = 0, h, o;
+  if (s) {
+      a = 0;
+      /*jshint plusplus:false bitwise:false*/
+      for (h = s.length - 1; h >= 0; h--) {
+          o = s.charCodeAt(h);
+          a = (a<<6&268435455) + o + (o<<14);
+          c = a & 266338304;
+          a = c!==0?a^c>>21:a;
+      }
+  }
+  return a;
+};
+
+/**
+ * Function to transform a colorcode from hex to rgba
+ * @param hex colorcode as hex-string (#000000 for example)
+ * @param alpha is a number between 0 and 1 as string. Not necessary for a RGB Color.
+ * @returns a string in rgb format
+ */
+export const hexToRGB = (hex : string, alpha : string) : string => {
+  var red = parseInt(hex.slice(1, 3), 16),
+      green = parseInt(hex.slice(3, 5), 16),
+      blue = parseInt(hex.slice(5, 7), 16);
+
+  if (alpha) {
+      return "rgba(" + red + ", " + green + ", " + blue + ", " + alpha + ")";
+  } else {
+      return "rgb(" + red + ", " + green + ", " + blue + ")";
+  }
+}
+
+/**
  * Helperfunction to fetch Graph Data during Development. Will be deleted in later Versions
  */
 export const GraphFetch: React.FC = () => {
     /*
     ** useState Hook to save the graphData 
     */
-    const [graph, setGraph] = React.useState<PapersAndSimilarities>({tensor: [], paper: [], similarities: []});
+    const [graph, setGraph] = React.useState<PapersAndSimilarities | undefined>();
 
     const {id} = useParams<{id : string}>();
 
@@ -101,9 +142,7 @@ export const GraphFetch: React.FC = () => {
     ** EffectHook for the initial Load of the graph
     */
     React.useEffect(() => {
-        //loadData();
-
-        setGraph({tensor: [], paper: [], similarities: []})
+      
         let requestURL = Config.base_url + '/api/generate_graph/?paper_id=' + id;
 
         addRecentPaper(id);
@@ -126,6 +165,12 @@ export const GraphFetch: React.FC = () => {
     };*/
 
     return (
-        <Graph data={graph}/>
+        !graph ? <Loader 
+          className='loader' 
+          content='Loading...'
+          size='md'
+        />
+        : graph.paper.length === 0 ? <NoGraph/> 
+        : <Graph data={graph}/> 
     );
 }

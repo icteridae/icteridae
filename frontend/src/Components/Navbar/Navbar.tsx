@@ -2,7 +2,7 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 import { Navbar, Nav, Icon, Dropdown, Button, NavbarProps } from 'rsuite';
 import { Settings } from "./Settings";
-import './styles/Navbar.css'
+import './styles/Navbar.scss'
 
 /**
  * The Navbar holds links to the different sites of the application
