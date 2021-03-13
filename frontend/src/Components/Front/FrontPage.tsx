@@ -64,6 +64,7 @@ export const FrontPage: React.FC = () => {
                     <h1>
                         Icteridae
                     </h1>
+                    <div className='line'/>
                     <SearchBar placeholder='Begin exploring research...'/>
                 </div>
                 <div id='recent-papers-superscript'>scroll to see recent papers</div>
