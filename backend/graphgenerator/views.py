@@ -63,7 +63,7 @@ def search(request):
         },
         safe=False)
 
-    max_pages = min((count - 1) // pagesize + 1, pagesize*10)
+    max_pages = min((count - 1) // pagesize + 1, 5000/pagesize)
 
     page = request.query_params.get('page', '1')
     if not page.isnumeric() or int(page) > max_pages:
@@ -183,7 +183,7 @@ def search_author(request):
         },
         safe=False)
 
-    max_pages = min((count - 1) // pagesize + 1, pagesize*10) # Limit to 200 as elasticsearch has a limit on slices. This can be extended in the future
+    max_pages = min((count - 1) // pagesize + 1, 5000/pagesize) # Limit to 200 as elasticsearch has a limit on slices. This can be extended in the future
     # Example for error:
     # - Remove max(...,200) in expression above
     # - Search for Gao in Authors
