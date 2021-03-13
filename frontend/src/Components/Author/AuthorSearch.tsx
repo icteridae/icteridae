@@ -84,7 +84,7 @@ export const AuthorSearch: React.FC<AuthorResultProps> = (props) => {
                         (maxPages != null) &&
                         <Pagination
                             size='md'
-                            id='test'
+                            id='pagination'
                             activePage={activePage}
                             pages={maxPages}
                             maxButtons={3}
