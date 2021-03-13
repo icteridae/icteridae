@@ -7,7 +7,7 @@ export interface Paper {
     paperAbstract: string,
     s2Url: string,
     pdfUrls: string[],
-    authors: {name: string, ids : string[]}[],
+    authors: {name: string, id : string}[],
     inCitations: string[],
     outCitations: string[],
     fieldsOfStudy: string[],
@@ -23,7 +23,7 @@ export interface Paper {
 
     citations: number,
     references: number,
-
+    val: number,
 }
 
 export interface Similarity {
@@ -37,6 +37,7 @@ export interface ApiSearchResult {
     
     data: Paper[],
     max_pages: number,
+    count: number,
 
 }
 

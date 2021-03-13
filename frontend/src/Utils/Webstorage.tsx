@@ -1,5 +1,5 @@
-import { deepFilter, deleteTreeNode, getSubtreePaperIds } from "../Components/SavedPapers/PageSavedPapersFunctions";
-import { TreeNode } from "../Components/SavedPapers/PaperTree";
+import { deepFilter, getSubtreePaperIds } from "../Components/SavedPapers/PageSavedPapersFunctions";
+import { isDirectoryNode, PaperOrDirectoryNode } from "../Components/SavedPapers/TreeTypes";
 
 /**
  * Loads the recent papers from the web-storage
@@ -37,7 +37,7 @@ export function getSavedPapers() {
  * stores a new savedPaperTree to the webstorage
  * @param savedPapers is stored to the webstorage
  */
-export function setSavedPapers(savedPapers: Array<TreeNode>)
+export function setSavedPapers(savedPapers: Array<PaperOrDirectoryNode>)
 {
     if(typeof(savedPapers) !== "undefined") {
         localStorage.setItem("savedpapers", JSON.stringify(savedPapers));
@@ -65,28 +65,11 @@ export function addSavedPaper(id : string)
 
 export function removeSavedPaper(id: string) {
     const savedPapers = getSavedPapers();
-    setSavedPapers(deepFilter(savedPapers, (node) => node.paperId !== id))
+    setSavedPapers(deepFilter(savedPapers, (node) => isDirectoryNode(node) || node.paperId !== id))
 }
 
 export function getSavedPapersList() {
     return getSubtreePaperIds(getSavedPapers())
-}
-
-/**
- * local function to get an array of the stored paperIds
- * @param tree to search ids in
- */
-function GetPaperIds(tree : Array<TreeNode>) {
-    let ids = [];
-    for(let item in tree) {
-        if(tree[item].value.charAt(0) == 'p') {
-            ids.push(parseInt(tree[item].value.substring(1)));
-        }
-        else {
-            ids.concat(GetPaperIds(tree[item].children!));
-        }
-    }
-    return ids;
 }
 
 export function addRecentPaper(id: string): void {

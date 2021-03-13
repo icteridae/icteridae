@@ -1,0 +1,115 @@
+@import '../../../../node_modules/rsuite/dist/styles/rsuite-dark.css'
+@import '../../../Utils/_colors.sass'
+
+/*reset default link styling*/
+a.navbar-item, a.navbar-item:hover 
+    color: inherit
+    text-decoration: none
+
+/* Navbar Grid */
+#navbar 
+    display: grid
+    grid-template-columns: auto auto
+    grid-template-rows: 60px
+
+    background-color: $color-background-light
+
+    .navbar-left 
+        display: grid
+        grid-template-columns: repeat(4, max-content)
+        align-content: center
+    
+    .navbar-right 
+        display: grid
+        grid-template-columns: repeat(2, max-content)
+        align-content: center
+        justify-content: right
+
+    .navbar-left > *:not(:first-child), .navbar-right > * 
+        display: flex
+        justify-content: center
+        align-items: center
+
+        padding: 0 20px
+        transition: 0.5s
+
+        &:hover
+            background-color: rgba($color-background, 0.3)
+
+
+    .navbar-item 
+        height: 60px
+        cursor: pointer
+
+        span 
+            font-family: "Segoe UI", Arial, sans-serif
+            font-weight: lighter
+            font-size: 17px
+
+
+    /* Navbar home item */
+    .navbar-home 
+        display: flex
+        justify-content: center
+        align-items: center
+
+        transition: 0.3s
+
+        span 
+            margin: 0 22px
+            font-family: "Segoe UI", Arial, sans-serif
+            font-weight: lighter
+            font-size: 22px
+
+        &:hover 
+            opacity: 70%
+
+    .navbar-item-active 
+        color: $color-imprint
+
+
+
+
+/* search bar */
+.navbar-search 
+    font-size: 17px
+
+    input 
+        outline: none
+
+    ::placeholder
+        font-family: "Segoe UI", Arial, sans-serif
+        font-weight: lighter
+        font-size: 17px
+        color: #e9ebf0
+        opacity: 1
+
+    input[type=search] 
+        appearance: none
+        background: transparent
+        padding-left: 10px
+        border: none
+        width: 4em
+        color: transparent
+        cursor: pointer
+        transition: all .5s
+
+        &:focus, &.has-text
+            width: 200px
+            padding-left: 10px
+            color: whitesmoke
+            cursor: auto
+            border-bottom: 2px solid $color-search-border
+            
+            &::placeholder
+                color: gray
+
+            &::-webkit-search-cancel-button 
+                display: initial
+
+        &::-webkit-search-cancel-button 
+            display: none
+        
+::-webkit-search-decoration 
+    display: none
+

@@ -1,22 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import './FrontPage.css'
+import './FrontPage.sass'
 import logo from '../../icon.png'
 
-import { DataInterface } from '../Search/SearchResult/Types';
 import { getRecentPapers} from "../../Utils/Webstorage";
 import { SearchBar } from "../Search/SearchBar/SearchBar";
 import { SearchResultCard } from '../Search/SearchResult/SearchResultCard';
 import Config from '../../Utils/Config'
 
-import { css } from "@emotion/core";
 import SyncLoader from "react-spinners/SyncLoader";
+
+import { Paper } from '../../Utils/GeneralTypes';
+
+import { Alert, Button, Divider, Footer } from 'rsuite';
+
 
 /**
  * Frontpage is shown when the user the Web-Application. If exists it shows the recently opened papers
  * @returns the front/Search page
  */
 export const FrontPage: React.FC = () => {
-    const [recentlyOpenedPapers, setRecentlyOpenedPapers] = useState<Array<DataInterface> | null>([]);
+    const [recentlyOpenedPapers, setRecentlyOpenedPapers] = useState<Array<Paper> | null>([]);
     const [recentPaperIds, setPaperIds] = useState<Array<string>>(getRecentPapers());
 
     /**
@@ -34,23 +37,17 @@ export const FrontPage: React.FC = () => {
         }
         
         //capped at 10 papers max
-        const numberOfPapers : number = Math.min(recentPaperIds.length, 10);
-        let papers: Array<DataInterface> = new Array<DataInterface>(numberOfPapers);
+        let papers: Array<Paper> = new Array<Paper>(Math.min(recentPaperIds.length, 10));
         
         // fetch all papers
-        let promises = [];
-        for (let i = numberOfPapers-1; i > -1; i--) {
-            promises.push(fetch(baseURL +"/api/paper/?paper_id=" + paperIds[i])
-                .then(res => res.json())
-                .then(res => {
-                    papers[i] = {...res, link: "/graph"};
-                })
-            )
-        }
+        const promises = recentPaperIds.map((id, i) => fetch(baseURL +"/api/paper/?paper_id=" + id)
+            .then(res => res.json())
+            .then(res => {
+                papers[i] = res;
+            }))
         
         // set paperIds and recentlyOpenedPapers once all promises succeed
         Promise.all(promises).then(() => {
-            console.log(papers);
             setPaperIds(paperIds);
             setRecentlyOpenedPapers(papers);
         }).catch(() => {
@@ -59,39 +56,46 @@ export const FrontPage: React.FC = () => {
         });
     }, []);
 
-    const override = css`
-        display: block;
-        margin: 32vh 0 0 2vw;
-        
-    `;
-
-    console.log(recentlyOpenedPapers);
-    let loaderOrRecentPapers;
-    if(recentlyOpenedPapers != null) {
-        if(recentlyOpenedPapers.length === 0) {
-            loaderOrRecentPapers = <SyncLoader color="#36D7B7" css={override}/>;
-        } else {
-            
-            loaderOrRecentPapers = 
-            <>
-                <h3>Recently opened papers:</h3>
-                {recentlyOpenedPapers?.map((value) => <SearchResultCard dataKey={value.id} key={value.id} data={value} raiseStateSelected={()=>null} highlightCard={() => null}/>)}
-            </>;    
-        }
-    }
-
     return (
         <div className="frontpage">
             <div className="frontpage-content">
-                <h1>
-                    Welcome to Icteridae!
-                </h1>
-                <SearchBar/>
-                <div className="recent-papers">
-                    
-                    {loaderOrRecentPapers}
+                <div className='full-view'>
+                    <h1>
+                        Icteridae
+                    </h1>
+                    <SearchBar placeholder='Begin exploring research...'/>
+                </div>
+                <div id='recent-papers-superscript'>scroll to see recent papers</div>
+                <Divider/>
+                <div>  
+                    {recentlyOpenedPapers !== null && 
+                        (recentlyOpenedPapers.length === 0 ? 
+                            <div className="sync-loader">
+                                <SyncLoader/> 
+                            </div>
+                        : 
+                            (<>
+                                <div className="recent-papers">
+                                    <h3>Recently opened papers:</h3>
+                                    {
+                                    recentlyOpenedPapers.map(
+                                        (value) => <SearchResultCard 
+                                            dataKey={value.id} 
+                                            key={value.id} 
+                                            data={value} 
+                                            raiseStateSelected={()=>null} 
+                                            highlightCard={() => null}/>)
+                                        }
+                                </div>
+                            </>)
+                        )
+                    }
                 </div>
             </div>
+            <Footer className='footer'>
+                <img src={logo} alt="Logo"/> &copy; {new Date().getFullYear()} Icteridae
+                <Button className='impressum' onClick={() => Alert.info('There is no impressum yet', 5000)} appearance='link'>Impressum</Button>
+            </Footer>
         </div>
     );
 }

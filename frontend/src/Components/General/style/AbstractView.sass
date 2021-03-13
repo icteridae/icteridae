@@ -1,0 +1,54 @@
+@import '../../../Utils/_colors'
+
+.abstract-view 
+    display: flex
+    flex-direction: column
+    flex: 1
+    max-height: 85vh
+
+    text-align: left
+    font-size: 1.4vw
+    padding: 0 20px
+
+    background-color: $color-background
+   
+    overflow-y: scroll
+
+    border-radius: 20px
+    border-left: 0.4vw outset $color-search-border
+
+    .title 
+        font-family: "Segoe UI",Arial,sans-serif
+        font-weight: lighter
+        color: $color-imprint
+        
+        line-height: inherit
+
+        a:active, a:focus
+            color: $color-imprint
+
+        @media only screen and (max-width: 1200px) 
+            font-size: 2.4vw
+
+        @media only screen and (min-width: 1201px) 
+            font-size: 1.8vw
+
+        
+
+    span, .authors 
+        color: darkgray
+        font-size: 1.2vw
+        line-height: inherit
+
+
+    span:last-of-type 
+        margin-bottom: 0.8em
+
+    .paper-abstract
+        h3
+            text-decoration: underline
+            font-size: 1.6vw 
+            margin-bottom: 0.3em
+            color: $color-title-font
+    > * 
+        font-weight: lighter

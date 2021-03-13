@@ -2,7 +2,7 @@ import * as React from "react";
 import { Icon } from 'rsuite';
 import { NavbarItem } from './NavbarItem';
 import { NavbarSearch } from "./NavbarSearch";
-import './styles/Navbar.css'
+import './styles/Navbar.sass'
 
 /**
  * The Navbar holds links to the different sites of the application
