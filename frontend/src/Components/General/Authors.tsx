@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const Authors : React.FC<{authors: {name: string, ids: string[]}[], maxAuthors: number}> = (props) => {
+export const Authors : React.FC<{authors: {name: string, id: string}[], maxAuthors: number}> = (props) => {
     return(
         <span className="authors">
             {
