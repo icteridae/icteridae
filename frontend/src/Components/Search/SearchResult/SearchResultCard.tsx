@@ -6,7 +6,7 @@ import { Authors } from '../../General/Authors'
 import { Bookmark } from '../../General/Bookmark';
 import { Paper } from '../../../Utils/GeneralTypes';
 
-import './styles/SearchResultCard.scss';
+import './styles/SearchResultCard.sass';
 
 interface SearchResultCardProps {
     /**function used to raise state, takes DataInterface as argument */
