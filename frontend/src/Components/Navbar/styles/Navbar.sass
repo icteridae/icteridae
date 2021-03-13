@@ -9,19 +9,17 @@ a.navbar-item, a.navbar-item:hover
 /* Navbar Grid */
 #navbar 
     display: grid
-    grid-template-columns: auto auto
-    grid-template-rows: 60px
-
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))
     background-color: $color-background-light
 
     .navbar-left 
         display: grid
-        grid-template-columns: repeat(4, max-content)
+        grid-template-columns: max-content max-content max-content max-content
         align-content: center
     
     .navbar-right 
         display: grid
-        grid-template-columns: repeat(2, max-content)
+        grid-template-columns: repeat(1, max-content)
         align-content: center
         justify-content: right
 
