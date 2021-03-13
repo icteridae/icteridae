@@ -23,7 +23,11 @@ export const AbstractView : React.FC<{selected: Paper}> = (props) => {
                 {
                     (props.selected.paperAbstract === "") ? 'no Abstract available' : 
                         (<div className='paper-abstract'>
-                            <h3>Abstract:</h3>
+                            <h3>
+                                Abstract:
+                            </h3>
+                            <div className='line'/>
+                            
                             {props.selected.paperAbstract}
                         </div>)
                 }
