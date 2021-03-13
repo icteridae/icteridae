@@ -1,4 +1,4 @@
-import './styles/AuthorSearchResult.scss'
+import './styles/AuthorSearchResult.sass'
 import '../Search/SearchBar/SearchBar.scss'
 import React, {useEffect, useState} from "react";
 import Config from "../../Utils/Config";
@@ -67,7 +67,7 @@ export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
 
 
     return (
-        <div className="wrapper">
+        <div className="author-search-result">
             <div className="search-bar">
                 {props.text? <><div className='text'>{props.text} </div> <br /></> : null}
                 <form onSubmit={buttonClick}>

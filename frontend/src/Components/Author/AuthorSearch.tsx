@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { useHistory, useParams } from 'react-router-dom';
 
-import './styles/AuthorSearch.scss';
+import './styles/AuthorSearch.sass';
 import '../Search/SearchBar/SearchBar.scss'
 import {AutoComplete, Icon, InputGroup, Pagination} from "rsuite";
 import {AuthorInterface} from "./AuthorInterface";
@@ -78,12 +78,12 @@ export const AuthorSearch: React.FC<AuthorResultProps> = (props) => {
     }
 
     return (
-        <div className='page-search-result' id='author-search-result'>
+        <div className='author-search-page'>
             <div className="search-bar">
                 {props.text? <><div className='text'>{props.text} </div> <br /></> : null}
                 <form onSubmit={buttonClick}>
                 <InputGroup id="search-bar-group">
-                        <AutoComplete placeholder='Search for author' value={input} onChange={(e) => setInput(e)} />
+                        <AutoComplete placeholder='Search for authors...' value={input} onChange={(e) => setInput(e)} />
                         <InputGroup.Button type="submit" onClick={buttonClick}>
                             <Icon icon="search" />
                         </InputGroup.Button>
