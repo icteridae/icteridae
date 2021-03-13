@@ -2,7 +2,7 @@ import React from 'react';
 
 import { PapersAndSimilarities } from './GraphTypes';
 import Config from '../../Utils/Config';
-import { addRecentPaper } from '../../Utils/Webstorage';
+import { addRecentPaper, getSavedSliders } from '../../Utils/Webstorage';
 
 import Graph from './Graph';
 import { useParams } from 'react-router-dom';
@@ -13,7 +13,7 @@ import { Loader } from 'rsuite';
  * Function to determine the smallest and largest number in a matrix
  * @param matrix 
  */
-export const GetMinAndMaxFromMatrix = (matrix : number[][]) => {
+export const getMinAndMaxFromMatrix = (matrix : number[][]) => {
     let min = matrix[0][0];
     let max = 0;
     for (let i = 0; i < matrix.length; i++){
@@ -35,7 +35,7 @@ export const GetMinAndMaxFromMatrix = (matrix : number[][]) => {
  * @param min smallest value in the matrix
  * @param max largest value in the matrix
  */
-export const Normalize = (matrix : number[][], min : number, max : number) => {
+export const normalize = (matrix : number[][], min : number, max : number) => {
     if (min === max) return matrix.map((row : number[]) => row.map((n : number) => 0));
     return matrix.map((row : number[]) => row.map((n : number) => (n - min) / (max - min)));
 }
@@ -45,7 +45,7 @@ export const Normalize = (matrix : number[][], min : number, max : number) => {
  * @param matrix contains the Link-value for each Pair of Nodes
  * @param threshold is the threshold to determine if the link will be included in the graph or not
  */
-export const CheckConnections = (matrix : number[][], threshold : number) => {
+export const checkConnections = (matrix : number[][], threshold : number) => {
     let matrix_c = JSON.parse(JSON.stringify(matrix));
     matrix_c = matrix_c.map((x : number[]) => x.map(z => z>threshold ? z : -1));
     let x : Set<number> = new Set();
@@ -68,7 +68,7 @@ export const CheckConnections = (matrix : number[][], threshold : number) => {
  /**
   * Function to determine the smallest threshhold for Link Generation so that every Node ist still connected.
   */
-export const  FindBoundary = (matrix : number[][]) => {
+export const findBoundary = (matrix : number[][]) => {
    let matrixC2 = JSON.parse(JSON.stringify(matrix));
    const maxOfMatrix = Math.max(...matrixC2.map((x : number[]) => Math.max(...x)));
  
@@ -77,7 +77,7 @@ export const  FindBoundary = (matrix : number[][]) => {
  
    for (let i = 0; i < 10; i++) {
      let mid = (upperBound + lowerBound) / 2;
-     let bo = CheckConnections(matrix, mid);
+     let bo = checkConnections(matrix, mid);
      if (bo) {
         lowerBound = mid;
      } else {
@@ -85,6 +85,35 @@ export const  FindBoundary = (matrix : number[][]) => {
      }
    }
    return lowerBound;
+}
+
+/**
+ * Generiert ein sliderCount langes Array mit Werten totalSliderCount/sliderCount sofern keine Werte im localStorage gespeichert sind
+ * Generates an Array with sliderCount many elements. The values are set to totalSliderCount/slidercount if there are no values saved in the localStorage
+ * @param sliderCount Number of sliders
+ * @param totalSliderValue highest number a slider can have
+ * @returns the values for all sliders
+ */
+export const choosingSliderValues = (sliderCount : number, totalSliderValue : number) => {
+  const SavedSliders = getSavedSliders();
+  console.log(SavedSliders?.length + "   " +   sliderCount);
+  if(SavedSliders?.length !== sliderCount)
+      return Array(sliderCount).fill(totalSliderValue / sliderCount);
+  return SavedSliders;
+}
+
+/**
+ * this method provides the values of the remaining sliders when one of them is changed
+ * @param index contains the unique index of the slider that was changed
+ * @param val contains the new value of the changed slider
+ * @param oldValues contains all values of all sliders before the change
+ * @param totalSliderValues maximum number that a slider can be
+ */
+ export const changeSlider = (index : number, val : number, oldValues : number[], totalSliderValue : number) => {
+  if (oldValues.filter((x, i) => x === 0 || i === index).length === oldValues.length ) {
+      return oldValues.map((x,i) => i === index ? val : (totalSliderValue-val)/(oldValues.length-1));
+  }
+  return oldValues.map((x, i) => i === index ? val : oldValues[index] === totalSliderValue ? 0 : (totalSliderValue - val) * x / (totalSliderValue - oldValues[index]));
 }
 
 /**
