@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 
 import { DataInterface } from './Types';
 import { SearchResultList, setAbstractViewToCorrectHeight } from './SearchResultList';
-import { Pagination } from 'rsuite';
 
 import { useParams } from 'react-router-dom';
 
@@ -14,14 +13,17 @@ export const PageSearchResult : React.FC = () => {
     let {query} = useParams<{query: string}>(); 
     const [selected, setSelected] = useState<DataInterface>();
     
+    const PAGESIZE = 10;
+
+
     return (
         <div className='page-search-result'>
             <div className='wrapper' id='search-result-wrapper'>
                 <div id='query-title'>
-                    <h2>Showing search results for <b>"{query}"</b>:</h2>
+                    <h2>Showing  results for <b>"{query}"</b>:</h2>
                     <div className='line'></div>
                 </div>
-                <SearchResultList query={query} raiseStateSelected={setSelected}/>
+                <SearchResultList query={query} pageSize={PAGESIZE} raiseStateSelected={setSelected}/>
             </div>
             {(selected != null) && <AbstractView selected={selected}/>}
         </div>

@@ -7,6 +7,7 @@ import { Pagination } from 'rsuite';
 
 interface ResultListProps {
     query: string,
+    pageSize: number,
 
     /**function used to raise state, takes DataInterface as argument */
     raiseStateSelected: React.Dispatch<React.SetStateAction<DataInterface | undefined>>
@@ -59,7 +60,7 @@ export const SearchResultList : React.FC<ResultListProps> = (props) => {
 
     // Effect hook for fetching query data from search API
     useEffect(() => {
-        let requestURL = Config.base_url + '/api/search/?query=' + props.query + '&page=' + activePage;
+        let requestURL = Config.base_url + '/api/search/?query=' + props.query + '&page=' + activePage + '&pagesize=' + props.pageSize;
 
         fetch(requestURL)
             .then(res => res.json())
