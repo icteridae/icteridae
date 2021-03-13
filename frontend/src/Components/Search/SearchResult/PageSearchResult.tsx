@@ -26,6 +26,9 @@ export const PageSearchResult : React.FC = () => {
             .then(result => {
                 setSearchResults({data: result.data, pages: result.max_pages, count: result.count});
             }).catch(() => console.log("Can't access " + requestURL));
+
+        // selected needs to be reset so that AbstractView doesn't stay when query changes
+        return () => {setSelected(undefined)}
     }, [query, activePage]);
 
 
