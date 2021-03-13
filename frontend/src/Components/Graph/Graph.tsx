@@ -106,7 +106,7 @@ const generateGraph = (data : PapersAndSimilarities) : [PaperGraphData, number, 
  */
 const changeSlider = (index: number, val: number, oldValues: number[]) => {
     if (oldValues.filter((x, i) => x === 0 || i === index).length === oldValues.length ) {
-        return oldValues.map((x,i) => i === index ? val : (totalSliderValue-val)/(oldValues.length-1))
+        return oldValues.map((x,i) => i === index ? val : (totalSliderValue-val)/(oldValues.length-1));
     }
     return oldValues.map((x, i) => i === index ? val : oldValues[index] === totalSliderValue ? 0 : (totalSliderValue - val) * x / (totalSliderValue - oldValues[index]));
 }
@@ -157,7 +157,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
     const [paperDrawer, setPaperDrawer] = React.useState(false);
 
     // set whether the drawer is shown or hidden
-    const [sliderDrawer, setSliderDrawer] = React.useState(false);
+    const [sliderDrawer, setSliderDrawer] = React.useState(true);
     
     // selected Node to display on drawer
     const [selectedNode, setNode] = React.useState(props.data.paper[0]);
@@ -185,6 +185,9 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
 
     // boolean to decide wheter the legend should be displayed or not
     const [showLegend, setShowLegend] = React.useState<boolean>(true);
+
+    // boolean to decide wheter the Nodes will be colored by their Field of Study or their year
+    const [nodeColoring, setNodeColoring] = React.useState<boolean>(true);
 
     let history = useHistory()
 
@@ -230,15 +233,23 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                 </div>
                 {showLegend && <div className='legend'>
                     <div className='legend-description'>
-                        <span>Distinct Colors = Distinct Fields Of Study</span>
+                        <span className='legend-description-child2'>Fields Of Study</span>
+                    </div>
+                    {Array.from(new Set(props.data.paper.map((paper) => paper.fieldsOfStudy.slice().sort().join(', ')))).map((field) =>(
+                        <div className='legend-fieldsofstudy' style={{color: 'black', backgroundColor: (field === defaultFieldOfStudy) ? ('rgba(231, 156, 69, 1)') : (hexToRGB(pallette[1][hash(field) % pallette[1].length], '1'))}}>{field}</div>
+                    ))}
+                    <div className='legend-description'>
+                        <span className='legend-description-child1'>Low</span>
+                        <span className='legend-description-child2'>Link Similarity</span>
+                        <span className='legend-description-child3'>High</span>
                     </div>
                     <div className='legend-link-width-container'>
                         <div className='legend-link-width'></div>
                     </div>
                     <div className='legend-description'>
-                        <span className='legend-description-child1'>Low</span>
-                        <span className='legend-description-child2'>Link Similarity</span>
-                        <span className='legend-description-child3'>High</span>
+                        <span className='legend-description-child1'>{leastCitations}</span>
+                        <span className='legend-description-child2'>Citations</span>
+                        <span className='legend-description-child3'>{mostCitations}</span>
                     </div>
                     <div className='legend-circles'>
                         <div className='circle--1'></div>
@@ -248,16 +259,11 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                         <div className='circle--5'></div>
                     </div>
                     <div className='legend-description'>
-                        <span className='legend-description-child1'>{leastCitations}</span>
-                        <span className='legend-description-child2'>Citations</span>
-                        <span className='legend-description-child3'>{mostCitations}</span>
-                    </div>
-                    <div className='legend-color-bar'></div>
-                    <div className='legend-description'>
                         <span className='legend-description-child1'>{new Date().getFullYear() - paperOppacityYearRange}</span>
                         <span className='legend-description-child2'>Year</span>
                         <span className='legend-description-child3'>{new Date().getFullYear()}</span>
                     </div>
+                    <div className='legend-color-bar'></div>
                 </div>}
 
                 {props.data.tensor.length > 0 ? 
@@ -295,7 +301,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                                         progress
                                                         style={{ marginTop: 16, marginRight: 10 }}
                                                         handleStyle={{ paddingTop: 7 }}
-                                                        value={sliderVal}
+                                                        value={sliderVal.toFixed(2)}
                                                         onChange={value => {
                                                             const newSliders = changeSlider(index, value, sliders);
                                                             setSliders(newSliders);
@@ -305,10 +311,10 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                                     <InputNumber
                                                         min={0}
                                                         max={totalSliderValue}
-                                                        value={sliderVal}
+                                                        value={sliderVal.toFixed(2)}
                                                         onChange={value => {
                                                             if (0 <= value && 100 >= value){
-                                                                let newSliders = changeSlider(index, value as number, sliders)
+                                                                let newSliders = changeSlider(index, (value as number), sliders)
                                                                 setSliders(newSliders);
                                                                 setSavedSliders(newSliders);
                                                             }
@@ -330,6 +336,18 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                             <Button className='switch-button-2' appearance={showLegend ? 'primary' : 'ghost'} onClick={() => setShowLegend(true)}>On</Button>
                                             <Button className='switch-button-2' appearance={showLegend ? 'ghost' : 'primary'} onClick={() => setShowLegend(false)}>Off</Button>
                                         </ButtonGroup>
+                                        <span className='graph-settings-subtitle'>Node Coloring</span>
+                                        <ButtonGroup>
+                                            <Button className='switch-button-2' appearance={nodeColoring ? 'primary' : 'ghost'} onClick={() => setNodeColoring(true)}>Field of Study</Button>
+                                            <Button className='switch-button-2' appearance={nodeColoring ? 'ghost' : 'primary'} onClick={() => setNodeColoring(false)}>Year</Button>
+                                        </ButtonGroup>
+                                        <span className='graph-settings-subtitle'>Colorblindness Pallettes for Field Of Study</span>
+                                        <SelectPicker 
+                                            data={pallettes.map(x => ({value: x, label: x[0]}))}
+                                            searchable={false}
+                                            cleanable={false}
+                                            value={pallette}
+                                            onSelect={setPallette}/>
                                         <span className='graph-settings-subtitle'>Weak Link Filter</span>
                                         <Slider className='graph-settings-slider'
                                             progress
@@ -346,13 +364,6 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                                 setNodeRepelling(value);
                                             }}
                                         />
-                                        <span className='graph-settings-subtitle'>Colorblindness Pallettes</span>
-                                        <SelectPicker 
-                                            data={pallettes.map(x => ({value: x, label: x[0]}))}
-                                            searchable={false}
-                                            cleanable={false}
-                                            value={pallette}
-                                            onSelect={setPallette}/>
                                     </div>
                                 </div>
                             </Drawer.Body>
@@ -375,12 +386,9 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                     <Button appearance='ghost' href={selectedNode.s2Url} target='_blank'>
                                         Open in Semantic Scholar
                                     </Button>
-
-
                                     <Button appearance='ghost' onClick={() => addSavedPaper(selectedNode.id)}>
                                         Save Paper
                                     </Button>
-
                                     <Button appearance='ghost' onClick={() => {history.push(`/graph/${selectedNode.id}`)}}>
                                         Generate Graph
                                     </Button>
@@ -441,32 +449,41 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                         const fontSize = 12/globalScale;
                                         ctx.font = `${fontSize}px Sans-Serif`;
                                         
-                                        //Node Color
-                                        if((node as PaperNode).id === props.data.paper[0].id){
-                                            ctx.fillStyle = `rgba(136, 46, 114, ${(((node as PaperNode).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as PaperNode).year - new Date().getFullYear()) + 1))})`;
-                                        }else{
+                                        // show Node Color for Field of Study or Oppacity for year
+                                        if(nodeColoring){
+                                            // Node Color
                                             if((node as PaperNode).fieldsOfStudy.toString() === defaultFieldOfStudy){
-                                                ctx.fillStyle = `rgba(231, 156, 69, ${(((node as PaperNode).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as PaperNode).year - new Date().getFullYear()) + 1))})`;  
+                                                ctx.fillStyle = 'rgba(231, 156, 69, 1)';  
                                             }else{
-                                                ctx.fillStyle = hexToRGB(pallette[1][hash((node as PaperNode).fieldsOfStudy.slice().sort().toString()) % pallette[1].length], (((node as PaperNode).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as PaperNode).year - new Date().getFullYear()) + 1)).toString());
+                                                // Hashe die Namen der FieldsOfStudy und benutze das Ergebnis als Index für die Wahl der Farbe. Für eindeutige Ergebnisse müssen die fields of Study zuerst sortiert werden und da sort kein Array zurückgibt, kopieren wir das Array zuerst mit slice()
+                                                ctx.fillStyle = hexToRGB(pallette[1][hash((node as PaperNode).fieldsOfStudy.slice().sort().join(', ')) % pallette[1].length], '1');
                                             }
+                                        }else{
+                                            // Node Oppacity
+                                            ctx.fillStyle = `rgba(231, 156, 69, ${(((node as PaperNode).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as PaperNode).year - new Date().getFullYear()) + 1))})`;  
                                         }
                                         ctx.beginPath();
-                                        //Node shape (arc creates a cirle at coordinate (node.x, node.y) with radius (radiusmagic). Last 2 Parameters are needed to draw a full circle)
-                                        ctx.arc(node.x!, node.y!, Math.sqrt(Math.max(0, (node as PaperNode).val || 1)) * 4, 0 , 2 * Math.PI);
                                         if((node as PaperNode).isHovered){
                                             //Circle Edge Color when the Node is hovered
                                             ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
                                         }else{
                                             //Circle Edge Color. The color doesnt matter since Alpha is 0 und thus the Edge is transparent
-                                            ctx.strokeStyle = 'rgba(122, 201, 171, 0)';
+                                            ctx.strokeStyle = 'rgba(255, 255, 255, 0)';
                                         }
+                                        //Node shape (arc creates a cirle at coordinate (node.x, node.y) with radius (radiusmagic). Last 2 Parameters are needed to draw a full circle)
+                                        ctx.arc(node.x!, node.y!, Math.sqrt(Math.max(0, (node as PaperNode).val || 1)) * 4, 0 , 2 * Math.PI);
                                         ctx.stroke();
                                         ctx.fill();
+                                        if((node as PaperNode).id === props.data.paper[0].id){
+                                            //Circle Edge Color for Origin Node
+                                            ctx.strokeStyle = 'rgba(255, 255, 255, 1)';
+                                            ctx.arc(node.x!, node.y!, Math.sqrt(Math.max(0, (node as PaperNode).val || 1)) * 4 + 1, 0 , 2 * Math.PI);
+                                            ctx.stroke();
+                                        }
                             
                                         ctx.textAlign = 'center';
                                         ctx.textBaseline = 'middle';
-                                        ctx.fillStyle = 'rgba(230, 230, 230, 0.8)';//(node as Paper).color;
+                                        ctx.fillStyle = 'rgba(230, 230, 230, 0.8)';
                                         ctx.fillText(label as string, node.x!, node.y!);
                                     }}
                                     nodeLabel='title'
