@@ -1,5 +1,4 @@
 import './styles/AuthorSearchResult.sass'
-import '../Search/SearchBar/SearchBar.scss'
 import React, {useEffect, useState} from "react";
 import Config from "../../Utils/Config";
 import {Paper} from "../../Utils/GeneralTypes";

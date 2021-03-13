@@ -57,14 +57,13 @@ def search(request):
     if count <= 0:
         return http.JsonResponse(
         {
-            'data': PaperSerializer([],
-                                    many=True).data,
+            'data': PaperSerializer([], many=True).data,
             'max_pages': 0,
             'count': 0
         },
         safe=False)
 
-    max_pages = (count - 1) // pagesize + 1
+    max_pages = min((count - 1) // pagesize + 1, pagesize*10)
 
     page = request.query_params.get('page', '1')
     if not page.isnumeric() or int(page) > max_pages:
@@ -172,7 +171,19 @@ def search_author(request):
 
     search_result = Author.objects.filter(name__icontains = query)
 
-    max_pages = min((result.count() - 1) // pagesize + 1, 200) # Limit to 200 as elasticsearch has a limit on slices. This can be extended in the future
+    count = result.count()
+
+    if count <= 0:
+        return http.JsonResponse(
+        {
+            'data': PaperSerializer([],
+                                    many=True).data,
+            'max_pages': 0,
+            'count': 0
+        },
+        safe=False)
+
+    max_pages = min((count - 1) // pagesize + 1, pagesize*10) # Limit to 200 as elasticsearch has a limit on slices. This can be extended in the future
     # Example for error:
     # - Remove max(...,200) in expression above
     # - Search for Gao in Authors
