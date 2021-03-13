@@ -12,6 +12,7 @@ import SyncLoader from "react-spinners/SyncLoader";
 import { Paper } from '../../Utils/GeneralTypes';
 
 import { Alert, Button, Divider, Footer } from 'rsuite';
+import { PulseLoader } from 'react-spinners';
 
 
 /**
@@ -70,9 +71,7 @@ export const FrontPage: React.FC = () => {
                 <div>  
                     {recentlyOpenedPapers !== null && 
                         (recentlyOpenedPapers.length === 0 ? 
-                            <div className="sync-loader">
-                                <SyncLoader/> 
-                            </div>
+                            <div className="spinner"><PulseLoader/></div> 
                         : 
                             (<>
                                 <div className="recent-papers">

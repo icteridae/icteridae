@@ -7,6 +7,8 @@ import './styles/AuthorSearch.sass';
 import {AutoComplete, FlexboxGrid, Icon, InputGroup, Pagination} from "rsuite";
 import {AuthorInterface} from "./AuthorInterface";
 import Config from "../../Utils/Config";
+import { Sorry } from '../General/Sorry';
+import { PulseLoader } from 'react-spinners';
 
 interface AuthorResultProps {
     text?: string;
@@ -20,7 +22,9 @@ export const AuthorSearch: React.FC<AuthorResultProps> = (props) => {
     // Searchbar input
     const [input, setInput] = useState('');
     // Author list
-    const [authorList, setAuthorList] = useState<AuthorInterface[] | undefined>(undefined);
+    // undefined: inital value
+    // null: api request sent
+    const [authorList, setAuthorList] = useState<AuthorInterface[] | undefined | null>(undefined);
 
     const [activePage, setActivePage] = useState<number>(1);
     const [maxPages, setMaxPages] = useState<number>();
@@ -28,8 +32,9 @@ export const AuthorSearch: React.FC<AuthorResultProps> = (props) => {
 
 
     const updateContent = (query: string, activePage: number): void => {
+        if (query===undefined) {return;}
         const requestURL = Config.base_url + '/api/search_author/?query=' + query + '&page=' + activePage;
-
+        setAuthorList(null)
         fetch(requestURL)
             .then(res => res.json())
             .then(result => {
@@ -113,8 +118,12 @@ export const AuthorSearch: React.FC<AuthorResultProps> = (props) => {
                     </InputGroup>
                 </form>
             </div>
-            {authorList===undefined ? <>Loading</> 
-            : authorList.length === 0 ? <>No results</>
+            {authorList===undefined ? <></> :
+             authorList===null ? <div className="spinner"><PulseLoader/></div> 
+            : authorList.length === 0 ? <Sorry
+                message="No matching authors found"
+                description="Are you sure you've entered the right name?"
+                />
             : resultList}
         </div>
     );

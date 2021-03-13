@@ -22,6 +22,8 @@ export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
     const [selectedAuthor, setSelectedAuthor] = useState<AuthorInterface>()
     // Papers depending on selected author
     const [authorPapers, setAuthorPapers] = useState<Paper[]>();
+    // Publication count
+    const [publications, setPublications] = useState<number>();
 
 
     // Effect hook for setting author and fetching paper data from search API
@@ -36,7 +38,10 @@ export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
 
         fetch(requestURLAuthorPapers)
             .then(res => res.json())
-            .then(result => setAuthorPapers(result.data)).catch(() => console.log("Can't access " + requestURLAuthorPapers));
+            .then(result => {
+                setAuthorPapers(result.data);
+                setPublications(result.count);
+            }).catch(() => console.log("Can't access " + requestURLAuthorPapers));
     }, [id]);
 
     const buttonClick = () => {
@@ -51,7 +56,7 @@ export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
             <div className="author-search-result">
                 <div className="author-details">
                     <div className="author-name">{selectedAuthor.name}</div>
-                    <div><b>Publications: </b>{authorPapers != null && authorPapers.length}</div>
+                    <div><b>Publications: </b>{publications}</div>
                 </div>
                 <div className="paper-list">
                     <div className="publications">Publications</div>
