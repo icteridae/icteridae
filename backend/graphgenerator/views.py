@@ -105,7 +105,6 @@ def generate_graph(request):
                               'paper': PaperSerializer(relevant, many=True).data,
                               'similarities': similarities})
 
-
 @api_view(['GET'])
 def get_paper(request):
     """
@@ -125,8 +124,6 @@ def get_paper(request):
         return http.JsonResponse(PaperSerializer(paper).data)
     except:
         return http.HttpResponseBadRequest('Paper not found')
-
-
 
 @api_view(['POST'])
 def get_paper_bulk(request):
@@ -269,5 +266,39 @@ def get_authorpapers(request):
                                     many=True).data,
             'max_pages': max_pages,
             'count': count
+        },
+        safe=False)
+
+@api_view(['GET'])
+def get_author_details(request):
+    """
+    returns papers written by author based on id
+
+    request needs to have 'author_id':any field
+    """
+
+    author_id = request.query_params.get('author_id', None)
+    if author_id is None:
+        return http.HttpResponseBadRequest('no query supplied.')
+
+    results = Author.objects.raw(f"""SELECT a2.id, a2.name FROM 
+	graphgenerator_author as a1 
+	JOIN graphgenerator_authorpaper as ap1 
+	ON a1.id = ap1.author_id 
+	
+	JOIN graphgenerator_authorpaper as ap2
+	ON ap1.paper_id = ap2.paper_id AND NOT ap2.author_id = a1.id
+	
+	JOIN graphgenerator_author as a2
+	ON ap2.author_id = a2.id
+		WHERE a1.id = '{author_id}'
+		GROUP BY a2.id
+		ORDER BY COUNT(*) DESC
+		LIMIT 10;""")
+
+    return http.JsonResponse(
+        {
+            'data': AuthorSerializer(results,
+                                    many=True).data,
         },
         safe=False)
