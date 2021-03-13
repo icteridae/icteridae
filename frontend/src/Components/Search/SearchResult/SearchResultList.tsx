@@ -45,8 +45,6 @@ export const SearchResultList : React.FC<ResultListProps> = (props) => {
             // only set height if none of these is null or undefined
             if(navbarHeight != null && queryTitleHeight != null && list != null) {
                 list.style.height = (windowHeight - navbarHeight - queryTitleHeight) + "px";
-
-                setAbstractViewToCorrectHeight();
             }
         }
 
@@ -77,20 +75,4 @@ export const SearchResultList : React.FC<ResultListProps> = (props) => {
                 }/>
         </div>
     );
-}
-
-/**
- * Sets the height of the DOM-Element with the id "search-result-abstract-view" to the computed height of the DOM-Element with the id "search-result-list"
- */
-export function setAbstractViewToCorrectHeight() {
-    const queryTitle = document.getElementById("query-title");
-    const list = document.getElementById('search-result-list');
-    const wrapper2 = document.getElementById('search-result-wrapper-2');
-    const abstractView = document.getElementById('search-result-abstract-view');
-
-    if(queryTitle != null && list != null && wrapper2 != null && abstractView != null) {
-        wrapper2.style.height = queryTitle.offsetHeight + list.offsetHeight + "px";
-        const abstractViewVerticalMargin : number = parseInt(window.getComputedStyle(abstractView).marginTop) + parseInt(window.getComputedStyle(abstractView).marginBottom)
-        abstractView.style.height = parseInt(wrapper2.style.height) - abstractViewVerticalMargin + "px";
-    }
 }
