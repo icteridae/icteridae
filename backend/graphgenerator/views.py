@@ -52,7 +52,8 @@ def search(request):
 
     result = PaperDocument.search().query(full_query)
 
-    max_pages = (result.count() - 1) // pagesize + 1
+    count = result.count()
+    max_pages = (count - 1) // pagesize + 1
 
     page = request.query_params.get('page', '1')
     if not page.isnumeric() or int(page) > max_pages:
@@ -64,7 +65,8 @@ def search(request):
         {
             'data': PaperSerializer(result[pagesize * (page - 1): pagesize * page].to_queryset(),
                                     many=True).data,
-            'max_pages': max_pages
+            'max_pages': max_pages,
+            'count': count
         },
         safe=False)
 
@@ -227,7 +229,8 @@ def get_authorpapers(request):
 
     search_result = Paper.objects.prefetch_related('authors').filter(authors__id = author_id)
 
-    max_pages = (search_result.count() - 1) // pagesize
+    count = search_result.count()
+    max_pages = (count - 1) // pagesize
 
     page = request.query_params.get('page', '0')
     if not page.isnumeric() or int(page) > max_pages:
@@ -238,6 +241,7 @@ def get_authorpapers(request):
         {
             'data': PaperSerializer(search_result[pagesize * page: pagesize * (page + 1)],
                                     many=True).data,
-            'max_pages': max_pages
+            'max_pages': max_pages,
+            'count': count
         },
         safe=False)

@@ -37,6 +37,7 @@ export interface ApiSearchResult {
     
     data: Paper[],
     max_pages: number,
+    count: number,
 
 }
 

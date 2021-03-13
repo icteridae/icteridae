@@ -25,6 +25,7 @@ export const AuthorSearch: React.FC<AuthorResultProps> = (props) => {
 
     const [activePage, setActivePage] = useState<number>(1);
     const [maxPages, setMaxPages] = useState<number>();
+    const [count, setCount] = useState<number>();
 
 
     // Effect hook for fetching author list from search API
@@ -36,6 +37,7 @@ export const AuthorSearch: React.FC<AuthorResultProps> = (props) => {
             .then(result => {
                 setAuthorList(result.data);
                 setMaxPages(result.max_pages);
+                setCount(result.count);
             }).catch(() => console.log("Can't access " + requestURL));
     }, [query, activePage]);
 

@@ -36,8 +36,9 @@
 
 .paper-list {
     margin-top: 6vh;
-    overflow : scroll;
-    height: 75vh;
+    margin-right: 10em;
+    //overflow : scroll;
+    //height: 75vh;
 }
 
 .paper-list .publications {
@@ -46,4 +47,5 @@
     font-weight: lighter;
     margin-left: 1.46vw;
     line-height: 4.7vh;
+
 }
