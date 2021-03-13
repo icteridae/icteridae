@@ -1,7 +1,7 @@
 import './styles/AuthorSearchResult.sass'
 import React, {useEffect, useState} from "react";
 import Config from "../../Utils/Config";
-import {DataInterface} from "../Search/SearchResult/Types";
+import {Paper} from "../../Utils/GeneralTypes";
 import {AuthorInterface} from "./AuthorInterface";
 import {SearchResultCard} from "../Search/SearchResult/SearchResultCard";
 import {AutoComplete, Icon, InputGroup} from "rsuite";
@@ -21,7 +21,7 @@ export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
     // Currently displayed author
     const [selectedAuthor, setSelectedAuthor] = useState<AuthorInterface>()
     // Papers depending on selected author
-    const [authorPapers, setAuthorPapers] = useState<DataInterface[]>();
+    const [authorPapers, setAuthorPapers] = useState<Paper[]>();
 
 
     // Effect hook for setting author and fetching paper data from search API

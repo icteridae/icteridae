@@ -2,21 +2,24 @@ import React, { useEffect, useState } from 'react';
 import './FrontPage.sass'
 import logo from '../../icon.png'
 
-import { DataInterface } from '../Search/SearchResult/Types';
 import { getRecentPapers} from "../../Utils/Webstorage";
 import { SearchBar } from "../Search/SearchBar/SearchBar";
 import { SearchResultCard } from '../Search/SearchResult/SearchResultCard';
 import Config from '../../Utils/Config'
 
 import SyncLoader from "react-spinners/SyncLoader";
+
+import { Paper } from '../../Utils/GeneralTypes';
+
 import { Alert, Button, Divider, Footer } from 'rsuite';
+
 
 /**
  * Frontpage is shown when the user the Web-Application. If exists it shows the recently opened papers
  * @returns the front/Search page
  */
 export const FrontPage: React.FC = () => {
-    const [recentlyOpenedPapers, setRecentlyOpenedPapers] = useState<Array<DataInterface> | null>([]);
+    const [recentlyOpenedPapers, setRecentlyOpenedPapers] = useState<Array<Paper> | null>([]);
     const [recentPaperIds, setPaperIds] = useState<Array<string>>(getRecentPapers());
 
     /**
@@ -34,7 +37,7 @@ export const FrontPage: React.FC = () => {
         }
         
         //capped at 10 papers max
-        let papers: Array<DataInterface> = new Array<DataInterface>(Math.min(recentPaperIds.length, 10));
+        let papers: Array<Paper> = new Array<Paper>(Math.min(recentPaperIds.length, 10));
         
         // fetch all papers
         const promises = recentPaperIds.map((id, i) => fetch(baseURL +"/api/paper/?paper_id=" + id)

@@ -1,0 +1,45 @@
+@import '../../../../Utils/colors'
+
+.page-search-result 
+    display: flex
+    flex-direction: row
+    width: 100%
+    background-color: $color-background
+
+
+    .spinner 
+        margin: auto
+        margin-top: 45vh
+        width: 0%
+
+        span > span
+            background-color: $color-accent
+
+    .no-results
+        margin: 1em 2em
+        font-size: 2em
+
+    .wrapper 
+        display: flex
+        flex-direction: column
+        width: 50%
+
+    .abstract-view
+        margin: 5vh 0 3vh 11vw
+
+    #query-title 
+        h2 
+            font-weight: unset
+            font-size: 1.9vw
+            line-height: 5.2vh
+            color: $color-title-font
+            margin: 20px 0 0 20px
+
+        .line 
+            border-bottom: 2px $color-search-border solid
+            width: 80%
+            height: 10px
+            margin-left: 20px
+            margin-bottom: 2vh
+
+    
