@@ -31,21 +31,20 @@ export const PageSearchResult : React.FC = () => {
 
     return (
         <div className='page-search-result'>
-            <div className='wrapper' id='search-result-wrapper'>
-                {
-                    (searchResults == null) ? <div className="sync-loader"><SyncLoader/></div> : 
-                        (
-                            <>
-                                <div id='query-title'>
-                                    <h2>Showing {PAGESIZE} of 1000 results for <b>"{query}"</b>:</h2>
-                                    <div className='line'></div>
-                                </div>
-                                <SearchResultList results={searchResults} activePage={activePage} raiseStateSelected={setSelected} raiseStateActivePage={setActivePage}/>
-                            </>
-                        )
-                }
+            {
+                (searchResults == null) ? <div className="spinner"><SyncLoader/></div> :
+                    (
+                        <div className='wrapper' id='search-result-wrapper'>            
+                            <div id='query-title'>
+                                <h2>Showing {PAGESIZE} of 1000 results for <b>"{query}"</b>:</h2>
+                            <div className='line'>
+                        </div>
+                        </div>
+                            <SearchResultList results={searchResults} activePage={activePage} raiseStateSelected={setSelected} raiseStateActivePage={setActivePage}/>
+                        </div>
+                    ) 
                 
-            </div>
+            }
             {(selected != null) && <AbstractView selected={selected}/>}
         </div>
     );
