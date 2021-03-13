@@ -1,36 +1,49 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import ForceGraph2D from 'react-force-graph-2d';
-import { Button, Drawer, Slider, InputNumber, Loader, Icon, Footer } from 'rsuite';
+import { Button, Drawer, Slider, InputNumber, Loader, Icon, Popover, Whisper, ButtonGroup, Divider, SelectPicker } from 'rsuite';
 import sizeMe from 'react-sizeme'
+import Linkify from 'react-linkify';
 
 import { PaperNode, PapersAndSimilarities, PaperGraphData, SimilarityLinkObject } from './GraphTypes';
-import { GetMinAndMaxFromMatrix, Normalize } from './GraphHelperfunctions';
+import { GetMinAndMaxFromMatrix, Normalize, hash, hexToRGB } from './GraphHelperfunctions';
 
-import './Graph.scss'
+import './Graph.sass'
 import { addSavedPaper, getSavedSliders, setSavedSliders } from '../../Utils/Webstorage';
 import { useHistory } from 'react-router-dom';
 import { Bookmark } from '../General/Bookmark';
+import { pallettes } from './Colors';
 
-// Node Params
-// Added inside log(inCitations) to shift the logarithm
+// Node Parameters
+// Added inside log(inCitations) to shift the logarithm. Can not be less than 1!
 const logBulk: number = 2;
 // Linear Factor to increase each Nodes size
 const nodeBaseSize: number = 4;
 // Lowest Node Oppacity for all Nodes
-const lowerBoundForNodeOppacity: number = 0.5;
+const lowerBoundForNodeOppacity: number = 0.251;
 // How many years backwards will have their oppacity scaled. Any Paper older than currentYear - paperOppacityYearRange will get the lowerBound value
-const paperOppacityYearRange: number = 10;
+const paperOppacityYearRange: number = 20;
+// Use our Standard Accent Color for all Papers that only have the Computer Science Field of Study
+const defaultFieldOfStudy: string = 'Computer Science';
+// Size of the Node with the least Citations
+const smallestNodeSize: number = 10;
+// Size of the Node with the most Citations
+const largestNodeSize: number = 100;
 
-// Link Params
+// Link Parameters
 // Size of Link that the Cursor hovers over
 const linkOnHoverWidth: number = 4;
 // squish can be between 0 and 1. Adjusts how strong the link force pulls the nodes together where 0 is no LinkForce at all
 const squish: number = 0.25;
 
-// Slider Params
+// Slider Parameters
 // Maximum number that can be selected on a slider
 const totalSliderValue: number = 100;
+
+// Display Parameters
+// Max number of Authors shown for selected Paper
+const maxAuthors: number = 3;
 
 function ChoosingSliderValues(sliderCount : number) {
     const SavedSliders = getSavedSliders();
@@ -45,7 +58,7 @@ function ChoosingSliderValues(sliderCount : number) {
  * @param data contains all papers, similarities and similarities between papers
  * @returns a GraphData object consisting of nodes[] and links[]
  */
-const generateGraph = (data : PapersAndSimilarities) : PaperGraphData =>{
+const generateGraph = (data : PapersAndSimilarities) : [PaperGraphData, number, number] =>{
     let similarityMatrix : number[][] = new Array(data.paper.length);
 
     const normalized_tensor = data.tensor.map(matrix => {
@@ -64,21 +77,26 @@ const generateGraph = (data : PapersAndSimilarities) : PaperGraphData =>{
         target: data.paper[y].id,
         color: `rgba(150,150,150,${similarityMatrix[x][y]})`,
         similarity: data.similarities.map((similiarity, index) => normalized_tensor[index][x][y]),
-        label: "",//data.similarities.map((similiarity, index) => normalized_tensor[index][x][y]).toString(),
+        label: '',//data.similarities.map((similiarity, index) => normalized_tensor[index][x][y]).toString(),
         isHovered: false,
     })))).flat();
+
+    let leastCitations = data.paper.reduce((paper, smallest) => (paper.citations < smallest.citations) ? paper : smallest ).citations;
+    let mostCitations = data.paper.reduce((paper, largest) => (paper.citations > largest.citations) ? paper : largest).citations;
 
     const nodes = data.paper.map((paper, index) => ({
         ...paper,
         color: '',
-        val: Math.log(paper.inCitations.length + logBulk) * nodeBaseSize,
+        val: (((Math.log(paper.citations + logBulk) - Math.log(leastCitations + logBulk)) / (Math.log(mostCitations + logBulk) - Math.log(leastCitations + logBulk))) * (largestNodeSize - smallestNodeSize)) + smallestNodeSize,
         isHovered: false,
     }));
 
-    return ({    
+    return ([{    
         nodes: nodes,
         links: links,
-    });
+    },
+    leastCitations,
+    mostCitations]);
 }
 
 /**
@@ -130,7 +148,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
     // total number of Sliders needed base on the number of similarity metrics applied
     const sliderCount: number = props.data.tensor.length;
 
-    // reference to the Graph used for TODO: insert Usage  
+    // reference to the Graph
     const fgRef = React.useRef();
 
     // slider values
@@ -143,10 +161,31 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
     const [sliderDrawer, setSliderDrawer] = React.useState(false);
     
     // selected Node to display on drawer
-    const [selectedNode, setNode] = React.useState(initNode);
+    const [selectedNode, setNode] = React.useState(props.data.paper[0]);
 
     // load an empty Graph until the real Data is fetched
     const [graphData, setGraphData] = React.useState<PaperGraphData>({nodes : [], links : []})
+
+    // boolean to decide wheter the Title or the author and year should be displayed on the nodes
+    const [showTitle, setShowTitle] = React.useState<Boolean>(true);
+
+    // weak Link Filter Slider value
+    const [weakLinkFilter, setweakLinkFilter] = React.useState<number>(0);
+
+    // selected pallette
+    const [pallette, setPallette] = React.useState<[string, string[]]>(pallettes[0]);
+
+    // used to increase/decrease the Node Repelling Force (ManyBodyForce)
+    const [nodeRepelling, setNodeRepelling] = React.useState<number>(0);
+
+    // least Citations of a Paper in the generated Graph
+    const [leastCitations, setLeastCitations] = React.useState<number>(0);
+
+    // most Citations of a Paper in the generated Graph
+    const [mostCitations, setMostCitations] = React.useState<number>(0);
+
+    // boolean to decide wheter the legend should be displayed or not
+    const [showLegend, setShowLegend] = React.useState<boolean>(true);
 
     let history = useHistory()
 
@@ -155,8 +194,12 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
     }, [sliderCount])
 
     React.useEffect(() => {
-        if (props.data.tensor.length > 0)
-            setGraphData(generateGraph(props.data));
+        if (props.data.paper.length > 0){
+            let graphData = generateGraph(props.data);
+            setGraphData(graphData[0]);
+            setLeastCitations(graphData[1]);
+            setMostCitations(graphData[2]);
+        }
     }, [props.data])
 
     // EffectHook for playing with forces
@@ -165,10 +208,10 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
         if (fg) {
             fg.d3Force('charge').strength(-100);
             fg.d3Force('charge').distanceMin(10);
-            fg.d3Force('link').distance((link : SimilarityLinkObject) => 100 / (link.similarity.map((element, index) => element * sliders[index] / 100).reduce((x,y) => x+y) + squish));
+            fg.d3Force('link').distance((link : SimilarityLinkObject) => 100 / (link.similarity.map((element, index) => element * sliders[index] / 100).reduce((x,y) => x+y) + squish)+nodeRepelling*2);
             fg.d3Force('link').strength((link : SimilarityLinkObject) => (link.similarity.map((element, index) => element * sliders[index] / 100).reduce((x,y) => x+y) + squish));
         }
-        }, [sliders]);
+        }, [sliders, nodeRepelling]);
 
     // EffectHook for rerendering upon slider changes
     React.useEffect(() => {
@@ -176,7 +219,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
         if (fg) {
             fg.d3ReheatSimulation();
         }
-    }, [sliders]);
+    }, [sliders, nodeRepelling]);
 
     return(
         <div>
@@ -186,6 +229,37 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                         Slider
                     </div>
                 </div>
+                {showLegend && <div className='legend'>
+                    <div className='legend-description'>
+                        <span>Distinct Colors = Distinct Fields Of Study</span>
+                    </div>
+                    <div className='legend-link-width-container'>
+                        <div className='legend-link-width'></div>
+                    </div>
+                    <div className='legend-description'>
+                        <span className='legend-description-child1'>Low</span>
+                        <span className='legend-description-child2'>Link Similarity</span>
+                        <span className='legend-description-child3'>High</span>
+                    </div>
+                    <div className='legend-circles'>
+                        <div className='circle--1'></div>
+                        <div className='circle--2'></div>
+                        <div className='circle--3'></div>
+                        <div className='circle--4'></div>
+                        <div className='circle--5'></div>
+                    </div>
+                    <div className='legend-description'>
+                        <span className='legend-description-child1'>{leastCitations}</span>
+                        <span className='legend-description-child2'>Citations</span>
+                        <span className='legend-description-child3'>{mostCitations}</span>
+                    </div>
+                    <div className='legend-color-bar'></div>
+                    <div className='legend-description'>
+                        <span className='legend-description-child1'>{new Date().getFullYear() - paperOppacityYearRange}</span>
+                        <span className='legend-description-child2'>Year</span>
+                        <span className='legend-description-child3'>{new Date().getFullYear()}</span>
+                    </div>
+                </div>}
 
                 {props.data.tensor.length > 0 ? 
                     <>
@@ -202,14 +276,20 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                         >
                             <Drawer.Header>
                                 <Drawer.Title>
-                                    {'Slider'}
+                                    Graph Controller
                                 </Drawer.Title>
                             </Drawer.Header>
                             <Drawer.Body>
                                 <div className='slider-popup'>
+                                    <span className='graph-settings-title'>Similarites</span>
                                     {sliders.map((sliderVal, index) => (
                                         <div className='slider'>
-                                            {props.data.similarities[index].name + ':'}
+                                            <div>{props.data.similarities[index].name + ':  '}
+                                                <Whisper placement="right" trigger="hover" speaker={<Popover title={props.data.similarities[index].name}>
+                                                        <Linkify><p>{props.data.similarities[index].description}</p></Linkify>
+                                                    </Popover>} enterable>
+                                                    <Icon icon="info"/>
+                                                </Whisper></div>
                                             <div className='slider-with-input-number' key={index}>
                                                     <Slider
                                                         step= {0.1}
@@ -238,11 +318,45 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                                 </div>
                                         </div>)
                                     )}
+                                    <Divider />
+                                    <div className='graph-settings'>
+                                        <span className='graph-settings-title'>Settings</span>
+                                        <span className='graph-settings-subtitle-first'>Node Label</span>
+                                        <ButtonGroup>
+                                            <Button className='switch-button-2' appearance={showTitle ? 'primary' : 'ghost'} onClick={() => setShowTitle(true)}>Title</Button>
+                                            <Button className='switch-button-2' appearance={showTitle ? 'ghost' : 'primary'} onClick={() => setShowTitle(false)}>Author, Year</Button>
+                                        </ButtonGroup>
+                                        <span className='graph-settings-subtitle'>Legend</span>
+                                        <ButtonGroup>
+                                            <Button className='switch-button-2' appearance={showLegend ? 'primary' : 'ghost'} onClick={() => setShowLegend(true)}>On</Button>
+                                            <Button className='switch-button-2' appearance={showLegend ? 'ghost' : 'primary'} onClick={() => setShowLegend(false)}>Off</Button>
+                                        </ButtonGroup>
+                                        <span className='graph-settings-subtitle'>Weak Link Filter</span>
+                                        <Slider className='graph-settings-slider'
+                                            progress
+                                            defaultValue={0}
+                                            onChange={value => {
+                                                setweakLinkFilter(value/100);
+                                            }}
+                                        />
+                                        <span className='graph-settings-subtitle'>Node Repelling Force</span>
+                                        <Slider className='graph-settings-slider'
+                                            progress
+                                            defaultValue={0}
+                                            onChange={value => {
+                                                setNodeRepelling(value);
+                                            }}
+                                        />
+                                        <span className='graph-settings-subtitle'>Colorblindness Pallettes</span>
+                                        <SelectPicker 
+                                            data={pallettes.map(x => ({value: x, label: x[0]}))}
+                                            searchable={false}
+                                            cleanable={false}
+                                            value={pallette}
+                                            onSelect={setPallette}/>
+                                    </div>
                                 </div>
                             </Drawer.Body>
-                            <Drawer.Footer>
-
-                            </Drawer.Footer>
                         </Drawer>
                         {/**
                          * Drawer displays the selected Paper
@@ -259,28 +373,25 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                             </Drawer.Header>
                             <Drawer.Body>
                                 <p>
-                                    <Button color='cyan' appearance='ghost' href={selectedNode.s2Url} target='_blank'>
+                                    <Button appearance='ghost' href={selectedNode.s2Url} target='_blank'>
                                         Open in Semantic Scholar
                                     </Button>
 
 
-                                    <Button color='cyan' appearance='ghost' onClick={() => addSavedPaper(selectedNode.id)}>
+                                    <Button appearance='ghost' onClick={() => addSavedPaper(selectedNode.id)}>
                                         Save Paper
                                     </Button>
 
-                                    <Button color='cyan' appearance='ghost' onClick={() => {history.push(`/graph/${selectedNode.id}`)}}>
+                                    <Button appearance='ghost' onClick={() => {history.push(`/graph/${selectedNode.id}`)}}>
                                         Generate Graph
                                     </Button>
                                 </p>
-                                <p style={{color:'grey'}}>{selectedNode.year}{selectedNode.authors.map(author => <>, {author.name}</>)}
+                                <p style={{color:'grey'}}>{selectedNode.year + ', '}{selectedNode.authors.length <= maxAuthors + 1 ? selectedNode.authors.map<React.ReactNode>(obj => (<Link to={`/author/${obj.id}`}>{obj.name}</Link>)).reduce((prev, curr) => [prev, ', ', curr]) : selectedNode.authors.slice(0, maxAuthors).map(author => author.name).join(', ') + ', +' + (selectedNode.authors.length - maxAuthors) + ' others'}
                                     <br/> Citations: {selectedNode.inCitations.length}, References: {selectedNode.outCitations.length}
-                                    <br/><p style={{color:selectedNode.color}}>Field: {selectedNode.fieldsOfStudy.map(field => <> {field}</>)} </p>
+                                    <br/><p style={{color:selectedNode.color}}>Field: {selectedNode.fieldsOfStudy.map(field => field).join(', ')} </p>
                                 </p>
                                 <p>{selectedNode.paperAbstract}</p>
                             </Drawer.Body>
-                            <Drawer.Footer>
-
-                            </Drawer.Footer>
                         </Drawer>
                         {/**
                          * ForceGraph2D renders the actual graph
@@ -326,21 +437,24 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                     // Remove nodeCanvasObject to get normal circular nodes
                                     nodeCanvasObject={(node, ctx, globalScale) => {
                                         let paperName = (node as PaperNode).title;
-                                        const label = paperName.length > 25 ? paperName.substring(0, 20).concat("...") : paperName;
+                                        let authorName = (node as PaperNode).authors[0].name.split(' ');
+                                        const label = showTitle ? (paperName.length > 25 ? paperName.substring(0, 20).trim() + '...' : paperName) : authorName[authorName.length-1] + ', ' + (node as PaperNode).year;
                                         const fontSize = 12/globalScale;
                                         ctx.font = `${fontSize}px Sans-Serif`;
-                                        const textWidth = ctx.measureText(label as string).width;
                                         
                                         //Node Color
-                                        //console.log((((node as Paper).year - (new Date().getFullYear() - 20) < 0 ? 5 : ((node as Paper).year - (new Date().getFullYear() - 20)))/20));
                                         if((node as PaperNode).id === props.data.paper[0].id){
-                                            ctx.fillStyle = `rgba(146, 122, 201, ${(((node as PaperNode).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as PaperNode).year - new Date().getFullYear()) + 1))})`;
+                                            ctx.fillStyle = `rgba(136, 46, 114, ${(((node as PaperNode).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as PaperNode).year - new Date().getFullYear()) + 1))})`;
                                         }else{
-                                            ctx.fillStyle = `rgba(122, 201, 171, ${(((node as PaperNode).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as PaperNode).year - new Date().getFullYear()) + 1))})`;
+                                            if((node as PaperNode).fieldsOfStudy.toString() === defaultFieldOfStudy){
+                                                ctx.fillStyle = `rgba(231, 156, 69, ${(((node as PaperNode).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as PaperNode).year - new Date().getFullYear()) + 1))})`;  
+                                            }else{
+                                                ctx.fillStyle = hexToRGB(pallette[1][hash((node as PaperNode).fieldsOfStudy.slice().sort().toString()) % pallette[1].length], (((node as PaperNode).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as PaperNode).year - new Date().getFullYear()) + 1)).toString());
+                                            }
                                         }
                                         ctx.beginPath();
-                                        //Node shape (arc creates a cirle at coordinate (node.x, node.y) with radius (radiusmagie). Last 2 Parameters are needed to draw a full circle)
-                                        ctx.arc(node.x!, node.y!, Math.log((node as PaperNode).inCitations.length + logBulk) * nodeBaseSize, 0, 2 * Math.PI);
+                                        //Node shape (arc creates a cirle at coordinate (node.x, node.y) with radius (radiusmagic). Last 2 Parameters are needed to draw a full circle)
+                                        ctx.arc(node.x!, node.y!, Math.sqrt(Math.max(0, (node as PaperNode).val || 1)) * 4, 0 , 2 * Math.PI);
                                         if((node as PaperNode).isHovered){
                                             //Circle Edge Color when the Node is hovered
                                             ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
@@ -356,16 +470,13 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                         ctx.fillStyle = 'rgba(230, 230, 230, 0.8)';//(node as Paper).color;
                                         ctx.fillText(label as string, node.x!, node.y!);
                                     }}
-                                    nodeAutoColorBy='fieldsOfStudy'
                                     nodeLabel='title'
                                     linkLabel={(link) => (link as SimilarityLinkObject).label}
                                     linkWidth={(link) => (link as SimilarityLinkObject).isHovered ? linkOnHoverWidth 
                                         : ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y)*3)}
                                     linkVisibility={(link) => 
-                                        ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y) !== 0)}
-                                    linkCurvature='curvature'
-                                    linkDirectionalArrowLength='arrowLen'
-                                    linkDirectionalParticles='dirParticles'
+                                        ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y) !== 0) &&
+                                        ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y)) > weakLinkFilter/3}
                                     d3VelocityDecay={0.95}
                                     cooldownTicks={100}
                                     //onEngineStop={() => (fgRef.current as any).zoomToFit(400, 100)}

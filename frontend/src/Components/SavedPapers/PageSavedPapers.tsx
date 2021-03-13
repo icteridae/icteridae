@@ -9,7 +9,6 @@ import FlexboxGridItem from 'rsuite/lib/FlexboxGrid/FlexboxGridItem';
 
 export const PageSavedPapers: React.FC = () => (
     
-
     <Grid>
         <Row>
             <Col lg={14}>
@@ -20,6 +19,5 @@ export const PageSavedPapers: React.FC = () => (
             </Col>
         </Row>
     </Grid>
-    
-    
+      
 );
