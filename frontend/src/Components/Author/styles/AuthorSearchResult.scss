@@ -16,7 +16,7 @@
     display: flex;
     flex-shrink: 0;
     flex-direction: column;
-    width: 40%;
+    width: 35%;
 
     margin-left: 5vh;
     margin-top: 5vh;
@@ -36,6 +36,8 @@
 
 .paper-list {
     margin-top: 6vh;
+    overflow : scroll;
+    height: 75vh;
 }
 
 .paper-list .publications {
