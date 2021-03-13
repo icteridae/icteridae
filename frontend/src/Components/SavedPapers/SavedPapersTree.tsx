@@ -11,12 +11,18 @@ import { Link } from 'react-router-dom';
 
 import './SavedPapers.sass'
 
+interface SavedPaperTreeProps {
+    setSelectedPaper: (x: TreeTypes.PaperOrDirectoryNode | undefined) => void,
+    loadedPapers: { [id: string] : GeneralTypes.Paper},
+    setLoadedPapers: React.Dispatch<React.SetStateAction<{
+        [id: string]: GeneralTypes.Paper;
+    }>>,
+}
 
-export const SavedPapersTree: React.FC = () => {
+export const SavedPapersTree: React.FC<SavedPaperTreeProps> = (props) => {
     
     const [selectedTreeNode, setSelectedTreeNode] = useState<TreeTypes.PaperOrDirectoryNode>();
-    const [loadedPapers, setLoadedPapers] = useState<{ [id: string] : GeneralTypes.Paper}>({})
-    const [directoryNames, setDirectoryNames] = useState<{ [id: string] : string}>({})
+    const [directoryNames, setDirectoryNames] = useState<{ [id: string] : string}>({});
     const [treeData, setTreeData] = useState<TreeTypes.PaperOrDirectoryNode[]>(
         PaperFunctions.deepMap(JSON.parse(localStorage.getItem('savedpapers') || '[]'),
         (node) => TreeTypes.isDirectoryNode(node) ? 
@@ -35,24 +41,24 @@ export const SavedPapersTree: React.FC = () => {
     }
 
     useEffect(() => {
-        PaperFunctions.loadPapers(treeData, setLoadedPapers)
+        PaperFunctions.loadPapers(treeData, props.setLoadedPapers)
         setDirectoryNames(PaperFunctions.deepReduce(treeData, (ac, val) => TreeTypes.isDirectoryNode(val) ? {...ac, [val.value]: val.directoryName}: ac, {}))
     }, []);
 
     useEffect(() => {
         setTreeData(treeData => PaperFunctions.deepMap(treeData, 
             node => (
-                TreeTypes.isPaperNode(node) && loadedPapers.hasOwnProperty(node.paperId) ? 
+                TreeTypes.isPaperNode(node) && props.loadedPapers.hasOwnProperty(node.paperId) ? 
                     {...node, label: 
-                        <>{loadedPapers[node.paperId].title 
+                        <>{props.loadedPapers[node.paperId].title 
                             + ' (' 
-                            + loadedPapers[node.paperId].authors[0].name.split(' ').slice(-1)[0] 
+                            + props.loadedPapers[node.paperId].authors[0].name.split(' ').slice(-1)[0] 
                             + ' ' 
-                            + loadedPapers[node.paperId].year 
+                            + props.loadedPapers[node.paperId].year 
                             + ')'} </>} 
                 : node
                 )))
-    }, [loadedPapers])
+    }, [props.loadedPapers])
 
     useEffect(() => {
         setTreeData(treeData => PaperFunctions.deepMap(treeData,
@@ -70,6 +76,15 @@ export const SavedPapersTree: React.FC = () => {
     useEffect(() => {
         localStorage.setItem('savedpapers', JSON.stringify(PaperFunctions.deepMap(PaperFunctions.stripTree(treeData), (node) => (TreeTypes.isStrippedDirectoryNode(node) ? {...node, directoryName: directoryNames[node.value]} : node))))
     }, [treeData, directoryNames])
+
+    useEffect(() => {
+        if (TreeTypes.isPaperNode(selectedTreeNode)) {
+            props.setSelectedPaper(selectedTreeNode)
+        } else {
+            props.setSelectedPaper(undefined)
+        }
+        
+    })
 
     return (
         <div className="saved-papers-tree">
