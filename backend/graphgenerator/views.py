@@ -18,7 +18,7 @@ from .similarity import USING_SIMILARITIES as similarity_function_list
 from .similarity import PairwiseSimilarity
 from .relevance import USING_RELEVANCE
 
-from .documents import PaperDocument
+from .documents import PaperDocument, AuthorDocument
 
 SATURATION_PIVOT = 100
 BOOST_MAGNITUDE = 2.5
@@ -43,9 +43,9 @@ def search(request):
 
 
     title_query = dsl_query.Match(title={'query': query})
-    author_query = dsl_query.Match(authors__name={'query': query})
+    # author_query = dsl_query.Match(authors__name={'query': query})
 
-    match_query = title_query | author_query #dsl_query.MultiMatch(query=query, fields=['title', 'authors.name'])
+    match_query = title_query # | author_query #dsl_query.MultiMatch(query=query, fields=['title', 'authors.name'])
     citation_query = dsl_query.RankFeature(field='citations', saturation={'pivot': SATURATION_PIVOT}, boost=BOOST_MAGNITUDE) # Create query to boost results with high citations
 
     full_query = match_query & citation_query # Combine two queries above
@@ -153,18 +153,22 @@ def search_author(request):
         return http.HttpResponseBadRequest('invalid page size.')
     pagesize = int(pagesize)
 
+
+    name_query = dsl_query.Match(name={'query': query})
+    result = AuthorDocument.search().query(name_query)
+
     search_result = Author.objects.filter(name__icontains = query)
 
-    max_pages = (search_result.count() - 1) // pagesize
+    max_pages = (result.count() - 1) // pagesize + 1
 
-    page = request.query_params.get('page', '0')
+    page = request.query_params.get('page', '1')
     if not page.isnumeric() or int(page) > max_pages:
         return http.HttpResponseBadRequest('invalid page number.')
     page = int(page)
 
     return http.JsonResponse(
         {
-            'data': AuthorSerializer(search_result[pagesize * page: pagesize * (page + 1)],
+            'data': AuthorSerializer(result[pagesize * (page - 1): pagesize * page].to_queryset(),
                                     many=True).data,
             'max_pages': max_pages
         },
