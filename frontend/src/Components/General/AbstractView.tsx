@@ -6,9 +6,10 @@ import { Authors } from './Authors'
 import { Bookmark } from './Bookmark'
 import { Paper } from '../../Utils/GeneralTypes'
 
+import './style/AbstractView.sass'
+
 export const AbstractView : React.FC<{selected: Paper}> = (props) => {
     return(
-        <div className='wrapper-abstract-view' id='search-result-wrapper-2'>
             <div id='search-result-abstract-view' className='abstract-view'>
                 <h1 className='title'>
                     <Link to={`/graph/${props.selected.id}`}>{props.selected.title}</Link>
@@ -27,6 +28,5 @@ export const AbstractView : React.FC<{selected: Paper}> = (props) => {
                         </div>)
                 }
             </div>
-        </div>
     );
 }
