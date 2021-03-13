@@ -8,7 +8,7 @@ import { SearchResultList, setAbstractViewToCorrectHeight } from './SearchResult
 import Config from '../../../Utils/Config'
 import {Paper} from '../../../Utils/GeneralTypes'
 
-import './styles/PageSearchResult.scss';
+import './styles/PageSearchResult.sass';
 
 
 export const PageSearchResult : React.FC = () => {
