@@ -1,9 +1,11 @@
 import React, {useEffect, useState} from 'react';
 
 import { useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import PulseLoader from "react-spinners/PulseLoader";
 
 import { Authors } from '../../General/Authors';
+import { Bookmark } from '../../General/Bookmark';
 import { SearchResultList, setAbstractViewToCorrectHeight } from './SearchResultList';
 import Config from '../../../Utils/Config'
 import { Paper } from '../../../Utils/GeneralTypes'
@@ -60,7 +62,10 @@ const AbstractView : React.FC<{selected: Paper}> = (props) => {
     return(
         <div className='wrapper-2' id='search-result-wrapper-2'>
             <div id='search-result-abstract-view' className='abstract-view'>
-                {(props.selected != null) && <h1>{props.selected.title}</h1>}
+                <h1>
+                    <Link to={`/graph/${props.selected.id}`}>{props.selected.title}</Link>
+                    <Bookmark paper_id={props.selected.id} size="md"/>
+                </h1>
 
                 <Authors authors={props.selected.authors} maxAuthors={5}/>
                 <span className='fields-of-study'>{props.selected.fieldsOfStudy.join(' ,')}</span>
