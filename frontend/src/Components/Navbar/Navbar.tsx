@@ -1,25 +1,28 @@
-import * as React from "react";
-import { Icon } from 'rsuite';
+import React, { useState } from 'react';
+
 import { NavbarItem } from './NavbarItem';
-import { NavbarSearch } from "./NavbarSearch";
+import { NavbarSearch } from './NavbarSearch';
+
 import './styles/Navbar.sass'
 
 /**
  * The Navbar holds links to the different sites of the application
- * @param props are the standard NavbarProps from rsuite
- * @returns the navbar with links to the Search-, My Papers-, Graph-, Privacy- and Aboutpages and a link to Github and to the settings
+ * @returns the navbar with links to the Search-, My Papers-, Graph-, Privacy- and About-pages and a link to Github
  */
-export const NavBar: React.FC = (props) => {
+export const NavBar: React.FC = () => {
+    const [searchInput, setSearchInput] = useState<string>('');
+
+    const resetInput = () => setSearchInput('');
     return (
-        <div id="navbar">
-            <div className="navbar-left">
-                <NavbarItem label="Icteridae" path="/" className="navbar-home"/>
-                <NavbarSearch/>
-                <NavbarItem icon="bookmark" label="My Papers" path="/papers" className="navbar-my-papers"/>
-                <NavbarItem icon="info" label="About" path="/privacy" className="navbar-about"/>
+        <div id='navbar'>
+            <div className='navbar-left'>
+                <NavbarItem label='Icteridae' path='/' className='navbar-home' onClick={resetInput}/>
+                <NavbarSearch value={searchInput} raiseStateInput={setSearchInput}/>
+                <NavbarItem icon='bookmark' label='My Papers' path='/papers' className='navbar-my-papers' onClick={resetInput}/>
+                <NavbarItem icon='info' label='About' path='/privacy' className='navbar-about' onClick={resetInput}/>
             </div>
-            <div className="navbar-right">
-                <NavbarItem extern icon="github" label="Github" path="https://github.com/icteridae/icteridae/" className="navbar-github"/>
+            <div className='navbar-right'>
+                <NavbarItem extern icon='github' label='Github' path='https://github.com/icteridae/icteridae/' className='navbar-github'/>
             </div>
         </div>
     )
