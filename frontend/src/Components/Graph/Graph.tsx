@@ -14,6 +14,7 @@ import { addSavedPaper, getSavedSliders, setSavedSliders } from '../../Utils/Web
 import { useHistory } from 'react-router-dom';
 import { Bookmark } from '../General/Bookmark';
 import { pallettes } from './Colors';
+import { Helmet } from 'react-helmet';
 
 // Node Parameters
 // Added inside log(citations) to shift the logarithm. Can not be less than 1!
@@ -183,6 +184,11 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
 
     return(
         <div>
+            <Helmet>
+                <title>
+                    {props.data.paper[0].title}
+                </title>
+            </Helmet>
             <div className='graph-container'>
                 {/**
                  * Graph controller popup button
