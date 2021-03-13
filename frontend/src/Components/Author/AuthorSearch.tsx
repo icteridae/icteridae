@@ -4,8 +4,7 @@ import { Link } from 'react-router-dom';
 import { useHistory, useParams } from 'react-router-dom';
 
 import './styles/AuthorSearch.sass';
-import '../Search/SearchBar/SearchBar.scss'
-import {AutoComplete, Icon, InputGroup, Pagination} from "rsuite";
+import {AutoComplete, FlexboxGrid, Icon, InputGroup, Pagination} from "rsuite";
 import {AuthorInterface} from "./AuthorInterface";
 import Config from "../../Utils/Config";
 
@@ -21,16 +20,15 @@ export const AuthorSearch: React.FC<AuthorResultProps> = (props) => {
     // Searchbar input
     const [input, setInput] = useState('');
     // Author list
-    const [authorList, setAuthorList] = useState<AuthorInterface[]>();
+    const [authorList, setAuthorList] = useState<AuthorInterface[] | undefined>(undefined);
 
     const [activePage, setActivePage] = useState<number>(1);
     const [maxPages, setMaxPages] = useState<number>();
     const [count, setCount] = useState<number>();
 
 
-    // Effect hook for fetching author list from search API
-    useEffect(() => {
-        let requestURL = Config.base_url + '/api/search_author/?query=' + query + '&page=' + activePage;
+    const updateContent = (query: string, activePage: number): void => {
+        const requestURL = Config.base_url + '/api/search_author/?query=' + query + '&page=' + activePage;
 
         fetch(requestURL)
             .then(res => res.json())
@@ -39,24 +37,49 @@ export const AuthorSearch: React.FC<AuthorResultProps> = (props) => {
                 setMaxPages(result.max_pages);
                 setCount(result.count);
             }).catch(() => console.log("Can't access " + requestURL));
-    }, [query, activePage]);
-
-    const buttonClick = () => {
-        history.push(`/authorsearch/${input}`);
     }
 
+    // Effect hook for fetching author list from search API
+    useEffect(() => {
+        setActivePage(1);
+        setMaxPages(0);
+        setCount(0);
+        setAuthorList(undefined)
+        updateContent(query, 1)
+    }, [query])
+
+    useEffect(() => {
+        updateContent(query, activePage)
+    }, [activePage])
+
+    const getAuthorAbreviation = (author: string): string => {
+        const authorAr = author.split(/ +/) // Why are there two spaces in an authors name??? 
+        const abrAr = authorAr.slice(0, authorAr.length-1).map(n => n[0] + '.')
+        abrAr.push(authorAr[authorAr.length-1])
+        return abrAr.join(' ')
+    }
 
     // Display search results
     let resultList
-    if (query != null) {
+    if (query != null && authorList !== undefined) {
         resultList =
             <div className='wrapper' id='author-list-wrapper'>
                 <div id='query-title'>
                     <h2>Showing search results for <b>"{query}"</b>:</h2>
                     <div className='line'></div>
                 </div>
-                <div className="result-list" id="author-result-list">
-                    {authorList?.map((author) => (<Link to={`/author/${author.id}`}>{author.name}</Link>))}
+                <div id="author-result-list">
+                    <FlexboxGrid justify='center'>
+                        {authorList?.map((author) => (
+                                <Link className='author-card' to={`/author/${author.id}`}>
+                                    <div>{getAuthorAbreviation(author.name)}</div> 
+                                    <div className='author-full-name'>{author.name}</div>
+                                    
+                                    </Link>
+                            ))}
+                    </FlexboxGrid>
+                    
+                    
                     {
                         (maxPages != null) &&
                         <Pagination
@@ -81,16 +104,18 @@ export const AuthorSearch: React.FC<AuthorResultProps> = (props) => {
         <div className='author-search-page'>
             <div className="search-bar">
                 {props.text? <><div className='text'>{props.text} </div> <br /></> : null}
-                <form onSubmit={buttonClick}>
+                <form onSubmit={(e) => {e.preventDefault(); history.push(`/authorsearch/${input}`);}}>
                 <InputGroup id="search-bar-group">
                         <AutoComplete placeholder='Search for authors...' value={input} onChange={(e) => setInput(e)} />
-                        <InputGroup.Button type="submit" onClick={buttonClick}>
+                        <InputGroup.Button type="submit" onClick={() => {history.push(`/authorsearch/${input}`);}}>
                             <Icon icon="search" />
                         </InputGroup.Button>
                     </InputGroup>
                 </form>
             </div>
-            {resultList}
+            {authorList===undefined ? <>Loading</> 
+            : authorList.length === 0 ? <>No results</>
+            : resultList}
         </div>
     );
 }
