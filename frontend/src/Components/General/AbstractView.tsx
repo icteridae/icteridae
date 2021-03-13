@@ -17,7 +17,7 @@ export const AbstractView : React.FC<{selected: Paper}> = (props) => {
                 </h1>
 
                 <Authors authors={props.selected.authors} maxAuthors={5}/>
-                <span className='fields-of-study'>{props.selected.fieldsOfStudy.join(' ,')}</span>
+                <span className='fields-of-study'>{props.selected.fieldsOfStudy.join(', ')}</span>
                 <span className='year'>{props.selected.year}</span>
                 <span className='citations'>{'Citations: ' + props.selected.inCitations.length + ', References: ' + props.selected.outCitations.length}</span>
                 {

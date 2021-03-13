@@ -5,7 +5,7 @@ import { Pagination } from 'rsuite';
 import { SearchResultCard } from "./SearchResultCard";
 import { Paper } from '../../../Utils/GeneralTypes';
 
-import './styles/SearchResultList.scss';
+import './styles/SearchResultList.sass';
 
 interface ResultListProps {
     activePage: number,
@@ -63,7 +63,7 @@ export const SearchResultList : React.FC<ResultListProps> = (props) => {
             })}
 
             <Pagination 
-                size='md' id='test' 
+                size='md' id='pagination' 
                 activePage={props.activePage} 
                 pages={props.results.pages} 
                 maxButtons={3} 
