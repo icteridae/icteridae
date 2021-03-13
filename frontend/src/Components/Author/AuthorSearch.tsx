@@ -20,8 +20,8 @@ export const AuthorSearch: React.FC<AuthorResultProps> = (props) => {
 
     // Searchbar input
     const [input, setInput] = useState('');
-    // Searchbar autocomplete data
-    const [authorAutocompleteList, setAuthorAutocompleteList] = useState<AuthorInterface[]>();
+    // Author list
+    const [authorList, setAuthorList] = useState<AuthorInterface[]>();
 
     const [activePage, setActivePage] = useState<number>(1);
     const [maxPages, setMaxPages] = useState<number>();
@@ -34,7 +34,7 @@ export const AuthorSearch: React.FC<AuthorResultProps> = (props) => {
         fetch(requestURL)
             .then(res => res.json())
             .then(result => {
-                setAuthorAutocompleteList(result.data);
+                setAuthorList(result.data);
                 setMaxPages(result.max_pages);
             }).catch(() => console.log("Can't access " + requestURL));
     }, [query, activePage]);
@@ -54,23 +54,23 @@ export const AuthorSearch: React.FC<AuthorResultProps> = (props) => {
                     <div className='line'></div>
                 </div>
                 <div className="result-list" id="author-result-list">
-                    {authorAutocompleteList?.map((author) => (<Link to={`/author/${author.id}`}>{author.name}</Link>))}
+                    {authorList?.map((author) => (<Link to={`/author/${author.id}`}>{author.name}</Link>))}
+                    {
+                        (maxPages != null) &&
+                        <Pagination
+                            size='md'
+                            id='test'
+                            activePage={activePage}
+                            pages={maxPages}
+                            maxButtons={3}
+                            ellipsis
+                            boundaryLinks
+                            onSelect={(eventKey) => {
+                                setActivePage(eventKey);
+                                document.getElementById('search-result-list')?.scrollTo(0, 0)}
+                            }/>
+                    }
                 </div>
-                {
-                    (maxPages != null) &&
-                    <Pagination
-                        size='md'
-                        id='test'
-                        activePage={activePage}
-                        pages={maxPages}
-                        maxButtons={3}
-                        ellipsis
-                        boundaryLinks
-                        onSelect={(eventKey) => {
-                            setActivePage(eventKey);
-                            document.getElementById('search-result-list')?.scrollTo(0, 0)}
-                        }/>
-                }
             </div>
             ;
     }
@@ -81,7 +81,7 @@ export const AuthorSearch: React.FC<AuthorResultProps> = (props) => {
                 {props.text? <><div className='text'>{props.text} </div> <br /></> : null}
                 <form onSubmit={buttonClick}>
                 <InputGroup id="search-bar-group">
-                        <AutoComplete placeholder={props.placeholder} value={input} onChange={(e) => setInput(e)} />
+                        <AutoComplete placeholder='Search for author' value={input} onChange={(e) => setInput(e)} />
                         <InputGroup.Button type="submit" onClick={buttonClick}>
                             <Icon icon="search" />
                         </InputGroup.Button>

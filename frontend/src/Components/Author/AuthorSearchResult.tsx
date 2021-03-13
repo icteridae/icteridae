@@ -72,7 +72,7 @@ export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
                 {props.text? <><div className='text'>{props.text} </div> <br /></> : null}
                 <form onSubmit={buttonClick}>
                     <InputGroup id="search-bar-group">
-                        <AutoComplete placeholder={props.placeholder} value={input} onChange={(e) => setInput(e)} />
+                        <AutoComplete placeholder='Search for author' value={input} onChange={(e) => setInput(e)} />
                         <InputGroup.Button type="submit" onClick={buttonClick}>
                             <Icon icon="search" />
                         </InputGroup.Button>

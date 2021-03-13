@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import ForceGraph2D from 'react-force-graph-2d';
 import { Button, Drawer, Slider, InputNumber, Loader, Icon, Popover, Whisper, ButtonGroup, Divider, SelectPicker } from 'rsuite';
@@ -385,7 +386,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                         Generate Graph
                                     </Button>
                                 </p>
-                                <p style={{color:'grey'}}>{selectedNode.year + ', '}{selectedNode.authors.length <= maxAuthors + 1 ? selectedNode.authors.map(author => author.name).join(', ') : selectedNode.authors.slice(0, maxAuthors).map(author => author.name).join(', ') + ', +' + (selectedNode.authors.length - maxAuthors) + ' others'}
+                                <p style={{color:'grey'}}>{selectedNode.year + ', '}{selectedNode.authors.length <= maxAuthors + 1 ? selectedNode.authors.map<React.ReactNode>(obj => (<Link to={`/author/${obj.id}`}>{obj.name}</Link>)).reduce((prev, curr) => [prev, ', ', curr]) : selectedNode.authors.slice(0, maxAuthors).map(author => author.name).join(', ') + ', +' + (selectedNode.authors.length - maxAuthors) + ' others'}
                                     <br/> Citations: {selectedNode.inCitations.length}, References: {selectedNode.outCitations.length}
                                     <br/><p style={{color:selectedNode.color}}>Field: {selectedNode.fieldsOfStudy.map(field => field).join(', ')} </p>
                                 </p>
