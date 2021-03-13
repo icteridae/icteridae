@@ -1,23 +1,23 @@
 import React, {useEffect, useState} from 'react';
-import './styles/SearchResultList.scss';
-import { SearchResultCard } from "./SearchResultCard";
-import { DataInterface } from './Types';
-import Config from '../../../Utils/Config';
+
 import { Pagination } from 'rsuite';
 
-interface ResultListProps {
-    query: string,
-    pageSize: number,
+import { SearchResultCard } from "./SearchResultCard";
+import { Paper } from '../../../Utils/GeneralTypes';
 
-    /**function used to raise state, takes DataInterface as argument */
-    raiseStateSelected: React.Dispatch<React.SetStateAction<DataInterface | undefined>>
+import './styles/SearchResultList.scss';
+
+interface ResultListProps {
+    activePage: number,
+    results: {data: Paper[], pages: number},
+    
+    /**function used to raise state, takes Paper as argument */
+    raiseStateSelected: React.Dispatch<React.SetStateAction<Paper | undefined>>,
+    raiseStateActivePage: React.Dispatch<React.SetStateAction<number>>
 }
 
 export const SearchResultList : React.FC<ResultListProps> = (props) => {
-    const [searchResults, setSearchResults] = useState<DataInterface[]>();
     const [lastHighlighted, setLastHighlighted] = useState<string>();
-    const [activePage, setActivePage] = useState<number>(1);
-    const [maxPages, setMaxPages] = useState<number>();
 
     /**
      * Highlight a card with the given key and unhighlight the card that was last highlighted
@@ -57,44 +57,24 @@ export const SearchResultList : React.FC<ResultListProps> = (props) => {
             window.removeEventListener('resize', setListToRemainingHeight);
         }
     }, []);
-
-    // Effect hook for fetching query data from search API
-    useEffect(() => {
-        let requestURL = Config.base_url + '/api/search/?query=' + props.query + '&page=' + activePage + '&pagesize=' + props.pageSize;
-
-        fetch(requestURL)
-            .then(res => res.json())
-            .then(result => {
-                setSearchResults(result.data);
-                setMaxPages(result.max_pages);
-            }).catch(() => console.log("Can't access " + requestURL));
-    }, [props.query, activePage]);
-
     
     return (
         <div id="search-result-list" className="result-list">
-            {
-                // short-circuit eval, if searchResults null don't render
-                (searchResults != null) && searchResults.map((entry: DataInterface, index: number) => {
-                    return <SearchResultCard highlightCard={highlightCard} raiseStateSelected={props.raiseStateSelected} key={entry.id} dataKey={index.toString()} data={entry}/>
-                })
-                
-            }
-            {
-                (maxPages != null) && 
-                    <Pagination 
-                        size='md' 
-                        id='test' 
-                        activePage={activePage} 
-                        pages={maxPages} 
-                        maxButtons={3} 
-                        ellipsis 
-                        boundaryLinks 
-                        onSelect={(eventKey) => {
-                            setActivePage(eventKey);
-                            document.getElementById('search-result-list')?.scrollTo(0, 0)}
-                        }/>
-            }
+            {props.results.data.map((entry: Paper, index: number) => {
+                return <SearchResultCard highlightCard={highlightCard} raiseStateSelected={props.raiseStateSelected} key={entry.id} dataKey={index.toString()} data={entry}/>
+            })}
+
+            <Pagination 
+                size='md' id='test' 
+                activePage={props.activePage} 
+                pages={props.results.pages} 
+                maxButtons={3} 
+                ellipsis 
+                boundaryLinks 
+                onSelect={(eventKey) => {
+                    props.raiseStateActivePage(eventKey);
+                    document.getElementById('search-result-list')?.scrollTo(0, 0)}
+                }/>
         </div>
     );
 }

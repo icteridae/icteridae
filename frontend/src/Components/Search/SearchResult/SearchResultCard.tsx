@@ -8,12 +8,13 @@ import { DataInterface } from './Types';
 
 
 import './styles/SearchResultCard.scss';
+import { Paper } from '../../../Utils/GeneralTypes';
 
 interface SearchResultCardProps {
     /**function used to raise state, takes DataInterface as argument */
-    raiseStateSelected: React.Dispatch<React.SetStateAction<DataInterface | undefined>>,
+    raiseStateSelected: React.Dispatch<React.SetStateAction<Paper | undefined>>,
     highlightCard: (dataKey:string) => void,
-    data: DataInterface,
+    data: Paper,
     dataKey: string
 }
 

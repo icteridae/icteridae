@@ -10,13 +10,14 @@ import Config from '../../Utils/Config'
 
 import { css } from "@emotion/core";
 import SyncLoader from "react-spinners/SyncLoader";
+import { Paper } from '../../Utils/GeneralTypes';
 
 /**
  * Frontpage is shown when the user the Web-Application. If exists it shows the recently opened papers
  * @returns the front/Search page
  */
 export const FrontPage: React.FC = () => {
-    const [recentlyOpenedPapers, setRecentlyOpenedPapers] = useState<Array<DataInterface> | null>([]);
+    const [recentlyOpenedPapers, setRecentlyOpenedPapers] = useState<Array<Paper> | null>([]);
     const [recentPaperIds, setPaperIds] = useState<Array<string>>(getRecentPapers());
 
     /**
@@ -35,7 +36,7 @@ export const FrontPage: React.FC = () => {
         
         //capped at 10 papers max
         const numberOfPapers : number = Math.min(recentPaperIds.length, 10);
-        let papers: Array<DataInterface> = new Array<DataInterface>(numberOfPapers);
+        let papers: Array<Paper> = new Array<Paper>(numberOfPapers);
         
         // fetch all papers
         let promises = [];

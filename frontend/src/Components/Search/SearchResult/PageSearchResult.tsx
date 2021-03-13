@@ -1,36 +1,48 @@
 import React, {useEffect, useState} from 'react';
 
-import { DataInterface } from './Types';
-import { SearchResultList, setAbstractViewToCorrectHeight } from './SearchResultList';
-
 import { useParams } from 'react-router-dom';
 
-import './styles/PageSearchResult.scss';
 import { Authors } from '../../General/Authors';
+import { SearchResultList, setAbstractViewToCorrectHeight } from './SearchResultList';
+import Config from '../../../Utils/Config'
+import {Paper} from '../../../Utils/GeneralTypes'
+
+import './styles/PageSearchResult.scss';
 
 
 export const PageSearchResult : React.FC = () => {
-    let {query} = useParams<{query: string}>(); 
-    const [selected, setSelected] = useState<DataInterface>();
-    
+    let {query} = useParams<{query: string}>();
+    const [activePage, setActivePage] = useState<number>(1);
+    const [selected, setSelected] = useState<Paper>();
+    const [searchResults, setSearchResults] = useState<{data: Paper[], pages: number}>();
     const PAGESIZE = 10;
+
+    useEffect(() => {
+        let requestURL = Config.base_url + '/api/search/?query=' + query + '&page=' + activePage + '&pagesize=' + PAGESIZE;
+
+        fetch(requestURL)
+            .then(res => res.json())
+            .then(result => {
+                setSearchResults({data: result.data, pages: result.max_pages});
+            }).catch(() => console.log("Can't access " + requestURL));
+    }, [query, activePage]);
 
 
     return (
         <div className='page-search-result'>
             <div className='wrapper' id='search-result-wrapper'>
                 <div id='query-title'>
-                    <h2>Showing  results for <b>"{query}"</b>:</h2>
+                    <h2>Showing {PAGESIZE} of 1000 results for <b>"{query}"</b>:</h2>
                     <div className='line'></div>
                 </div>
-                <SearchResultList query={query} pageSize={PAGESIZE} raiseStateSelected={setSelected}/>
+                {searchResults  && <SearchResultList results={searchResults} activePage={activePage} raiseStateSelected={setSelected} raiseStateActivePage={setActivePage}/>}
             </div>
             {(selected != null) && <AbstractView selected={selected}/>}
         </div>
     );
 }
 
-const AbstractView : React.FC<{selected: DataInterface}> = (props) => {
+const AbstractView : React.FC<{selected: Paper}> = (props) => {
     // Effect hook for setting the height of AbstractView when it's rendered for the first time
     useEffect(() => {
         setAbstractViewToCorrectHeight();
