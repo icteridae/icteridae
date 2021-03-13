@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 
 import { useParams } from 'react-router-dom';
+import SyncLoader from "react-spinners/SyncLoader";
 
 import { Authors } from '../../General/Authors';
 import { SearchResultList, setAbstractViewToCorrectHeight } from './SearchResultList';
@@ -31,11 +32,19 @@ export const PageSearchResult : React.FC = () => {
     return (
         <div className='page-search-result'>
             <div className='wrapper' id='search-result-wrapper'>
-                <div id='query-title'>
-                    <h2>Showing {PAGESIZE} of 1000 results for <b>"{query}"</b>:</h2>
-                    <div className='line'></div>
-                </div>
-                {searchResults  && <SearchResultList results={searchResults} activePage={activePage} raiseStateSelected={setSelected} raiseStateActivePage={setActivePage}/>}
+                {
+                    (searchResults == null) ? <div className="sync-loader"><SyncLoader/></div> : 
+                        (
+                            <>
+                                <div id='query-title'>
+                                    <h2>Showing {PAGESIZE} of 1000 results for <b>"{query}"</b>:</h2>
+                                    <div className='line'></div>
+                                </div>
+                                <SearchResultList results={searchResults} activePage={activePage} raiseStateSelected={setSelected} raiseStateActivePage={setActivePage}/>
+                            </>
+                        )
+                }
+                
             </div>
             {(selected != null) && <AbstractView selected={selected}/>}
         </div>
