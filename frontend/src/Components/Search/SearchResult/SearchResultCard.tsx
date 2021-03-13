@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Link } from 'react-router-dom';
 
-import {Authors} from '../../General/Authors'
+import { Authors } from '../../General/Authors'
 import { Bookmark } from '../../General/Bookmark';
 import { Paper } from '../../../Utils/GeneralTypes';
 

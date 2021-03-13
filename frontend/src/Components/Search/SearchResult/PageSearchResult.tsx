@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from 'react';
 
 import { useParams } from 'react-router-dom';
-import SyncLoader from "react-spinners/SyncLoader";
+import PulseLoader from "react-spinners/PulseLoader";
 
 import { Authors } from '../../General/Authors';
 import { SearchResultList, setAbstractViewToCorrectHeight } from './SearchResultList';
 import Config from '../../../Utils/Config'
-import {Paper} from '../../../Utils/GeneralTypes'
+import { Paper } from '../../../Utils/GeneralTypes'
 
 import './styles/PageSearchResult.sass';
 
@@ -32,7 +32,8 @@ export const PageSearchResult : React.FC = () => {
     return (
         <div className='page-search-result'>
             {
-                (searchResults == null) ? <div className="spinner"><SyncLoader/></div> :
+                (searchResults == null) ? <div className="spinner"><PulseLoader/></div> :
+                    (searchResults.data.length === 0) ? <h2 className="no-results">No results found</h2> :
                     (
                         <div className='wrapper' id='search-result-wrapper'>            
                             <div id='query-title'>
