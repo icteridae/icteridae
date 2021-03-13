@@ -15,7 +15,7 @@ export const PageSearchResult : React.FC = () => {
     let {query} = useParams<{query: string}>();
     const [activePage, setActivePage] = useState<number>(1);
     const [selected, setSelected] = useState<Paper>();
-    const [searchResults, setSearchResults] = useState<{data: Paper[], pages: number}>();
+    const [searchResults, setSearchResults] = useState<{data: Paper[], pages: number, count: number}>();
     const PAGESIZE = 10;
 
     useEffect(() => {
@@ -24,7 +24,7 @@ export const PageSearchResult : React.FC = () => {
         fetch(requestURL)
             .then(res => res.json())
             .then(result => {
-                setSearchResults({data: result.data, pages: result.max_pages});
+                setSearchResults({data: result.data, pages: result.max_pages, count: result.count});
             }).catch(() => console.log("Can't access " + requestURL));
     }, [query, activePage]);
 
@@ -37,7 +37,7 @@ export const PageSearchResult : React.FC = () => {
                     (
                         <div className='wrapper' id='search-result-wrapper'>            
                             <div id='query-title'>
-                                <h2>Showing {PAGESIZE} of 1000 results for <b>"{query}"</b>:</h2>
+                                <h2>Showing {(PAGESIZE <= searchResults.count) ? PAGESIZE: searchResults.count} of {searchResults.count} results</h2>
                             <div className='line'>
                         </div>
                         </div>
