@@ -30,10 +30,10 @@ export const NavBar: React.FC = () => {
         <div id='navbar'>
             <div className='navbar-left'>
                 <NavbarItem label='Icteridae' path='/' className='navbar-home' onClick={resetInput}/>
-                <NavbarSearch label='Search' path='results' value={paperSearchInput} raiseStateInput={setPaperSearchInput} className='navbar-paper-search'/>
+                <NavbarSearch label='Papers' path='results' value={paperSearchInput} raiseStateInput={setPaperSearchInput} className='navbar-paper-search'/>
                 <NavbarSearch label='Authors' path='authorsearch' icon='user-o' value={authorSearchInput} raiseStateInput={setAuthorSearchInput} className='navbar-author-search'/>
                 <NavbarItem icon='bookmark' label='My Papers' path='/papers' className='navbar-my-papers' onClick={resetInput}/>
-                <NavbarItem icon='info' label='About' path='/privacy' className='navbar-about' onClick={resetInput}/>
+                <NavbarItem icon='info' label='About' path='/description' className='navbar-about' onClick={resetInput}/>
             </div>
             <div className='navbar-right'>
                 <NavbarItem extern icon='github' label='Github' path='https://github.com/icteridae/icteridae/' className='navbar-github'/>
