@@ -8,6 +8,7 @@ import Linkify from 'react-linkify';
 
 import { PaperNode, PapersAndSimilarities, PaperGraphData, SimilarityLinkObject } from './GraphTypes';
 import { getMinAndMaxFromMatrix, normalize, choosingSliderValues, changeSlider, hash, hexToRGB } from './GraphHelperfunctions';
+import { Legend } from './Legend'
 
 import './Graph.sass'
 import { addSavedPaper, setSavedSliders } from '../../Utils/Webstorage';
@@ -198,43 +199,10 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                         Slider
                     </div>
                 </div>
-                 {/**
+                {/**
                   * Legend
                   */}
-                {showLegend && <div className='legend'>
-                    <div className='legend-description'>
-                        <span className='legend-description-child2'>Fields Of Study</span>
-                    </div>
-                    {Array.from(new Set(props.data.paper.map((paper) => paper.fieldsOfStudy.slice().sort().join(', ')))).map((field) =>(
-                        <div className='legend-fieldsofstudy' style={{color: 'black', backgroundColor: (field === defaultFieldOfStudy) ? ('rgba(231, 156, 69, 1)') : (hexToRGB(pallette[1][hash(field) % pallette[1].length], '1'))}}>{field}</div>
-                    ))}
-                    <div className='legend-description'>
-                        <span className='legend-description-child1'>Low</span>
-                        <span className='legend-description-child2'>Link Similarity</span>
-                        <span className='legend-description-child3'>High</span>
-                    </div>
-                    <div className='legend-link-width-container'>
-                        <div className='legend-link-width'></div>
-                    </div>
-                    <div className='legend-description'>
-                        <span className='legend-description-child1'>{leastCitations}</span>
-                        <span className='legend-description-child2'>Citations</span>
-                        <span className='legend-description-child3'>{mostCitations}</span>
-                    </div>
-                    <div className='legend-circles'>
-                        <div className='circle--1'></div>
-                        <div className='circle--2'></div>
-                        <div className='circle--3'></div>
-                        <div className='circle--4'></div>
-                        <div className='circle--5'></div>
-                    </div>
-                    <div className='legend-description'>
-                        <span className='legend-description-child1'>{new Date().getFullYear() - paperOppacityYearRange}</span>
-                        <span className='legend-description-child2'>Year</span>
-                        <span className='legend-description-child3'>{new Date().getFullYear()}</span>
-                    </div>
-                    <div className='legend-color-bar'></div>
-                </div>}
+                {showLegend && <Legend data={props.data} defaultFieldOfStudy={defaultFieldOfStudy} pallette={pallette} leastCitations={leastCitations} mostCitations={mostCitations} paperOppacityYearRange={paperOppacityYearRange}/>}
                 {/**
                  * Render the graph and both drawers only if data exists (Successful fetch)
                  */}
@@ -273,7 +241,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                                         progress
                                                         style={{ marginTop: 16, marginRight: 10 }}
                                                         handleStyle={{ paddingTop: 7 }}
-                                                        value={sliderVal.toFixed(2)}
+                                                        value={parseInt(Number(sliderVal).toFixed(2))}
                                                         onChange={value => {
                                                             const newSliders = changeSlider(index, value, sliders, totalSliderValue);
                                                             setSliders(newSliders);
@@ -283,10 +251,10 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                                     <InputNumber
                                                         min={0}
                                                         max={totalSliderValue}
-                                                        value={sliderVal.toFixed(2)}
+                                                        value={parseInt(Number(sliderVal).toFixed(1))}
                                                         onChange={value => {
                                                             if (0 <= value && 100 >= value){
-                                                                let newSliders = changeSlider(index, (value as number), sliders, totalSliderValue)
+                                                                let newSliders = changeSlider(index, (value as number), sliders, totalSliderValue);
                                                                 setSliders(newSliders);
                                                                 setSavedSliders(newSliders);
                                                             }
@@ -438,12 +406,13 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                         if((node as PaperNode).isHovered){
                                             //Circle Edge Color when the Node is hovered
                                             ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+                                            ctx.lineWidth = 2;
                                         }else{
                                             //Circle Edge Color. The color doesnt matter since Alpha is 0 und thus the Edge is transparent
                                             ctx.strokeStyle = 'rgba(255, 255, 255, 0)';
+                                            ctx.lineWidth = 0.5;
                                         }
                                         //Node shape (arc creates a cirle at coordinate (node.x, node.y) with radius determined in the same way as the React-Force-Graph-2d does internally to get overlapping nodes. The *4 is needed since they use a NodeRelSize Variable that we could use while creating the graph. Its Standard value is 4. Last 2 Parameters are needed to draw a full circle)
-                                        ctx.lineWidth = 0.5;
                                         ctx.arc(node.x!, node.y!, Math.sqrt(Math.max(0, (node as PaperNode).val || 1)) * 4, 0 , 2 * Math.PI);
                                         ctx.stroke();
                                         ctx.fill();
