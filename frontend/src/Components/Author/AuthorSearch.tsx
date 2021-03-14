@@ -33,7 +33,7 @@ export const AuthorSearch: React.FC<AuthorResultProps> = (props) => {
 
     const updateContent = (query: string, activePage: number): void => {
         if (query===undefined) {return;}
-        const requestURL = Config.base_url + '/api/search_author/?query=' + query + '&page=' + activePage;
+        const requestURL = Config.base_url + '/api/author/search/?query=' + query + '&page=' + activePage;
         //setAuthorList(null)
         fetch(requestURL)
             .then(res => res.json())

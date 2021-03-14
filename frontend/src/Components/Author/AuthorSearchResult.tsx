@@ -36,13 +36,13 @@ export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
 
     // Effect hook for setting author and fetching paper data from search API
     useEffect(() => {
-        const requestURLAuthor = Config.base_url + '/api/author/?author_id=' + id;
+        const requestURLAuthor = Config.base_url + '/api/author/name/?author_id=' + id;
 
         fetch(requestURLAuthor)
             .then(res => res.json())
             .then(result => setSelectedAuthor(result.data[0])).catch(() => console.log("Can't access " + requestURLAuthor));
 
-        const requestURLAuthorDetails = Config.base_url + '/api/author_details/?author_id=' + id;
+        const requestURLAuthorDetails = Config.base_url + '/api/author/related/?author_id=' + id;
 
         fetch(requestURLAuthorDetails)
             .then(res => res.json())
@@ -53,7 +53,7 @@ export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
     }, [id]);
 
     useEffect(() => {
-        const requestURLAuthorPapers = Config.base_url + '/api/authorpapers/?author_id=' + id + '&page=' + activePage;
+        const requestURLAuthorPapers = Config.base_url + '/api/author/papers/?author_id=' + id + '&page=' + activePage;
 
         fetch(requestURLAuthorPapers)
             .then(res => res.json())

@@ -3,12 +3,27 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('search/', views.search),
-    path('generate_graph/', views.generate_graph),
-    path('paper/', views.get_paper),
-    path('paper_bulk/', views.get_paper_bulk),
-    path('search_author/', views.search_author),
-    path('author/', views.get_author),
-    path('authorpapers/', views.get_authorpapers),
-    path('author_details/', views.get_author_details)
+    # Search papers using a query
+    path('search/', views.search),  
+
+    # Generate a graph from a source node
+    path('generate_graph/', views.generate_graph),  
+
+    # Find paper information given a paper id
+    path('paper/', views.get_paper),  
+
+    # Find paper information given a bulk of paper ids
+    path('paper_bulk/', views.get_paper_bulk), 
+
+    # Search authors using a query
+    path('author/search/', views.search_author),  
+
+    # Get author information using author id
+    path('author/name/', views.get_author),  
+
+    # Get papers written by a specific author
+    path('author/papers/', views.get_authorpapers),
+
+    # Get related authors from an author
+    path('author/related/', views.get_author_details)
 ]
