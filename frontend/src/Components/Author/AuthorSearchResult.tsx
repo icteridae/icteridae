@@ -5,7 +5,7 @@ import {Paper} from "../../Utils/GeneralTypes";
 import {AuthorInterface} from "./AuthorInterface";
 import {SearchResultCard} from "../Search/SearchResult/SearchResultCard";
 import {AutoComplete, Icon, InputGroup} from "rsuite";
-import {Link, useHistory, useParams} from "react-router-dom";
+import { useHistory, useParams} from "react-router-dom";
 import { AuthorCard } from './AuthorSearch';
 
 interface AuthorResultProps {
@@ -74,7 +74,7 @@ export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
                         <div className="author-related">
                             <div className='author-rel-title'>Related authors</div>
                             {relatedAuthors.map(author => 
-                                <AuthorCard author={author}/>
+                                <AuthorCard author={author} key={author.id}/>
                             )}
                         </div>
                     </div>
@@ -82,9 +82,9 @@ export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
                 <div className="paper-list">
                     <div className="publications">Publications</div>
                     {
-                        (authorPapers != null) && authorPapers.map((entry, index) => {
-                            return <SearchResultCard highlightCard={() => null} raiseStateSelected={() => null} key={entry.id} dataKey={index.toString()} data={entry}/>
-                        })
+                        (authorPapers != null) && authorPapers.map((entry, index) => (
+                            <SearchResultCard highlightCard={() => null} raiseStateSelected={() => null} key={entry.id} dataKey={index.toString()} data={entry}/>
+                        ))
                     }
                 </div>
             </div>;

@@ -3,9 +3,8 @@ import React from 'react';
 import { SavedPapersTree } from './SavedPapersTree';
 
 import './SavedPapers.sass'
-import { Col, Container, Content, FlexboxGrid, Grid, Row, Sidebar } from 'rsuite';
+import { Col, Grid, Row } from 'rsuite';
 import { SavedPapersSidebar } from './SavedPapersSidebar';
-import FlexboxGridItem from 'rsuite/lib/FlexboxGrid/FlexboxGridItem';
 
 export const PageSavedPapers: React.FC = () => (
     

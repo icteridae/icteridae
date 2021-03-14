@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { Navbar, Nav, Icon, Dropdown, Button, NavbarProps } from 'rsuite';
+import { Navbar, Nav, Icon, NavbarProps } from 'rsuite';
 import { Settings } from "./Settings";
 import './styles/Navbar.scss'
 
