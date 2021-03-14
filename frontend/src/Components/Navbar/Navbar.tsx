@@ -31,7 +31,7 @@ export const NavBar: React.FC = () => {
             <div className='navbar-left'>
                 <NavbarItem label='Icteridae' path='/' className='navbar-home' onClick={resetInput}/>
                 <NavbarSearch label='Search' path='results' value={paperSearchInput} raiseStateInput={setPaperSearchInput} className='navbar-paper-search'/>
-                <NavbarSearch label='Author' path='authorsearch' icon='user-o' value={authorSearchInput} raiseStateInput={setAuthorSearchInput} className='navbar-author-search'/>
+                <NavbarSearch label='Authors' path='authorsearch' icon='user-o' value={authorSearchInput} raiseStateInput={setAuthorSearchInput} className='navbar-author-search'/>
                 <NavbarItem icon='bookmark' label='My Papers' path='/papers' className='navbar-my-papers' onClick={resetInput}/>
                 <NavbarItem icon='info' label='About' path='/privacy' className='navbar-about' onClick={resetInput}/>
             </div>

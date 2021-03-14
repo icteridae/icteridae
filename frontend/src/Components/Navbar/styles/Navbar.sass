@@ -3,7 +3,7 @@
 
 /*reset default link styling*/
 a.navbar-item, a.navbar-item:hover 
-    color: inherit
+    color: $color-title-font
     text-decoration: none
 
 /* Navbar Grid */
@@ -40,7 +40,7 @@ a.navbar-item, a.navbar-item:hover
         cursor: pointer
 
         span 
-            font-family: "Segoe UI", Arial, sans-serif
+            font-family: "Ubuntu",-apple-system,BlinkMacSystemFont,"Segoe UI","Roboto","Oxygen","Ubuntu","Cantarell","Fira Sans","Droid Sans","Helvetica Neue",sans-serif
             font-weight: lighter
             font-size: 17px
 
@@ -55,7 +55,7 @@ a.navbar-item, a.navbar-item:hover
 
         span 
             margin: 0 22px
-            font-family: "Segoe UI", Arial, sans-serif
+            font-family: "Ubuntu",-apple-system,BlinkMacSystemFont,"Segoe UI","Roboto","Oxygen","Ubuntu","Cantarell","Fira Sans","Droid Sans","Helvetica Neue",sans-serif
             font-weight: lighter
             font-size: 22px
 
@@ -71,15 +71,16 @@ a.navbar-item, a.navbar-item:hover
 /* search bar */
 .navbar-search 
     font-size: 17px
+    color: $color-title-font
 
     input 
         outline: none
 
     ::placeholder
-        font-family: "Segoe UI", Arial, sans-serif
+        font-family: "Ubuntu",-apple-system,BlinkMacSystemFont,"Segoe UI","Roboto","Oxygen","Ubuntu","Cantarell","Fira Sans","Droid Sans","Helvetica Neue",sans-serif
         font-weight: lighter
         font-size: 17px
-        color: #e9ebf0
+        color: $color-title-font
         opacity: 1
 
     input[type=text] 
@@ -87,7 +88,7 @@ a.navbar-item, a.navbar-item:hover
         background: transparent
         padding-left: 10px
         border: none
-        width: 4em
+        width: 4.2em
         color: transparent
         cursor: pointer
         transition: all .5s
@@ -95,7 +96,7 @@ a.navbar-item, a.navbar-item:hover
         &:focus, &.has-text
             width: 200px
             padding-left: 10px
-            color: whitesmoke
+            color: $color-title-font
             cursor: auto
             border-bottom: 2px solid $color-search-border
             
