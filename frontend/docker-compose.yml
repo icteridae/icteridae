@@ -4,7 +4,9 @@ services:
 
   web:
     container_name: icteridae-react
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
     volumes:
       - .:/app
       - /app/node_modules/

@@ -1,9 +1,6 @@
 import React from 'react';
 
-import { SavedPapersTree } from './SavedPapersTree';
-
 import './SavedPapers.sass'
-import { Container, Content, Sidebar } from 'rsuite';
 
 export const SavedPapersSidebar: React.FC = () => (
     <div className='saved-papers-sidebar'>

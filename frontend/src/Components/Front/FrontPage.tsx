@@ -7,11 +7,10 @@ import { SearchBar } from "../Search/SearchBar/SearchBar";
 import { SearchResultCard } from '../Search/SearchResult/SearchResultCard';
 import Config from '../../Utils/Config'
 
-import SyncLoader from "react-spinners/SyncLoader";
-
 import { Paper } from '../../Utils/GeneralTypes';
 
 import { Alert, Button, Divider, Footer } from 'rsuite';
+import { PulseLoader } from 'react-spinners';
 
 
 /**
@@ -54,6 +53,8 @@ export const FrontPage: React.FC = () => {
             console.log("Papers couldn't be loaded");
             setRecentlyOpenedPapers(null);
         });
+    // dependencies have to be non-exhaustive here
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
@@ -63,6 +64,7 @@ export const FrontPage: React.FC = () => {
                     <h1>
                         Icteridae
                     </h1>
+                    <div className='line'/>
                     <SearchBar placeholder='Begin exploring research...'/>
                 </div>
                 <div id='recent-papers-superscript'>scroll to see recent papers</div>
@@ -70,9 +72,7 @@ export const FrontPage: React.FC = () => {
                 <div>  
                     {recentlyOpenedPapers !== null && 
                         (recentlyOpenedPapers.length === 0 ? 
-                            <div className="sync-loader">
-                                <SyncLoader/> 
-                            </div>
+                            <div className="spinner"><PulseLoader/></div> 
                         : 
                             (<>
                                 <div className="recent-papers">

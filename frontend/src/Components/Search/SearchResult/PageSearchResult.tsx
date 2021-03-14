@@ -9,6 +9,7 @@ import Config from '../../../Utils/Config'
 import { Paper } from '../../../Utils/GeneralTypes'
 
 import './styles/PageSearchResult.sass';
+import { Sorry } from '../../General/Sorry';
 
 
 export const PageSearchResult : React.FC = () => {
@@ -36,7 +37,11 @@ export const PageSearchResult : React.FC = () => {
         <div className='page-search-result'>
             {
                 (searchResults == null) ? <div className="spinner"><PulseLoader/></div> :
-                    (searchResults.data.length === 0) ? <h2 className="no-results">No results found</h2> :
+                    (searchResults.data.length === 0) ? 
+                        <Sorry
+                            message="No search results found"
+                            description="Make sure you entered the correct query." 
+                            /> :
                     (
                         <div className='wrapper' id='search-result-wrapper'>            
                             <div id='query-title'>

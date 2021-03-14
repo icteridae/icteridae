@@ -37,6 +37,8 @@ export const SavedPapersTree: React.FC = () => {
     useEffect(() => {
         PaperFunctions.loadPapers(treeData, setLoadedPapers)
         setDirectoryNames(PaperFunctions.deepReduce(treeData, (ac, val) => TreeTypes.isDirectoryNode(val) ? {...ac, [val.value]: val.directoryName}: ac, {}))
+    // do not update on treeData change as this would create an infinite loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -75,7 +77,8 @@ export const SavedPapersTree: React.FC = () => {
         <div className="saved-papers-tree">
             <Tree
                 data={treeData}
-                draggable
+                draggable={// Used to prevent dragging before tree has loaded. Decreases chance of some weird bug occuring where localstorage is emptied is minimized
+                    Object.keys(loadedPapers).length > 0 || PaperFunctions.getSubtreePaperIds(treeData).length === 0} 
                 defaultExpandAll
                 onDrop={({ createUpdateDataFunction }: DropData) => setTreeData(PaperFunctions.flattenPapers(createUpdateDataFunction(treeData)))}
                 onSelect={(active) => setSelectedTreeNode(active)}

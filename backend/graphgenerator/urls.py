@@ -10,4 +10,5 @@ urlpatterns = [
     path('search_author/', views.search_author),
     path('author/', views.get_author),
     path('authorpapers/', views.get_authorpapers),
+    path('author_details/', views.get_author_details)
 ]

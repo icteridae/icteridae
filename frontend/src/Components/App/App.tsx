@@ -10,13 +10,17 @@ import { SavedPapers } from '../SavedPapers/PageSavedPapersLocalstorage';
 import { Description } from '../Description/Description';
 import {AuthorSearchResult} from "../Author/AuthorSearchResult";
 import {AuthorSearch} from "../Author/AuthorSearch";
+import { Helmet } from "react-helmet";
 
 import './App.scss';
 
-import logo from '../../icon.png'
+//import logo from '../../icon.png'
 
  export const App: React.FC = () => (
     <BrowserRouter>
+      <Helmet>
+        <title>Icteridae</title>
+      </Helmet>
       <NavBar/>
       <Switch>
           <Route exact path='/' component={FrontPage}/>
