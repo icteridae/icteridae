@@ -30,6 +30,8 @@ const defaultFieldOfStudy: string = 'Computer Science';
 const smallestNodeSize: number = 10;
 // Size of the node with the most citations
 const largestNodeSize: number = 100;
+// Number of sides that the custom Origin Node Polygon will have
+const numberOfSides: number = 6;
 
 // Link Parameters
 // Size of link that the cursor hovers over
@@ -393,7 +395,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                         if(nodeColoring){
                                             // Node Color
                                             if((node as PaperNode).fieldsOfStudy.toString() === defaultFieldOfStudy){
-                                                ctx.fillStyle = 'rgba(231, 156, 69, 1)';  
+                                                ctx.fillStyle = 'rgba(231, 156, 69, 0.9)';  
                                             }else{
                                                 // Hash the names of FieldsOfStudy and use the result as index for choosing the color. For unique results we have to sort the fields first. Before that we have to copy the array using .slice since .sort doesnt return an array.
                                                 ctx.fillStyle = hexToRGB(pallette[1][hash((node as PaperNode).fieldsOfStudy.slice().sort().join(', ')) % pallette[1].length], '1');
@@ -403,26 +405,35 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                             ctx.fillStyle = `rgba(231, 156, 69, ${(((node as PaperNode).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as PaperNode).year - new Date().getFullYear()) + 1))})`;  
                                         }
                                         ctx.beginPath();
+                                        // The radius of our nodes is determined in the same way as the React-Force-Graph-2d does internally to get overlapping nodes. The *4 is needed since they use a nodeRelSize variable that we could use while creating the graph. Its standard value is 4.
+                                        let size = Math.sqrt(Math.max(0, (node as PaperNode).val || 1)) * 4;
+                                        /*ctx.moveTo (node.x! +  size * Math.cos(0), node.y! +  size *  Math.sin(0));
+                                        for (var i = 1; i <= numberOfSides; i += 1){
+                                            ctx.lineTo (node.x! + size * Math.cos(i * 2 * Math.PI / numberOfSides), node.y! + size * Math.sin(i * 2 * Math.PI / numberOfSides));
+                                        }
+                                        ctx.stroke();*/
                                         if((node as PaperNode).isHovered){
-                                            //Circle Edge Color when the Node is hovered
+                                            // Circle Edge Color when the Node is hovered
                                             ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
                                             ctx.lineWidth = 2;
                                         }else{
-                                            //Circle Edge Color. The color doesnt matter since Alpha is 0 und thus the Edge is transparent
+                                            // Circle Edge Color. The color doesnt matter since Alpha is 0 und thus the Edge is transparent
                                             ctx.strokeStyle = 'rgba(255, 255, 255, 0)';
                                             ctx.lineWidth = 0.5;
                                         }
-                                        //Node shape (arc creates a cirle at coordinate (node.x, node.y) with radius determined in the same way as the React-Force-Graph-2d does internally to get overlapping nodes. The *4 is needed since they use a NodeRelSize Variable that we could use while creating the graph. Its Standard value is 4. Last 2 Parameters are needed to draw a full circle)
-                                        ctx.arc(node.x!, node.y!, Math.sqrt(Math.max(0, (node as PaperNode).val || 1)) * 4, 0 , 2 * Math.PI);
+                                        // Node shape (arc creates a cirle at coordinate (node.x, node.y). Last 2 Parameters are needed to draw a full circle)
+                                        ctx.arc(node.x!, node.y!, size, 0 , 2 * Math.PI);
                                         ctx.stroke();
                                         ctx.fill();
+                                        // Add more arcs to the origion Node to make it stand out
                                         if((node as PaperNode).id === props.data.paper[0].id){
-                                            //Circle Edge Color for Origin Node
-                                            ctx.strokeStyle = 'rgba(255, 255, 255, 1)';
-                                            ctx.arc(node.x!, node.y!, Math.sqrt(Math.max(0, (node as PaperNode).val || 1)) * 4 + 0.5, 0 , 2 * Math.PI);
+                                            ctx.moveTo(node.x! + size + 1, node.y!)
+                                            ctx.arc(node.x!, node.y!, size + 1, 0 , 2 * Math.PI);
+                                            ctx.moveTo(node.x! + size + 2, node.y!)
+                                            ctx.arc(node.x!, node.y!, size + 2, 0 , 2 * Math.PI);
+                                            ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
                                             ctx.stroke();
                                         }
-                            
                                         ctx.textAlign = 'center';
                                         ctx.textBaseline = 'middle';
                                         ctx.fillStyle = 'rgba(230, 230, 230, 0.8)';
