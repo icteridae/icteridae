@@ -37,6 +37,8 @@ export const SavedPapersTree: React.FC = () => {
     useEffect(() => {
         PaperFunctions.loadPapers(treeData, setLoadedPapers)
         setDirectoryNames(PaperFunctions.deepReduce(treeData, (ac, val) => TreeTypes.isDirectoryNode(val) ? {...ac, [val.value]: val.directoryName}: ac, {}))
+    // do not update on treeData change as this would create an infinite loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {

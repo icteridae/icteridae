@@ -126,11 +126,12 @@ export const hash = (s : string) : number => {
   var a = 1, c = 0, h, o;
   if (s) {
       a = 0;
-      /*jshint plusplus:false bitwise:false*/
       for (h = s.length - 1; h >= 0; h--) {
           o = s.charCodeAt(h);
+          // eslint-disable-next-line no-mixed-operators
           a = (a<<6&268435455) + o + (o<<14);
           c = a & 266338304;
+          // eslint-disable-next-line no-mixed-operators
           a = c!==0?a^c>>21:a;
       }
   }

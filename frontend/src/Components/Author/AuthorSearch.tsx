@@ -55,6 +55,8 @@ export const AuthorSearch: React.FC<AuthorResultProps> = (props) => {
 
     useEffect(() => {
         updateContent(query, activePage)
+    // Only refresh on new active page. useEffect above will handle changed query
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activePage])
 
     
@@ -71,7 +73,7 @@ export const AuthorSearch: React.FC<AuthorResultProps> = (props) => {
                 <div id="author-result-list">
                     <FlexboxGrid justify='center'>
                         {authorList?.map((author) => (
-                                <AuthorCard author={author}/>
+                                <AuthorCard author={author} key={author.id}/>
                             ))}
                     </FlexboxGrid>
                     
