@@ -227,7 +227,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                             <Drawer.Body>
                                 <div className='slider-popup'>
                                     <span className='graph-settings-title'>Similarites</span>
-                                    {sliders.map((sliderVal, index) => (
+                                    {sliders.map((sliderVal : number, index) => (
                                         <div className='slider'>
                                             <div>{props.data.similarities[index].name + ':  '}
                                                 <Whisper placement="right" trigger="hover" speaker={<Popover title={props.data.similarities[index].name}>
@@ -241,7 +241,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                                         progress
                                                         style={{ marginTop: 16, marginRight: 10 }}
                                                         handleStyle={{ paddingTop: 7 }}
-                                                        value={parseInt(Number(sliderVal).toFixed(2))}
+                                                        value={Number(Number(sliderVal).toFixed(2))}
                                                         onChange={value => {
                                                             const newSliders = changeSlider(index, value, sliders, totalSliderValue);
                                                             setSliders(newSliders);
@@ -251,7 +251,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                                     <InputNumber
                                                         min={0}
                                                         max={totalSliderValue}
-                                                        value={parseInt(Number(sliderVal).toFixed(1))}
+                                                        value={Number(Number(sliderVal).toFixed(1))}
                                                         onChange={value => {
                                                             if (0 <= value && 100 >= value){
                                                                 let newSliders = changeSlider(index, (value as number), sliders, totalSliderValue);
