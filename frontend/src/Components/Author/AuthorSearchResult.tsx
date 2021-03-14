@@ -7,6 +7,7 @@ import {SearchResultCard} from "../Search/SearchResult/SearchResultCard";
 import {AutoComplete, Icon, InputGroup} from "rsuite";
 import { useHistory, useParams} from "react-router-dom";
 import { AuthorCard } from './AuthorSearch';
+import { SearchResultList } from '../Search/SearchResult/SearchResultList';
 
 interface AuthorResultProps {
     text?: string;
@@ -27,6 +28,10 @@ export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
     const [publications, setPublications] = useState<number>();
     // Related authors
     const [relatedAuthors, setRelatedAuthors] = useState<AuthorInterface[]>([]);
+    // Currently selected page
+    const [activePage, setActivePage] = useState<number>(1);
+    // Maximum pages
+    const [maxPages, setMaxPages] = useState<number>(1);
 
 
     // Effect hook for setting author and fetching paper data from search API
@@ -37,15 +42,6 @@ export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
             .then(res => res.json())
             .then(result => setSelectedAuthor(result.data[0])).catch(() => console.log("Can't access " + requestURLAuthor));
 
-        const requestURLAuthorPapers = Config.base_url + '/api/authorpapers/?author_id=' + id;
-
-        fetch(requestURLAuthorPapers)
-            .then(res => res.json())
-            .then(result => {
-                setAuthorPapers(result.data);
-                setPublications(result.count);
-            }).catch(() => console.log("Can't access " + requestURLAuthorPapers));
-
         const requestURLAuthorDetails = Config.base_url + '/api/author_details/?author_id=' + id;
 
         fetch(requestURLAuthorDetails)
@@ -55,6 +51,18 @@ export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
             }).catch(() => console.log("Can't access " + requestURLAuthorDetails));
 
     }, [id]);
+
+    useEffect(() => {
+        const requestURLAuthorPapers = Config.base_url + '/api/authorpapers/?author_id=' + id + '&page=' + activePage;
+
+        fetch(requestURLAuthorPapers)
+            .then(res => res.json())
+            .then(result => {
+                setAuthorPapers(result.data);
+                setMaxPages(result.max_pages);
+                setPublications(result.count);
+            }).catch(() => console.log("Can't access " + requestURLAuthorPapers));
+    }, [activePage])
 
     const buttonClick = () => {
         history.push(`/authorsearch/${input}`);
@@ -81,31 +89,32 @@ export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
                         </div>
                     </div>
                 </div>
-                <div className="paper-list">
+                <div className='author-papers-result-list'>
+                    
+                {authorPapers !== undefined && 
+                    <SearchResultList
+                        activePage={activePage}
+                        raiseStateActivePage={setActivePage}
+                        raiseStateSelected={(x) => {}}
+                        results={{data: authorPapers, pages: maxPages}}
+                    />}
+
+                </div>
+                {/* <div className="paper-list">
                     <div className="publications">Publications</div>
                     {
                         (authorPapers != null) && authorPapers.map((entry, index) => (
                             <SearchResultCard highlightCard={() => null} raiseStateSelected={() => null} key={entry.id} dataKey={index.toString()} data={entry}/>
                         ))
                     }
-                </div>
+                </div> */}
             </div>;
     }
 
 
     return (
         <div className="author-search-result">
-            <div className="search-bar">
-                {props.text? <><div className='text'>{props.text} </div> <br /></> : null}
-                <form onSubmit={buttonClick}>
-                    <InputGroup id="search-bar-group">
-                        <AutoComplete placeholder='Search for author' value={input} onChange={(e) => setInput(e)} />
-                        <InputGroup.Button type="submit" onClick={buttonClick}>
-                            <Icon icon="search" />
-                        </InputGroup.Button>
-                    </InputGroup>
-                </form>
-            </div>
+            
             {authorData}
         </div>
     )
