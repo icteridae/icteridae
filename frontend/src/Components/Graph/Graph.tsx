@@ -10,7 +10,7 @@ import { PaperNode, PapersAndSimilarities, PaperGraphData, SimilarityLinkObject 
 import { getMinAndMaxFromMatrix, normalize, choosingSliderValues, changeSlider, hash, hexToRGB } from './GraphHelperfunctions';
 
 import './Graph.sass'
-import { addSavedPaper, getSavedSliders, setSavedSliders } from '../../Utils/Webstorage';
+import { addSavedPaper, setSavedSliders } from '../../Utils/Webstorage';
 import { useHistory } from 'react-router-dom';
 import { Bookmark } from '../General/Bookmark';
 import { pallettes } from './Colors';
