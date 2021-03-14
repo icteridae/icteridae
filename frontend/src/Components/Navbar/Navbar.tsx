@@ -18,7 +18,7 @@ export const NavBar: React.FC = () => {
     // This hooks fills NavbarSearch with the correct query if the user managed to get to the results page without using the NavbarSearch itself
     useEffect(() => {
         (searchInput === '') && (match && setSearchInput((match.params as {query: string}).query));
-    })
+    }, [])
 
     const resetInput = () => setSearchInput('');
     return (

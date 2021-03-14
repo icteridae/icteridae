@@ -82,7 +82,7 @@ a.navbar-item, a.navbar-item:hover
         color: #e9ebf0
         opacity: 1
 
-    input[type=search] 
+    input[type=text] 
         appearance: none
         background: transparent
         padding-left: 10px
@@ -102,12 +102,10 @@ a.navbar-item, a.navbar-item:hover
             &::placeholder
                 color: gray
 
-            &::-webkit-search-cancel-button 
-                display: initial
 
-        &::-webkit-search-cancel-button 
-            display: none
-        
-::-webkit-search-decoration 
-    display: none
+    .reset-search
+        font-family: Helvetica, Arial, Verdana
+        background-color: rgba(0, 0, 0, 0);
+        color: $color-accent
+        margin-left: -20px
 
