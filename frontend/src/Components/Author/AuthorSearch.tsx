@@ -1,30 +1,20 @@
 import React, {useEffect, useState} from 'react';
 import { Link } from 'react-router-dom';
 
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import './styles/AuthorSearch.sass';
-import {AutoComplete, FlexboxGrid, Icon, InputGroup, Pagination} from "rsuite";
-import {AuthorInterface} from "./AuthorInterface";
+import { FlexboxGrid, Pagination } from "rsuite";
 import Config from "../../Utils/Config";
 import { Sorry } from '../General/Sorry';
 import { PulseLoader } from 'react-spinners';
+import { Author } from '../../Utils/GeneralTypes';
 
-interface AuthorResultProps {
-    text?: string;
-    placeholder?: string;
-}
+export const AuthorSearch: React.FC = () => {
+    const {query} = useParams<{query: string}>();
 
-export const AuthorSearch: React.FC<AuthorResultProps> = (props) => {
-    let {query} = useParams<{query: string}>();
-    let history = useHistory();
-
-    // Searchbar input
-    const [input, setInput] = useState('');
     // Author list
-    // undefined: inital value
-    // null: api request sent
-    const [authorList, setAuthorList] = useState<AuthorInterface[] | undefined | null>(undefined);
+    const [authorList, setAuthorList] = useState<Author[] | undefined>(undefined);
 
     const [activePage, setActivePage] = useState<number>(1);
     const [maxPages, setMaxPages] = useState<number>();
@@ -34,7 +24,7 @@ export const AuthorSearch: React.FC<AuthorResultProps> = (props) => {
     const updateContent = (query: string, activePage: number): void => {
         if (query===undefined) {return;}
         const requestURL = Config.base_url + '/api/author/search/?query=' + query + '&page=' + activePage;
-        //setAuthorList(null)
+
         fetch(requestURL)
             .then(res => res.json())
             .then(result => {
@@ -46,10 +36,11 @@ export const AuthorSearch: React.FC<AuthorResultProps> = (props) => {
 
     // Effect hook for fetching author list from search API
     useEffect(() => {
+        // Rests pagination variables when changing query
         setActivePage(1);
         setMaxPages(0);
         setCount(0);
-        setAuthorList(query === undefined ? undefined : null)
+        setAuthorList(undefined)
         updateContent(query, 1)
     }, [query])
 
@@ -58,8 +49,6 @@ export const AuthorSearch: React.FC<AuthorResultProps> = (props) => {
     // Only refresh on new active page. useEffect above will handle changed query
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activePage])
-
-    
 
     // Display search results
     let resultList
@@ -77,9 +66,7 @@ export const AuthorSearch: React.FC<AuthorResultProps> = (props) => {
                             ))}
                     </FlexboxGrid>
                     
-                    
-                    {
-                        (maxPages != null) &&
+                    {(maxPages != null) &&
                         <Pagination
                             size='md'
                             id='pagination'
@@ -90,8 +77,9 @@ export const AuthorSearch: React.FC<AuthorResultProps> = (props) => {
                             boundaryLinks
                             onSelect={(eventKey) => {
                                 setActivePage(eventKey);
-                                document.getElementById('search-result-list')?.scrollTo(0, 0)}
-                            }/>
+                                document.getElementById('search-result-list')?.scrollTo(0, 0)
+                            }}
+                        />
                     }
                 </div>
             </div>
@@ -101,8 +89,7 @@ export const AuthorSearch: React.FC<AuthorResultProps> = (props) => {
     return (
         <div className='author-search-page'>
             
-            {authorList===undefined ? <></> :
-             authorList===null ? <div className="spinner"><PulseLoader/></div> 
+            {authorList===undefined ? <div className="spinner"><PulseLoader/></div> 
             : authorList.length === 0 ? <Sorry
                 message="No matching authors found"
                 description="Are you sure you've entered the right name?"
@@ -112,7 +99,7 @@ export const AuthorSearch: React.FC<AuthorResultProps> = (props) => {
     );
 }
 
-export const AuthorCard: React.FC<{author: AuthorInterface}> = (props) => {
+export const AuthorCard: React.FC<{author: Author}> = (props) => {
 
     const getAuthorAbreviation = (author: string): string => {
         const authorAr = author.split(/ +/) // Why are there two spaces in an authors name??? 

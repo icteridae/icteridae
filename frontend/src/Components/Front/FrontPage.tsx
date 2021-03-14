@@ -26,33 +26,28 @@ export const FrontPage: React.FC = () => {
      * The loaded ids are send to the backend which returns the metadata from the papers
      */
     useEffect(() => {
-        const baseURL : string = Config.base_url;
         const paperIds = getRecentPapers();
 
         //if there are no papers to fetch, set recentlyOpenedPapers to null to stop the loading animation
         if(paperIds == null) {
             setRecentlyOpenedPapers(null);
             return;
-        }
+        } 
         
-        //capped at 10 papers max
-        let papers: Array<Paper> = new Array<Paper>(Math.min(recentPaperIds.length, 10));
-        
-        // fetch all papers
-        const promises = recentPaperIds.map((id, i) => fetch(baseURL +"/api/paper/?paper_id=" + id)
+        fetch(Config.base_url + '/api/paper_bulk/',
+            {
+                method: 'POST',
+                body: JSON.stringify({paper_ids: recentPaperIds.slice(0, 10)})
+            })
             .then(res => res.json())
             .then(res => {
-                papers[i] = res;
-            }))
-        
-        // set paperIds and recentlyOpenedPapers once all promises succeed
-        Promise.all(promises).then(() => {
-            setPaperIds(paperIds);
-            setRecentlyOpenedPapers(papers);
-        }).catch(() => {
-            console.log("Papers couldn't be loaded");
-            setRecentlyOpenedPapers(null);
-        });
+                setPaperIds(res.map((e: Paper) => e.id));
+                setRecentlyOpenedPapers(res);
+            }).catch(() => {
+                console.log("Papers couldn't be loaded");
+                setRecentlyOpenedPapers(null)
+            })
+
     // dependencies have to be non-exhaustive here
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);

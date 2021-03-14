@@ -210,29 +210,15 @@ def get_author(request):
 
     author_id = request.query_params.get('author_id', None)
     if author_id is None:
-        return http.HttpResponseBadRequest('no query supplied.')
+        return http.HttpResponseBadRequest('no id supplied.')
 
-    pagesize = request.query_params.get('pagesize', '20')
-    if not pagesize.isnumeric() or int(pagesize) < 1:
-        return http.HttpResponseBadRequest('invalid page size.')
-    pagesize = int(pagesize)
+    try:
+        author = Author.objects.get(id = author_id)
+        return http.JsonResponse(AuthorSerializer(author).data)
 
-    search_result = Author.objects.filter(id = author_id)
+    except:
+        return http.HttpResponseBadRequest('Author not found')
 
-    max_pages = (search_result.count() - 1) // pagesize
-
-    page = request.query_params.get('page', '0')
-    if not page.isnumeric() or int(page) > max_pages:
-        return http.HttpResponseBadRequest('invalid page number.')
-    page = int(page)
-
-    return http.JsonResponse(
-        {
-            'data': AuthorSerializer(search_result[pagesize * page: pagesize * (page + 1)],
-                                    many=True).data,
-            'max_pages': max_pages
-        },
-        safe=False)
 
 @api_view(['GET'])
 def get_authorpapers(request):

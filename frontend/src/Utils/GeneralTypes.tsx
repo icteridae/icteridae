@@ -33,6 +33,11 @@ export interface Similarity {
 
 }
 
+export interface Author {
+    name: string
+    id: number
+}
+
 export interface ApiSearchResult {
     
     data: Paper[],
@@ -49,4 +54,23 @@ export interface ApiGraphResult {
     paper: Paper[]
     similarities: Similarity[]
 
+}
+
+export interface ApiAutherSearchResult {
+    data: Author[]
+    max_pages: number
+}
+
+export interface ApiAuthorResult extends Author {}
+
+export interface ApiAuthorPapersResult {
+
+    data: Paper[]
+    max_pages: number
+    count: number
+
+}
+
+export interface ApiAuthorRelevantResult {
+    data: Author[]
 }

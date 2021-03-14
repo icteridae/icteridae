@@ -1,33 +1,23 @@
 import './styles/AuthorSearchResult.sass'
 import React, {useEffect, useState} from "react";
 import Config from "../../Utils/Config";
-import {Paper} from "../../Utils/GeneralTypes";
-import {AuthorInterface} from "./AuthorInterface";
-import {SearchResultCard} from "../Search/SearchResult/SearchResultCard";
-import {AutoComplete, Icon, InputGroup} from "rsuite";
-import { useHistory, useParams} from "react-router-dom";
+import {ApiAuthorPapersResult, ApiAuthorRelevantResult, ApiAuthorResult, Author, Paper} from "../../Utils/GeneralTypes";
+import { useParams} from "react-router-dom";
 import { AuthorCard } from './AuthorSearch';
 import { SearchResultList } from '../Search/SearchResult/SearchResultList';
 
-interface AuthorResultProps {
-    text?: string;
-    placeholder?: string;
-}
 
-export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
-    let {id} = useParams<{id: string}>();
-    let history = useHistory();
+export const AuthorSearchResult: React.FC = () => {
+    const {id} = useParams<{id: string}>();
 
-    // Searchbar input
-    const [input, setInput] = useState('');
     // Currently displayed author
-    const [selectedAuthor, setSelectedAuthor] = useState<AuthorInterface>()
+    const [selectedAuthor, setSelectedAuthor] = useState<Author>()
     // Papers depending on selected author
     const [authorPapers, setAuthorPapers] = useState<Paper[]>();
     // Publication count
     const [publications, setPublications] = useState<number>();
     // Related authors
-    const [relatedAuthors, setRelatedAuthors] = useState<AuthorInterface[]>([]);
+    const [relatedAuthors, setRelatedAuthors] = useState<Author[]>([]);
     // Currently selected page
     const [activePage, setActivePage] = useState<number>(1);
     // Maximum pages
@@ -40,82 +30,66 @@ export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
 
         fetch(requestURLAuthor)
             .then(res => res.json())
-            .then(result => setSelectedAuthor(result.data[0])).catch(() => console.log("Can't access " + requestURLAuthor));
+            .then((result: ApiAuthorResult) => setSelectedAuthor(result)).catch(() => console.log("Can't access " + requestURLAuthor));
 
-        const requestURLAuthorDetails = Config.base_url + '/api/author/related/?author_id=' + id;
+        const requestURLAuthorRelated = Config.base_url + '/api/author/related/?author_id=' + id;
 
-        fetch(requestURLAuthorDetails)
+        fetch(requestURLAuthorRelated)
             .then(res => res.json())
-            .then(results => {
+            .then((results: ApiAuthorRelevantResult) => {
                 setRelatedAuthors(results.data);
-            }).catch(() => console.log("Can't access " + requestURLAuthorDetails));
+            }).catch(() => console.log("Can't access " + requestURLAuthorRelated));
 
     }, [id]);
 
+    // Effect hook only for reloading papers when pagination element is interacted with
     useEffect(() => {
         const requestURLAuthorPapers = Config.base_url + '/api/author/papers/?author_id=' + id + '&page=' + activePage;
 
         fetch(requestURLAuthorPapers)
             .then(res => res.json())
-            .then(result => {
+            .then((result: ApiAuthorPapersResult) => {
                 setAuthorPapers(result.data);
                 setMaxPages(result.max_pages);
                 setPublications(result.count);
             }).catch(() => console.log("Can't access " + requestURLAuthorPapers));
-    }, [activePage])
 
-    const buttonClick = () => {
-        history.push(`/authorsearch/${input}`);
-    }
-
-
-    // Display data only if author is selected
-    let authorData
-    if (selectedAuthor != null) {
-        authorData =
-            <div className="author-search-result">
-                <div className="author-details">
-                    <div className="author-name">{selectedAuthor.name}</div>
-                    <div className="author-sub">
-                        
-                        <div className="author-related">
-                            <div className="author-pub">
-                                {publications} publications</div>
-                            <div className='line'/>
-                            <div className='author-rel-title'>Related authors</div>
-                            <div className='author-rel-cards'>{relatedAuthors.map(author => 
-                                <AuthorCard author={author} key={author.id}/>
-                            )}</div>
-                        </div>
-                    </div>
-                </div>
-                <div className='author-papers-result-list'>
-                    
-                {authorPapers !== undefined && 
-                    <SearchResultList
-                        activePage={activePage}
-                        raiseStateActivePage={setActivePage}
-                        raiseStateSelected={(x) => {}}
-                        results={{data: authorPapers, pages: maxPages}}
-                    />}
-
-                </div>
-                {/* <div className="paper-list">
-                    <div className="publications">Publications</div>
-                    {
-                        (authorPapers != null) && authorPapers.map((entry, index) => (
-                            <SearchResultCard highlightCard={() => null} raiseStateSelected={() => null} key={entry.id} dataKey={index.toString()} data={entry}/>
-                        ))
-                    }
-                </div> */}
-            </div>;
-    }
+    }, [activePage, id])
 
 
     return (
         <div className="author-search-result">
             
-            {authorData}
+            {selectedAuthor !== undefined && 
+                <div className="author-search-result">
+                    <div className="author-details">
+                        <div className="author-name">{selectedAuthor.name}</div>
+                        <div className="author-sub">
+                            
+                            <div className="author-related">
+                                <div className="author-pub">
+                                    {publications} publications</div>
+                                <div className='line'/>
+                                <div className='author-rel-title'>Related authors</div>
+                                <div className='author-rel-cards'>{relatedAuthors.map(author => 
+                                    <AuthorCard author={author} key={author.id}/>
+                                )}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className='author-papers-result-list'>
+                        
+                    {authorPapers !== undefined && 
+                        <SearchResultList
+                            activePage={activePage}
+                            raiseStateActivePage={setActivePage}
+                            raiseStateSelected={(x) => {}}
+                            results={{data: authorPapers, pages: maxPages}}
+                        />}
+
+                    </div>
+                </div>
+            }
         </div>
     )
 }
