@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+
+import { useRouteMatch } from 'react-router-dom';
 
 import { NavbarItem } from './NavbarItem';
 import { NavbarSearch } from './NavbarSearch';
 
-import './styles/Navbar.sass'
+import './styles/Navbar.sass';
 
 /**
  * The Navbar holds links to the different sites of the application
@@ -11,6 +13,12 @@ import './styles/Navbar.sass'
  */
 export const NavBar: React.FC = () => {
     const [searchInput, setSearchInput] = useState<string>('');
+    let match = useRouteMatch('/results/:query')
+    
+    // This hooks fills NavbarSearch with the correct query if the user managed to get to the results page without using the NavbarSearch itself
+    useEffect(() => {
+        (searchInput === '') && (match && setSearchInput((match.params as {query: string}).query));
+    })
 
     const resetInput = () => setSearchInput('');
     return (
