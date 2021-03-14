@@ -254,16 +254,16 @@ def get_authorpapers(request):
     search_result = Paper.objects.prefetch_related('authors').filter(authors__id = author_id)
 
     count = search_result.count()
-    max_pages = (count - 1) // pagesize
+    max_pages = (count - 1) // pagesize + 1
 
-    page = request.query_params.get('page', '0')
+    page = request.query_params.get('page', '1')
     if not page.isnumeric() or int(page) > max_pages:
         return http.HttpResponseBadRequest('invalid page number.')
     page = int(page)
 
     return http.JsonResponse(
         {
-            'data': PaperSerializer(search_result[pagesize * page: pagesize * (page + 1)],
+            'data': PaperSerializer(search_result[pagesize * (page - 1): pagesize * page],
                                     many=True).data,
             'max_pages': max_pages,
             'count': count
