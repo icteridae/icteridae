@@ -69,13 +69,15 @@ export const AuthorSearchResult: React.FC<AuthorResultProps> = (props) => {
                 <div className="author-details">
                     <div className="author-name">{selectedAuthor.name}</div>
                     <div className="author-sub">
-                        <div className="author-pub">
-                            {publications} publications</div>
+                        
                         <div className="author-related">
+                            <div className="author-pub">
+                                {publications} publications</div>
+                            <div className='line'/>
                             <div className='author-rel-title'>Related authors</div>
-                            {relatedAuthors.map(author => 
+                            <div className='author-rel-cards'>{relatedAuthors.map(author => 
                                 <AuthorCard author={author} key={author.id}/>
-                            )}
+                            )}</div>
                         </div>
                     </div>
                 </div>
