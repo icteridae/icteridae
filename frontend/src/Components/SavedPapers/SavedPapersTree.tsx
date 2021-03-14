@@ -12,8 +12,7 @@ import { Link } from 'react-router-dom';
 import './SavedPapers.sass'
 
 
-export const SavedPapersTree: React.FC = () => {
-    
+export const SavedPapersTree: React.FC<{setSelectedPaper: Function}> = (props) => {
     const [selectedTreeNode, setSelectedTreeNode] = useState<TreeTypes.PaperOrDirectoryNode>();
     const [loadedPapers, setLoadedPapers] = useState<{ [id: string] : GeneralTypes.Paper}>({})
     const [directoryNames, setDirectoryNames] = useState<{ [id: string] : string}>({})
@@ -81,7 +80,7 @@ export const SavedPapersTree: React.FC = () => {
                     Object.keys(loadedPapers).length > 0 || PaperFunctions.getSubtreePaperIds(treeData).length === 0} 
                 defaultExpandAll
                 onDrop={({ createUpdateDataFunction }: DropData) => setTreeData(PaperFunctions.flattenPapers(createUpdateDataFunction(treeData)))}
-                onSelect={(active) => setSelectedTreeNode(active)}
+                onSelect={(active) => {setSelectedTreeNode(active);props.setSelectedPaper(loadedPapers[active.paperId])}}
             />
             <div className="my-papers-actions">
                 <Button onClick={() => addFolder('New Directory')}>
