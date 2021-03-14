@@ -100,17 +100,7 @@ export const AuthorSearch: React.FC<AuthorResultProps> = (props) => {
 
     return (
         <div className='author-search-page'>
-            <div className="search-bar">
-                {props.text? <><div className='text'>{props.text} </div> <br /></> : null}
-                <form onSubmit={(e) => {e.preventDefault(); history.push(`/authorsearch/${input}`);}}>
-                <InputGroup id="search-bar-group">
-                        <AutoComplete placeholder='Search for authors...' value={input} onChange={(e) => setInput(e)} />
-                        <InputGroup.Button type="submit" onClick={() => {history.push(`/authorsearch/${input}`);}}>
-                            <Icon icon="search" />
-                        </InputGroup.Button>
-                    </InputGroup>
-                </form>
-            </div>
+            
             {authorList===undefined ? <></> :
              authorList===null ? <div className="spinner"><PulseLoader/></div> 
             : authorList.length === 0 ? <Sorry
