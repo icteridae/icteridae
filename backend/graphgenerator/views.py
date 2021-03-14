@@ -22,6 +22,7 @@ from .documents import PaperDocument, AuthorDocument
 
 SATURATION_PIVOT = 100
 BOOST_MAGNITUDE = 2.5
+RELATED_AUTHORS_COUNT = 20
 
 # Create your views here.
 @api_view(['GET'])
@@ -294,7 +295,7 @@ def get_author_details(request):
 		WHERE a1.id = '{author_id}'
 		GROUP BY a2.id
 		ORDER BY COUNT(*) DESC
-		LIMIT 10;""")
+		LIMIT {RELATED_AUTHORS_COUNT};""")
 
     return http.JsonResponse(
         {

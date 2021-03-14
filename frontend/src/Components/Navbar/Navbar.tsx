@@ -12,21 +12,26 @@ import './styles/Navbar.sass';
  * @returns the navbar with links to the Search-, My Papers-, Graph-, Privacy- and About-pages and a link to Github
  */
 export const NavBar: React.FC = () => {
-    const [searchInput, setSearchInput] = useState<string>('');
-    let match = useRouteMatch('/results/:query')
-    
+    const [paperSearchInput, setPaperSearchInput] = useState<string>('');
+    const [authorSearchInput, setAuthorSearchInput] = useState<string>('')
+    let matchPaper = useRouteMatch('/results/:query')
+    let matchAuthor = useRouteMatch('/authorsearch/:query')
     // This hooks fills NavbarSearch with the correct query if the user managed to get to the results page without using the NavbarSearch itself
     useEffect(() => {
-        (searchInput === '') && (match && setSearchInput((match.params as {query: string}).query));
+        (paperSearchInput === '') && (matchPaper && setPaperSearchInput((matchPaper.params as {query: string}).query));
+        (authorSearchInput === '') && (matchAuthor && setAuthorSearchInput((matchAuthor.params as {query: string}).query));
     }, [])
 
-    const resetInput = () => setSearchInput('');
+    const resetInput = () => {
+        setPaperSearchInput('');
+        setAuthorSearchInput('');
+    }
     return (
         <div id='navbar'>
             <div className='navbar-left'>
                 <NavbarItem label='Icteridae' path='/' className='navbar-home' onClick={resetInput}/>
-                <NavbarSearch value={searchInput} raiseStateInput={setSearchInput}/>
-                <NavbarItem icon='user-o' label='Authors' path='/authorsearch' className='navbar-author-search' onClick={resetInput}/>
+                <NavbarSearch label='Search' path='results' value={paperSearchInput} raiseStateInput={setPaperSearchInput} className='navbar-paper-search'/>
+                <NavbarSearch label='Author' path='authorsearch' icon='user-o' value={authorSearchInput} raiseStateInput={setAuthorSearchInput} className='navbar-author-search'/>
                 <NavbarItem icon='bookmark' label='My Papers' path='/papers' className='navbar-my-papers' onClick={resetInput}/>
                 <NavbarItem icon='info' label='About' path='/privacy' className='navbar-about' onClick={resetInput}/>
             </div>
