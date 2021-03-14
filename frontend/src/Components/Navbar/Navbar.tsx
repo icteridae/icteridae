@@ -26,6 +26,7 @@ export const NavBar: React.FC = () => {
             <div className='navbar-left'>
                 <NavbarItem label='Icteridae' path='/' className='navbar-home' onClick={resetInput}/>
                 <NavbarSearch value={searchInput} raiseStateInput={setSearchInput}/>
+                <NavbarItem icon='user-o' label='Authors' path='/authorsearch' className='navbar-author-search' onClick={resetInput}/>
                 <NavbarItem icon='bookmark' label='My Papers' path='/papers' className='navbar-my-papers' onClick={resetInput}/>
                 <NavbarItem icon='info' label='About' path='/privacy' className='navbar-about' onClick={resetInput}/>
             </div>
