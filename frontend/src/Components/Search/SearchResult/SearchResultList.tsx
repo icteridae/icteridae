@@ -29,33 +29,6 @@ export const SearchResultList : React.FC<ResultListProps> = (props) => {
         document.querySelector(`[data-key="${key}"]`)?.classList.add("card-selected");
         setLastHighlighted(key);
     }
-
-    // Effect hook for dynamically changing the height of the resultList and thus getting a scrollbar BECAUSE SCROLLBARS
-    useEffect(() => {
-        /**
-         * Sets the height of a DOM-ELement with the id "search-result-list" to the remaining height on the page 
-         * (which is calculated using the height of elements above search-result-list)
-         */
-        function setListToRemainingHeight() {
-            const windowHeight = window.innerHeight;
-            
-            const navbarHeight : number | undefined = document.getElementById("navbar")?.offsetHeight;
-            const queryTitleHeight : number | undefined = document.getElementById("query-title")?.offsetHeight;
-            const list : HTMLElement | null = document.getElementById("search-result-list");
-
-            // only set height if none of these is null or undefined
-            if(navbarHeight != null && queryTitleHeight != null && list != null) {
-                list.style.height = (windowHeight - navbarHeight - queryTitleHeight) + "px";
-            }
-        }
-
-        setListToRemainingHeight();
-        window.addEventListener('resize', setListToRemainingHeight);
-        // Cleanup: Remove EventListener when component will unmount
-        return () => {
-            window.removeEventListener('resize', setListToRemainingHeight);
-        }
-    }, []);
     
     return (
         <div id="search-result-list" className="result-list">
