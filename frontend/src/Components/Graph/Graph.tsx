@@ -212,7 +212,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                          * Drawer displays the sliders
                         */}
                         <Drawer
-                            className='rs-drawer-left'
+                            className='rs-drawer'
                             show={controllerDrawer}
                             placement='left'
                             backdrop={false}
