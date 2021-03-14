@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
-import { NavBarInstance } from '../Navbar/Navbar';
+import { NavBar } from '../Navbar/Navbar';
 import { FrontPage } from '../Front/FrontPage';
 import { PageImprint } from '../Privacy/PageImprint';
 import { GraphFetch } from '../Graph/GraphHelperfunctions';
@@ -21,7 +21,7 @@ import './App.scss';
       <Helmet>
         <title>Icteridae</title>
       </Helmet>
-      <NavBarInstance appearance="subtle"/>
+      <NavBar/>
       <Switch>
           <Route exact path='/' component={FrontPage}/>
           <Route exact path='/results/:query' component={PageSearchResult}/>
