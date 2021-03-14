@@ -42,7 +42,7 @@ class Paper(models.Model):  # Independent
     fieldsOfStudy = ArrayField(base_field=models.CharField(max_length=100), default=list)
     magId = models.TextField(blank=True)
     # s2PdUrl # deprecated since 2019 (see semanticscholar)
-    # entities # ndeprecated since 2019 (see semanticscholar)
+    # entities # deprecated since 2019 (see semanticscholar)
 
     # Fields not directly given in the SemanticScholar Open Research Corpus
     citations = models.IntegerField()

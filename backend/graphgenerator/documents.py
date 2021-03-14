@@ -20,13 +20,6 @@ class PaperDocument(Document):
     # Citation field for boosting popular papers
     citations = CitaionsRankField(attr = 'get_citations') # RankFeature for citation field
 
-    # # Nested authors field to allow search for authors complementing title search 
-    # authors = fields.ObjectField(
-    #     properties={
-    #         'name': fields.TextField(),
-    #      }
-    #  )
-
     class Index:
 
         name = 'papers'
