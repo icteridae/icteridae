@@ -22,6 +22,7 @@ from .documents import PaperDocument, AuthorDocument
 
 SATURATION_PIVOT = 100
 BOOST_MAGNITUDE = 2.5
+RELATED_AUTHORS_COUNT = 20
 
 # Create your views here.
 @api_view(['GET'])
@@ -253,16 +254,16 @@ def get_authorpapers(request):
     search_result = Paper.objects.prefetch_related('authors').filter(authors__id = author_id)
 
     count = search_result.count()
-    max_pages = (count - 1) // pagesize
+    max_pages = (count - 1) // pagesize + 1
 
-    page = request.query_params.get('page', '0')
+    page = request.query_params.get('page', '1')
     if not page.isnumeric() or int(page) > max_pages:
         return http.HttpResponseBadRequest('invalid page number.')
     page = int(page)
 
     return http.JsonResponse(
         {
-            'data': PaperSerializer(search_result[pagesize * page: pagesize * (page + 1)],
+            'data': PaperSerializer(search_result[pagesize * (page - 1): pagesize * page],
                                     many=True).data,
             'max_pages': max_pages,
             'count': count
@@ -294,7 +295,7 @@ def get_author_details(request):
 		WHERE a1.id = '{author_id}'
 		GROUP BY a2.id
 		ORDER BY COUNT(*) DESC
-		LIMIT 10;""")
+		LIMIT {RELATED_AUTHORS_COUNT};""")
 
     return http.JsonResponse(
         {

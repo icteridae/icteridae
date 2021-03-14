@@ -22,44 +22,59 @@
 
         margin-left: 5vh
         margin-top: 5vh
+        max-height: calc(95vh - #{$navbar-height})
+        overflow: scroll
+        scrollbar-width: none
+        //scrollbar-color: #8f5f28 gray !important
 
-        font-family: "Segoe UI",Arial,sans-serif
-        font-size: 1.46vw
-        font-weight: lighter
+        .author-pub, .author-rel-title
+            font-family: "Segoe UI",Arial,sans-serif
+            font-size: 1.46vw
+            font-weight: lighter
 
         color: lightgray
 
-        //line-height: 6.7vh
-
         .author-sub
-            padding-top: 1em
-            margin-left: 1em
-            padding-left: 2em
             padding-bottom: 1em
-            //border-left: 3px solid $color-search-border
             border-bottom-left-radius: 15px
             border-top-left-radius: 3px
 
+            .line 
+                border-bottom: 2px $color-search-border solid
+                width: 80%
+                height: 10px
+                margin: 2vh auto 3vh auto
+
             .author-related
-                
+
+                display: flex
+                flex-direction: column
+                align-items: center
+                padding: 1em
+
                 .author-rel-title
                     //font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
                     padding-bottom: 1em
-                padding-top: 1em
-                padding-left: 1em
+                    margin: auto
                 
+                .author-rel-cards
+
+                    display: flex
+                    //flex-direction: column
+                    align-items: center
+                    flex-wrap: wrap
+                    justify-content: center
 
     .author-name 
         font-size: 3.5vw
         line-height: 9vh
         color: $color-imprint
+        text-align: center
     
 
     .paper-list 
         margin-top: 6vh
         margin-right: 10em
-        //overflow : scroll
-        //height: 75vh
     
 
     .paper-list .publications 
@@ -69,4 +84,12 @@
         margin-left: 1.46vw
         line-height: 4.7vh
 
+    .author-papers-result-list
+
+        $author-papers-result-list-distance: 50px
+
+        margin-top: $author-papers-result-list-distance
+        margin-right: 50px
+        display: flex
+        max-height: calc(100vh - calc(#{$author-papers-result-list-distance} + #{$navbar-height}))
     

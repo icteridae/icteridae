@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import ForceGraph2D from 'react-force-graph-2d';
-import { Button, Drawer, Slider, InputNumber, Loader, Icon, Popover, Whisper, ButtonGroup, Divider, SelectPicker } from 'rsuite';
+import { Button, Drawer, Slider, InputNumber, Loader, Icon, Popover, Whisper, ButtonGroup, Divider, SelectPicker, FlexboxGrid } from 'rsuite';
 import sizeMe from 'react-sizeme'
 import Linkify from 'react-linkify';
 
@@ -212,7 +212,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                          * Drawer displays the sliders
                         */}
                         <Drawer
-                            className='rs-drawer-left'
+                            className='rs-drawer'
                             show={controllerDrawer}
                             placement='left'
                             backdrop={false}
@@ -322,7 +322,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                 </Drawer.Title>
                             </Drawer.Header>
                             <Drawer.Body>
-                                <p>
+                                <FlexboxGrid justify='space-between'>
                                     <Button appearance='ghost' href={selectedNode.s2Url} target='_blank'>
                                         Open in Semantic Scholar
                                     </Button>
@@ -332,7 +332,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                     <Button appearance='ghost' onClick={() => {history.push(`/graph/${selectedNode.id}`)}}>
                                         Generate Graph
                                     </Button>
-                                </p>
+                                </FlexboxGrid>
                                 <p style={{color:'grey'}}>{selectedNode.year + ', '}{selectedNode.authors.length <= maxAuthors + 1 ? selectedNode.authors.map<React.ReactNode>(obj => (<Link to={`/author/${obj.id}`}>{obj.name}</Link>)).reduce((prev, curr) => [prev, ', ', curr]) : <>{selectedNode.authors.slice(0, maxAuthors).map<React.ReactNode>(obj => (<Link to={`/author/${obj.id}`}>{obj.name}</Link>)).reduce((prev, curr) => [prev, ', ', curr])}, +{selectedNode.authors.length - maxAuthors} others</>}
                                     <br/> Citations: {selectedNode.inCitations.length}, References: {selectedNode.outCitations.length}
                                     <br/><p style={{color:selectedNode.color}}>Field: {selectedNode.fieldsOfStudy.map(field => field).join(', ')} </p>
