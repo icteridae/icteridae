@@ -96,7 +96,6 @@ export const findBoundary = (matrix : number[][]) => {
  */
 export const choosingSliderValues = (sliderCount : number, totalSliderValue : number) => {
   const SavedSliders = getSavedSliders();
-  console.log(SavedSliders?.length + "   " +   sliderCount);
   if(SavedSliders?.length !== sliderCount)
       return Array(sliderCount).fill(totalSliderValue / sliderCount);
   return SavedSliders;
