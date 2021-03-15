@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { PapersAndSimilarities } from './GraphTypes';
+import { ApiGraphResult } from '../../Utils/GeneralTypes';
 import Config from '../../Utils/Config';
 import { addRecentPaper, getSavedSliders } from '../../Utils/Webstorage';
 
@@ -163,7 +163,7 @@ export const GraphFetch: React.FC = () => {
     /*
     ** useState Hook to save the graphData 
     */
-    const [graph, setGraph] = React.useState<PapersAndSimilarities | undefined>();
+    const [graph, setGraph] = React.useState<ApiGraphResult | undefined>();
 
     const {id} = useParams<{id : string}>();
 

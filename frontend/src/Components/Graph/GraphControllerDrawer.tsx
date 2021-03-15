@@ -4,12 +4,12 @@ import { Drawer, Whisper, Icon, Popover, Slider, InputNumber, Divider } from 'rs
 import Linkify from 'react-linkify';
 
 import { GraphSettings } from './GraphSettings';
-import { PapersAndSimilarities } from './GraphTypes';
+import { ApiGraphResult } from './../../Utils/GeneralTypes';
 
 import './Graph.sass'
 
 interface GraphControllerDrawerTypes {
-    data: PapersAndSimilarities,
+    data: ApiGraphResult,
     controllerDrawer : boolean,
     sliders : number[],
     totalSliderValue : number,

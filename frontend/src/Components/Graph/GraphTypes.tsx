@@ -11,35 +11,10 @@ export interface PaperNode extends NodeObject, Paper {
     id: string,
 
     /** The color of the node */
-    color: string,
+    color?: string,
 
     /** Boolean if the node is hovered */
-    isHovered: boolean,
-}
-
-/**
- * This interface describes a similarity
- */
-export interface Similarity{
-    /** The Name of the Similarity */
-    name: string,
-
-    /** A Description for the Similarity */
-    description: string,
-}
-
-/**
- * Json structure of the Response from /api/generate_graph/
- */
-export interface PapersAndSimilarities{
-    /** Tensor of all similarities for every pair of papers */
-    tensor: number[][][],
-
-    /** List of all papers that are relevant for the graph including the requested paper*/
-    paper: PaperNode[],
-
-    /** List of all similarities used in this tensor */
-    similarities: Similarity[]
+    isHovered?: boolean,
 }
 
 /**

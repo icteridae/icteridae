@@ -1,11 +1,11 @@
 import React from 'react';
 
-import { PapersAndSimilarities } from './GraphTypes'
+import { ApiGraphResult } from '../../Utils/GeneralTypes'
 import { hexToRGB, hash } from './GraphHelperfunctions'
 
 import './Graph.sass'
 
-export const Legend: React.FC<{'data' : PapersAndSimilarities, 'defaultFieldOfStudy' : string, 'pallette' :  [string, string[]], 'leastCitations' : number, 'mostCitations' : number, 'paperOppacityYearRange' : number}> = (props) => {
+export const Legend: React.FC<{'data' : ApiGraphResult, 'defaultFieldOfStudy' : string, 'pallette' :  [string, string[]], 'leastCitations' : number, 'mostCitations' : number, 'paperOppacityYearRange' : number}> = (props) => {
     return (
         <div className='legend'>
             <div className='legend-description'>

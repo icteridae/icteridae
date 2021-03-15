@@ -1,12 +1,13 @@
 import React from 'react';
 
 import { Loader } from 'rsuite';
-import ForceGraph2D, { ForceGraphMethods } from 'react-force-graph-2d';
+import ForceGraph2D from 'react-force-graph-2d';
 import { Helmet } from 'react-helmet';
 import sizeMe from 'react-sizeme'
 
 import { getMinAndMaxFromMatrix, normalize, choosingSliderValues, changeSlider, hash, hexToRGB } from './GraphHelperfunctions';
-import { PaperNode, PapersAndSimilarities, PaperGraphData, SimilarityLinkObject } from './GraphTypes';
+import { PaperNode, PaperGraphData, SimilarityLinkObject } from './GraphTypes';
+import { ApiGraphResult } from '../../Utils/GeneralTypes'
 import { GraphControllerDrawer } from './GraphControllerDrawer';
 import { GraphDisplayDrawer } from './GraphDisplayDrawer';
 import { setSavedSliders } from '../../Utils/Webstorage';
@@ -46,11 +47,11 @@ const totalSliderValue: number = 100;
 const maxAuthors: number = 3;
 
 /**
- * This method generates the graph for the provided PapersAndSimilarities object
+ * This method generates the graph for the provided ApiGraphResult object
  * @param data contains all papers, similarities and similarities between papers
  * @returns a graphData object consisting of nodes[] and links[] aswell as the number of least and most citations that are used in the graph
  */
-const generateGraph = (data : PapersAndSimilarities) : [PaperGraphData, number, number] =>{
+const generateGraph = (data : ApiGraphResult) : [PaperGraphData, number, number] =>{
     let similarityMatrix : number[][] = new Array(data.paper.length);
 
     // Normalize all values in the tensor to [0, 1] (1 included)
@@ -100,7 +101,7 @@ const generateGraph = (data : PapersAndSimilarities) : [PaperGraphData, number, 
  * main method for generating the graph
  * @returns everything that is displayed in the graph view
  */
-const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : number, 'height' : number}}> = (props) => {
+const Graph: React.FC<{'data' : ApiGraphResult, 'size' : {'width' : number, 'height' : number}}> = (props) => {
 
     // total number of sliders needed base on the number of similarity metrics applied
     const sliderCount: number = props.data.tensor.length;
