@@ -19,9 +19,11 @@ export const AuthorSearch: React.FC = () => {
 
     // Author list
     const [authorList, setAuthorList] = useState<Author[] | undefined>(undefined);
-
+    // The currently viewed page using pagination
     const [activePage, setActivePage] = useState<number>(1);
+    // Maximum number of possible pages
     const [maxPages, setMaxPages] = useState<number>();
+    // Maximum number of results
     const [count, setCount] = useState<number>();
 
 

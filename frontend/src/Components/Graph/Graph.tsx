@@ -323,18 +323,24 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                 </Drawer.Title>
                             </Drawer.Header>
                             <Drawer.Body>
-                                <FlexboxGrid style={{ paddingBottom: '1vh' }} justify='space-between'>
-                                    <Button style={{width: '49%'}} appearance='ghost' href={selectedNode.s2Url} target='_blank'>
+                                <div style={{paddingBottom: '1em'}}>
+                                    <Button appearance='ghost' style={{marginRight: '1em'}} href={selectedNode.s2Url} target='_blank'>
                                         Open in Semantic Scholar
                                     </Button>
-                                    <Button style={{width: '49%'}} appearance='ghost' onClick={() => {history.push(`/graph/${selectedNode.id}`)}}>
+                                    <Button appearance='ghost' style={{marginRight: '1em'}} onClick={() => {history.push(`/graph/${selectedNode.id}`)}}>
                                         Generate Graph
                                     </Button>
-                                </FlexboxGrid>
+
+                                </div>
+                                    
                                 <p style={{color:'grey'}}>{selectedNode.year + ', '}{selectedNode.authors.length <= maxAuthors + 1 ? selectedNode.authors.map<React.ReactNode>(obj => (<Link to={`/author/${obj.id}`}>{obj.name}</Link>)).reduce((prev, curr) => [prev, ', ', curr]) : <>{selectedNode.authors.slice(0, maxAuthors).map<React.ReactNode>(obj => (<Link to={`/author/${obj.id}`}>{obj.name}</Link>)).reduce((prev, curr) => [prev, ', ', curr])}, +{selectedNode.authors.length - maxAuthors} others</>}
+                                    {selectedNode.doi !== '' && (selectedNode.doiUrl !== '' ? (<><br/>Doi: <a href={selectedNode.doiUrl}>{selectedNode.doi}</a></>) : (<><br/>Doi: {selectedNode.doi}</>))}
+                                    
                                     <br/> Citations: {selectedNode.inCitations.length}, References: {selectedNode.outCitations.length}
+                                    {selectedNode.venue !== '' && <><br/> Venue: {selectedNode.venue}</>}
                                     <br/><p style={{color:selectedNode.color}}>Field: {selectedNode.fieldsOfStudy.map(field => field).join(', ')} </p>
-                                </p>
+                                    
+                                    </p>
                                 <p>{selectedNode.paperAbstract}</p>
                             </Drawer.Body>
                         </Drawer>

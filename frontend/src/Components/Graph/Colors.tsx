@@ -10,4 +10,5 @@ export const pallettes : [string, string[]][] = [
     ['7 Colors - Tol', pallette3],
     ['11 Colors - Tol', pallette4],
     ['12 Colors - Tol', pallette5],
+    ['Achromatic', ['3', '4', '5', '6', '7', '8', '9', 'A', 'B'].map(s => '#' + s+s+s+s+s+s)],
 ]
