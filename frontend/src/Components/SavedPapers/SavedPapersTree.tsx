@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 
 import { Button, Loader, Tree, Icon} from 'rsuite';
 import { DropData } from 'rsuite/lib/TreePicker';
+import { Link } from 'react-router-dom';
 
 import * as TreeTypes from './TreeTypes';
 import * as PaperFunctions from './PageSavedPapersFunctions';
 import * as GeneralTypes from '../../Utils/GeneralTypes';
 import { RenamableDirectory } from './RenameableDirectory';
-import { Link } from 'react-router-dom';
 
 import './SavedPapers.sass'
 
@@ -54,7 +54,7 @@ export const SavedPapersTree: React.FC<{setSelectedPaper: Function}> = (props) =
                                 + loadedPapers[node.paperId].year 
                                 + ')'
                             }
-                            {(node.paperId == selectedTreeNode?.value) &&
+                            {(node.paperId === selectedTreeNode?.value) &&
                                 <button className='delete-button' onClick={() => setTreeData(PaperFunctions.deleteTreeNode(selectedTreeNode.value, treeData))}>
                                     <Icon icon='trash'/>
                                 </button>
@@ -77,7 +77,7 @@ export const SavedPapersTree: React.FC<{setSelectedPaper: Function}> = (props) =
                                 name={directoryNames.hasOwnProperty(node.value) ? directoryNames[node.value] : 'Loading...'} 
                                 setName={(val) => setDirectoryNames((directoryNames) => ({...directoryNames, [node.value]: val}))}
                             />
-                            {(node.value == selectedTreeNode?.value) && 
+                            {(node.value === selectedTreeNode?.value) && 
                                 <button className='delete-button' onClick={() => setTreeData(PaperFunctions.deleteTreeNode(selectedTreeNode.value, treeData))}>
                                     <Icon icon='trash'/>
                                 </button>
@@ -88,7 +88,6 @@ export const SavedPapersTree: React.FC<{setSelectedPaper: Function}> = (props) =
             } 
                 : node
             )));
-            console.log(selectedTreeNode);
     }, [directoryNames, selectedTreeNode])
 
     useEffect(() => {
