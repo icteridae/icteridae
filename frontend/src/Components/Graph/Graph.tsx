@@ -146,7 +146,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
     const [showLegend, setShowLegend] = React.useState<boolean>(true);
 
     // boolean to decide wheter the nodes will be colored by their field of study or their year
-    const [nodeColoring, setNodeColoring] = React.useState<boolean>(true);
+    const [nodeColoring, setNodeColoring] = React.useState<boolean>(false);
 
     let history = useHistory()
 
@@ -279,8 +279,8 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                         </ButtonGroup>
                                         <span className='graph-settings-subtitle'>Node Coloring</span>
                                         <ButtonGroup>
-                                            <Button className='switch-button-2' appearance={nodeColoring ? 'primary' : 'ghost'} onClick={() => setNodeColoring(true)}>Field of Study</Button>
                                             <Button className='switch-button-2' appearance={nodeColoring ? 'ghost' : 'primary'} onClick={() => setNodeColoring(false)}>Year</Button>
+                                            <Button className='switch-button-2' appearance={nodeColoring ? 'primary' : 'ghost'} onClick={() => setNodeColoring(true)}>Field of Study</Button>
                                         </ButtonGroup>
                                         <span className='graph-settings-subtitle'>Colorblindness Pallettes for Field Of Study</span>
                                         <SelectPicker 
@@ -391,10 +391,10 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                         if(nodeColoring){
                                             // Node Color
                                             if((node as PaperNode).fieldsOfStudy.toString() === defaultFieldOfStudy){
-                                                ctx.fillStyle = 'rgba(231, 156, 69, 0.9)';  
+                                                ctx.fillStyle = 'rgba(231, 156, 69, 0.85)';  
                                             }else{
                                                 // Hash the names of FieldsOfStudy and use the result as index for choosing the color. For unique results we have to sort the fields first. Before that we have to copy the array using .slice since .sort doesnt return an array.
-                                                ctx.fillStyle = hexToRGB(pallette[1][hash((node as PaperNode).fieldsOfStudy.slice().sort().join(', ')) % pallette[1].length], '0.9');
+                                                ctx.fillStyle = hexToRGB(pallette[1][hash((node as PaperNode).fieldsOfStudy.slice().sort().join(', ')) % pallette[1].length], '0.85');
                                             }
                                         }else{
                                             // Node Oppacity
