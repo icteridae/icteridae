@@ -49,14 +49,14 @@ export const GraphControllerDrawer: React.FC<GraphControllerDrawerTypes> = (prop
                 <div className='slider-popup'>
                     <span className='graph-settings-title'>Similarites</span>
                     {props.sliders.map((sliderVal : number, index) => (
-                        <div className='slider'>
+                        <div className='slider' key={index}>
                             <div>{props.data.similarities[index].name + ':  '}
                                 <Whisper placement="right" trigger="hover" speaker={<Popover title={props.data.similarities[index].name}>
                                         <Linkify><p>{props.data.similarities[index].description}</p></Linkify>
                                     </Popover>} enterable>
                                     <Icon icon="info"/>
                                 </Whisper></div>
-                            <div className='slider-with-input-number' key={index}>
+                            <div className='slider-with-input-number'>
                                     <Slider
                                         step= {0.1}
                                         progress
