@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Container, Content, Divider, Header } from 'rsuite';
 
 import './Description.sass';
@@ -24,6 +25,11 @@ export const Description: React.FC = () => (
                 <h4>How can I use it to find interesting research?</h4>
                 <p>
                     To find relevant research, use the search function and find a source to start reserach exploration. Select it to generate a graph based on similar papers. 
+                </p>
+
+                <h4>I found an interesting paper. Can I save it?</h4>
+                <p>
+                    Saving a paper can be done by clicking the bookmark icon next to its title. You can manage your saved papers in the <Link to='/papers'>My Papers</Link> tab.
                 </p>
 
                 <h4>How are similar papers determined?</h4>
