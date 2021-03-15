@@ -88,9 +88,8 @@ export const FrontPage: React.FC = () => {
                     }
                 </div>
             </div>
-            <Footer className='footer'>
+            <Footer className='frontpage-footer'>
                 <img src={logo} alt="Logo"/> &copy; {new Date().getFullYear()} Icteridae
-                <Button className='impressum' onClick={() => Alert.info('There is no impressum yet', 5000)} appearance='link'>Impressum</Button>
             </Footer>
         </div>
     );
