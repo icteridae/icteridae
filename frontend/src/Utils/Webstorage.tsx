@@ -15,21 +15,25 @@ export function getRecentPapers(){
  * @param papers is the array of papers
  */
 export function setRecentPapers(papers: Array<string>){
-    if(typeof(papers) !== "undefined") {
-        localStorage.removeItem("papers");
-        localStorage.setItem("papers", JSON.stringify(papers));
+    if (localStorage) {
+        if(typeof(papers) !== "undefined") {
+            localStorage.removeItem("papers");
+            localStorage.setItem("papers", JSON.stringify(papers));
+        }
     }
-    return;
 }
 
 /**
  * returns the savedPaperTree from the webstorage
  */
 export function getSavedPapers() {
-    const savedPaperTree = JSON.parse(localStorage.getItem("savedpapers") as string);
-    if (!savedPaperTree)
-        return [];
-    return savedPaperTree;
+    if (localStorage) {
+        const savedPaperTree = JSON.parse(localStorage.getItem("savedpapers") as string);
+        if (!savedPaperTree)
+            return [];
+        return savedPaperTree;
+    }
+    return [];
 
 }
 
@@ -78,11 +82,18 @@ export function addRecentPaper(id: string): void {
   }
 
 export function getSavedSliders(): number[] {
-    return JSON.parse(localStorage.getItem("slider") as string) as Array<number>;
+    if (localStorage) {
+        return JSON.parse(localStorage.getItem("slider") as string) as Array<number>;
+    }
+    return []
+    
 }
 
 export function setSavedSliders(slider: Array<number>) {
-    if(typeof(slider) !== "undefined") {
-        localStorage.setItem("slider", JSON.stringify(slider));
+    if (localStorage) {
+        if(typeof(slider) !== "undefined") {
+            localStorage.setItem("slider", JSON.stringify(slider));
+        }
     }
+
 }
