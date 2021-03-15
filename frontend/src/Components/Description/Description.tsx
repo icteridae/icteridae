@@ -3,6 +3,10 @@ import { Link } from 'react-router-dom';
 import { Container, Content, Divider, Header } from 'rsuite';
 
 import './Description.sass';
+import { PageImprint } from './Privacy/PageImprint';
+
+const SHOW_IMPRINT = false;
+
 
 /**
  * Frontpage is shown when the user the Web-Application. If exists it shows the recently opened papers
@@ -51,8 +55,15 @@ export const Description: React.FC = () => (
                     Just as with similarities, relevance metrics can be exchanged using a simple Python interface.
                 </p>
 
-
             </Content>
+
+            {SHOW_IMPRINT && 
+            <>
+            <Divider/>
+            <PageImprint/>
+            </>}
+
+
         </Container>
     </div>
 );
