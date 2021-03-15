@@ -2,7 +2,7 @@
 
 # Frontend Documentation
 
-The Icteridae frontend is using [React](https://reactjs.org/) and [React Suite](https://rsuitejs.com/) Components. Most files are written with [TypeScript](https://www.typescriptlang.org/). To allow easier configuration, [Sass](https://sass-lang.com/) files are used for style sheets. Package management and running is done using [yarn](https://yarnpkg.com/) and [Docker](https://www.docker.com/). Additionally, the force directed graph is rendered using [react-force-graph](https://github.com/vasturiano/react-force-graph).
+The Icteridae frontend is using [React](https://reactjs.org/) and [React Suite](https://rsuitejs.com/) components. Most files are written with [TypeScript](https://www.typescriptlang.org/). To allow easier configuration, [Sass](https://sass-lang.com/) files are used for style sheets. Package management and running is done using [yarn](https://yarnpkg.com/) and [Docker](https://www.docker.com/). Additionally, the force directed graph is rendered using [react-force-graph](https://github.com/vasturiano/react-force-graph).
 
 ## File Structure
 *only important files are included*
