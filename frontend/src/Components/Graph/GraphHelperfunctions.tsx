@@ -183,7 +183,7 @@ export const GraphFetch: React.FC = () => {
 
         fetch(requestURL)
             .then(res => res.json())
-            .then((res: PapersAndSimilarities) => {
+            .then((res: ApiGraphResult) => {
               if (res.paper.length > 0 && res.paper[0].id !== id) {
                 setGraph({tensor: [], paper: [], similarities: []})
               } else {
