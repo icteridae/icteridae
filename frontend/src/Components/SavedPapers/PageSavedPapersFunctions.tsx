@@ -9,7 +9,6 @@ export function loadPapers(treeData: TreeTypes.PaperOrDirectoryNode[], setLoaded
     [id: string]: GeneralTypes.Paper;
 }>>) {
         let paper_ids : string[] = getSubtreePaperIds(treeData);
-        console.log('paper ids', paper_ids)
         fetch(Config.base_url + '/api/paper_bulk/', 
             {
                 method: 'POST',

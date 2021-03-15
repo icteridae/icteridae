@@ -1,22 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 
+import { AbstractView } from '../General/AbstractView';
 import { SavedPapersTree } from './SavedPapersTree';
+import { Paper } from '../../Utils/GeneralTypes';
 
 import './SavedPapers.sass'
-import { Col, Grid, Row } from 'rsuite';
-import { SavedPapersSidebar } from './SavedPapersSidebar';
 
-export const PageSavedPapers: React.FC = () => (
-    
-    <Grid>
-        <Row>
-            <Col lg={14}>
-                <SavedPapersTree/>
-            </Col>
-            <Col lg={10}>
-                <SavedPapersSidebar/>    
-            </Col>
-        </Row>
-    </Grid>
+export const PageSavedPapers: React.FC = () => {
+    const [selectedPaper, setSelectedPaper] = useState<Paper>();
+
+    return(
+        <div className="page-saved-papers">
+            <SavedPapersTree setSelectedPaper={setSelectedPaper}/>
+            {selectedPaper && <AbstractView selected={selectedPaper}/>}
+        </div>  
+    );
+}
       
-);
