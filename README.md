@@ -15,6 +15,11 @@ Icteridae is an open-source Webapp for interactive research exploration, where u
  - [Import Papers](#import-papers)
  - [References](#references)
 
+## Documentation
+
+Docs are split into [Backend Docs](backend/README.md) and [Frontend Docs](frontend/README.md)
+
+
 ## Setup
 
 Clone the project using
@@ -41,7 +46,6 @@ If not using locally, enter the web address of your backend in `backend/backend/
 Navigate into the `backend/` directory and run
 
     docker-compose up
-
 
 ### Start Frontend
 
