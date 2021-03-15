@@ -4,6 +4,8 @@ import { isDirectoryNode, PaperOrDirectoryNode } from "../Components/SavedPapers
 
 export function checkLocalStorage(): boolean {
     try {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        let x = localStorage
         // you might ask yourself why this line exists. Yeah, so did I. Sit down because you're about to learn something.
         // so imagine you're using a browser of your choice. Firefox? You're good. Chrome? Think again.
         // someone, somewhere, sometime decided that inactive localstorage on firefox just evaluated to null. 
@@ -14,8 +16,6 @@ export function checkLocalStorage(): boolean {
         // alright so it's almost midnight and you're replacing every occurence of localstorage with a horrible try-catch and just hope being done.
         // yeah as if. so somehow the following line breaks chrome EVEN IF IT'S IN A TRY-CATCH BLOCK. 
         // that's my story of 'let x = localStorage'. Thank you for listening.
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        let x = localStorage
         return !(!localStorage)
     } catch {
         return false
@@ -26,7 +26,7 @@ export function checkLocalStorage(): boolean {
  * Loads the recent papers from the web-storage
  * @returns the stored recent papers
  */
-export function getRecentPapers(): Array<string> {
+export function getRecentPapers(): string[] {
     if (!checkLocalStorage()) return []
     return JSON.parse(localStorage.getItem("papers") as string);
 }
@@ -35,7 +35,7 @@ export function getRecentPapers(): Array<string> {
  * Stores the recent papers in the web-storage
  * @param papers is the array of papers
  */
-export function setRecentPapers(papers: Array<string>){
+export function setRecentPapers(papers: string[]){
     if (!checkLocalStorage()) return;
     if(typeof(papers) !== "undefined") {
         localStorage.removeItem("papers");
@@ -60,7 +60,7 @@ export function getSavedPapers() {
  * stores a new savedPaperTree to the webstorage
  * @param savedPapers is stored to the webstorage
  */
-export function setSavedPapers(savedPapers: Array<PaperOrDirectoryNode>)
+export function setSavedPapers(savedPapers: PaperOrDirectoryNode[])
 {
     if (!checkLocalStorage()) return;
     if(typeof(savedPapers) !== "undefined") {
@@ -103,7 +103,7 @@ export function getSavedSliders(): number[] {
     return JSON.parse(localStorage.getItem("slider") as string) as Array<number>;
 }
 
-export function setSavedSliders(slider: Array<number>) {
+export function setSavedSliders(slider: number[]) {
     if (!checkLocalStorage()) return;
     localStorage.setItem("slider", JSON.stringify(slider));
 }
