@@ -24,12 +24,12 @@ import './App.scss';
           <Route exact path='/' component={FrontPage}/>
           <Route exact path='/results/:query' component={PageSearchResult}/>
           <Route exact path='/privacy' component={PageImprint}/>
-          <Route exact path ='/papers' component={SavedPapers}/>
+          <Route exact path='/papers' component={SavedPapers}/>
           <Route exact path='/description' component={Description}/>
           <Route exact path='/graph/:id' component={GraphFetch}/>
           <Route exact path='/results/paper/:id' component={FrontPage}/>
           <Route exact path='/author/:id' component={AuthorSearchResult}/>
-          <Route exact path='/authorsearch' component={AuthorSearch}/>
+          {/* <Route exact path='/authorsearch' component={AuthorSearch}/> */}
           <Route exact path='/authorsearch/:query' component={AuthorSearch}/>
           {/* TODO: insert other routes. See paths in Navbar.tsx */}
       </Switch>
