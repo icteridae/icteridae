@@ -1,17 +1,19 @@
-import './styles/AuthorSearchResult.sass'
 import React, {useEffect, useState} from "react";
+
+import { useParams} from "react-router-dom";
+
 import Config from "../../Utils/Config";
 import {ApiAuthorPapersResult, ApiAuthorRelevantResult, ApiAuthorResult, Author, Paper} from "../../Utils/GeneralTypes";
-import { useParams} from "react-router-dom";
 import { AuthorCard } from './AuthorSearch';
 import { SearchResultList } from '../Search/SearchResult/SearchResultList';
 
+import './styles/AuthorSearchResult.sass';
 
 export const AuthorSearchResult: React.FC = () => {
     const {id} = useParams<{id: string}>();
 
     // Currently displayed author
-    const [selectedAuthor, setSelectedAuthor] = useState<Author>()
+    const [selectedAuthor, setSelectedAuthor] = useState<Author>();
     // Papers depending on selected author
     const [authorPapers, setAuthorPapers] = useState<Paper[]>();
     // Publication count
@@ -54,7 +56,7 @@ export const AuthorSearchResult: React.FC = () => {
                 setPublications(result.count);
             }).catch(() => console.log("Can't access " + requestURLAuthorPapers));
 
-    }, [activePage, id])
+    }, [activePage, id]);
 
 
     return (
@@ -65,7 +67,6 @@ export const AuthorSearchResult: React.FC = () => {
                     <div className="author-details">
                         <div className="author-name">{selectedAuthor.name}</div>
                         <div className="author-sub">
-                            
                             <div className="author-related">
                                 <div className="author-pub">
                                     {publications} publications</div>
@@ -78,15 +79,14 @@ export const AuthorSearchResult: React.FC = () => {
                         </div>
                     </div>
                     <div className='author-papers-result-list'>
-                        
-                    {authorPapers !== undefined && 
-                        <SearchResultList
-                            activePage={activePage}
-                            raiseStateActivePage={setActivePage}
-                            raiseStateSelected={(x) => {}}
-                            results={{data: authorPapers, pages: maxPages}}
-                        />}
-
+                        {authorPapers !== undefined && 
+                            <SearchResultList
+                                activePage={activePage}
+                                raiseStateActivePage={setActivePage}
+                                raiseStateSelected={(x) => {}}
+                                results={{data: authorPapers, pages: maxPages}}
+                            />
+                        }
                     </div>
                 </div>
             }
