@@ -13,7 +13,6 @@ export const AbstractView : React.FC<{selected: Paper}> = (props) => {
             <div id='search-result-abstract-view' className='abstract-view'>
                 <h1 className='title'>
                     <Link to={`/graph/${props.selected.id}`}>{props.selected.title}</Link>
-                    <Bookmark paper_id={props.selected.id} size='md'/>
                 </h1>
 
                 <Authors authors={props.selected.authors} maxAuthors={5}/>
