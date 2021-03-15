@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 
 import { Icon, IconButton, Whisper, Popover } from 'rsuite';
 
-import { addSavedPaper, getSavedPapersList, removeSavedPaper } from '../../Utils/Webstorage';
+import { addSavedPaper, getSavedPapersList, removeSavedPaper, checkLocalStorage } from '../../Utils/Webstorage';
 
 export const Bookmark: React.FC<{paper_id: string, savedPapers?: string[], size?: 'xs' | 'md' | 'lg' | 'sm'}> = (props) => {
 
     const [isSaved, setIsSaved] = useState<boolean>(props.savedPapers !== undefined ? props.savedPapers.includes(props.paper_id) : getSavedPapersList().includes(props.paper_id))
+
+    const [popOverMessage, setPopOverMessage] = useState<String>('Paper has been saved');
 
     useEffect(() => {
         setIsSaved(props.savedPapers !== undefined ? props.savedPapers.includes(props.paper_id) : getSavedPapersList().includes(props.paper_id))
@@ -16,14 +18,7 @@ export const Bookmark: React.FC<{paper_id: string, savedPapers?: string[], size?
         <Whisper
             trigger='click'
             placement='top'
-            speaker={() => {
-                try {
-                    let x = localStorage;
-                } catch {
-                    return <Popover title="Paper couldn't saved" />
-                }
-                return isSaved ? <Popover title='Paper has been saved' /> : <></>}
-            }
+            speaker={<Popover>{popOverMessage}</Popover>}
             style={{ 'zIndex': 2 }}
         >
             <IconButton
@@ -31,13 +26,19 @@ export const Bookmark: React.FC<{paper_id: string, savedPapers?: string[], size?
             icon={<Icon icon={isSaved ? 'bookmark' : 'bookmark-o'} />}
             appearance='subtle'
             onClick={() => {
-                if (isSaved) {
-                    removeSavedPaper(props.paper_id); 
-                    setIsSaved(false);
-                }
-                else {
-                    addSavedPaper(props.paper_id); 
-                    setIsSaved(true);
+                if(checkLocalStorage()){
+                    if (isSaved) {
+                        removeSavedPaper(props.paper_id); 
+                        setIsSaved(false);
+                        setPopOverMessage('Remove saved Paper');
+                    }
+                    else {
+                        addSavedPaper(props.paper_id); 
+                        setIsSaved(true);
+                        setPopOverMessage('Paper has been saved');
+                    }
+                }else{
+                    setPopOverMessage("Paper couldn't be saved");
                 }
             }}/>
         </Whisper>
