@@ -124,23 +124,23 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
     // load an empty graph until the real data is fetched
     const [graphData, setGraphData] = React.useState<PaperGraphData>({nodes : [], links : []})
 
-    // boolean to decide wheter the title or the author and year should be displayed on the nodes
-    const [showTitle, setShowTitle] = React.useState<Boolean>(true);
-
     // weak link filter slider value
     const [weakLinkFilter, setweakLinkFilter] = React.useState<number>(0);
-
+    
     // selected pallette
-    const [pallette, setPallette] = React.useState<[string, string[]]>(pallettes[0]);
-
+    const [pallette, setPallette] = React.useState<[string, string[]]>(pallettes[4]);
+    
     // used to increase/decrease the node repelling force (ManyBodyForce)
     const [nodeRepelling, setNodeRepelling] = React.useState<number>(0);
-
+    
     // least citations of a paper in the generated graph
     const [leastCitations, setLeastCitations] = React.useState<number>(0);
-
+    
     // most citations of a paper in the generated graph
     const [mostCitations, setMostCitations] = React.useState<number>(0);
+
+    // boolean to decide wheter the title or the author and year should be displayed on the nodes
+    const [showTitle, setShowTitle] = React.useState<Boolean>(false);
 
     // boolean to decide wheter the legend should be displayed or not
     const [showLegend, setShowLegend] = React.useState<boolean>(true);
@@ -269,8 +269,8 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                         <span className='graph-settings-title'>Settings</span>
                                         <span className='graph-settings-subtitle-first'>Node Label</span>
                                         <ButtonGroup>
-                                            <Button className='switch-button-2' appearance={showTitle ? 'primary' : 'ghost'} onClick={() => setShowTitle(true)}>Title</Button>
                                             <Button className='switch-button-2' appearance={showTitle ? 'ghost' : 'primary'} onClick={() => setShowTitle(false)}>Author, Year</Button>
+                                            <Button className='switch-button-2' appearance={showTitle ? 'primary' : 'ghost'} onClick={() => setShowTitle(true)}>Title</Button>
                                         </ButtonGroup>
                                         <span className='graph-settings-subtitle'>Legend</span>
                                         <ButtonGroup>
@@ -394,7 +394,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                                 ctx.fillStyle = 'rgba(231, 156, 69, 0.9)';  
                                             }else{
                                                 // Hash the names of FieldsOfStudy and use the result as index for choosing the color. For unique results we have to sort the fields first. Before that we have to copy the array using .slice since .sort doesnt return an array.
-                                                ctx.fillStyle = hexToRGB(pallette[1][hash((node as PaperNode).fieldsOfStudy.slice().sort().join(', ')) % pallette[1].length], '1');
+                                                ctx.fillStyle = hexToRGB(pallette[1][hash((node as PaperNode).fieldsOfStudy.slice().sort().join(', ')) % pallette[1].length], '0.9');
                                             }
                                         }else{
                                             // Node Oppacity
