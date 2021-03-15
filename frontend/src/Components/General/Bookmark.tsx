@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Icon, IconButton } from 'rsuite';
+
+import { Icon, IconButton, Whisper, Popover } from 'rsuite';
+
 import { addSavedPaper, getSavedPapersList, removeSavedPaper } from '../../Utils/Webstorage';
 
 export const Bookmark: React.FC<{paper_id: string, savedPapers?: string[], size?: 'xs' | 'md' | 'lg' | 'sm'}> = (props) => {
@@ -11,23 +13,27 @@ export const Bookmark: React.FC<{paper_id: string, savedPapers?: string[], size?
     }, [props.paper_id, props.savedPapers])
 
     return (
-        <IconButton 
-        size={props.size == null ? 'xs' : props.size} 
-        icon={<Icon icon={isSaved ? 'bookmark' : 'bookmark-o'} />} 
-        appearance='subtle' 
-        onClick={() => {
-            if (isSaved) {
-                
-                removeSavedPaper(props.paper_id); 
-                setIsSaved(false);
-
-            } 
-            else {
-                addSavedPaper(props.paper_id); 
-                setIsSaved(true);
-
-            }
-        }}/> 
+        <Whisper
+            trigger='click'
+            placement='top'
+            speaker={isSaved ? <Popover title='Paper has been saved' /> : <></>}
+            style={{ 'zIndex': 2 }}
+        >
+            <IconButton
+            size={props.size == null ? 'xs' : props.size}
+            icon={<Icon icon={isSaved ? 'bookmark' : 'bookmark-o'} />}
+            appearance='subtle'
+            onClick={() => {
+                if (isSaved) {
+                    removeSavedPaper(props.paper_id); 
+                    setIsSaved(false);
+                }
+                else {
+                    addSavedPaper(props.paper_id); 
+                    setIsSaved(true);
+                }
+            }}/>
+        </Whisper>
     )
 }
     

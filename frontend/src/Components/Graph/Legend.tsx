@@ -12,7 +12,7 @@ export const Legend: React.FC<{'data' : PapersAndSimilarities, 'defaultFieldOfSt
                 <span className='legend-description-child2'>Fields of Study</span>
             </div>
             {Array.from(new Set(props.data.paper.map((paper) => paper.fieldsOfStudy.slice().sort().join(', ')))).map((field) =>(
-                <div className='legend-fieldsofstudy' style={{color: 'black', backgroundColor: (field === props.defaultFieldOfStudy) ? ('rgba(231, 156, 69, 1)') : (hexToRGB(props.pallette[1][hash(field) % props.pallette[1].length], '1'))}}>{field}</div>
+                <div className='legend-fieldsofstudy' style={{color: 'black', backgroundColor: (field === props.defaultFieldOfStudy) ? ('rgba(231, 156, 69, 0.7)') : (hexToRGB(props.pallette[1][hash(field) % props.pallette[1].length], '0.7'))}}>{field}</div>
             ))}
             <div className='legend-description'>
                 <span className='legend-description-child1'>Low</span>

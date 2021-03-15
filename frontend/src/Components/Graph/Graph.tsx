@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Loader } from 'rsuite';
-import ForceGraph2D from 'react-force-graph-2d';
+import ForceGraph2D, { ForceGraphMethods } from 'react-force-graph-2d';
 import { Helmet } from 'react-helmet';
 import sizeMe from 'react-sizeme'
 
