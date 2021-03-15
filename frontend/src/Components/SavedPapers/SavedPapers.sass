@@ -2,16 +2,34 @@
 
 
 .saved-papers-tree
+    .rs-tree-drag-node-mover
     .rs-tree 
         max-height: unset // As rsuite somehow sets a maximum height on trees. I don't know why :(
         background-color: unset
 
+        
+
+        .rs-tree-node-dragging
+            outline-color: $color-imprint
+
+        .rs-tree-node-drag-over-top.rs-tree-node-label-content
+            border-top-color: $color-imprint !important
+            &::after
+                border-left-color: $color-imprint
+        .rs-tree-node-drag-over-bottom.rs-tree-node-label-content
+            border-bottom-color: $color-imprint !important
+            &::after
+                border-left-color: $color-imprint
+
     .rs-tree-node-active .rs-tree-node-label .rs-tree-node-label-content
-        color: #e6caab
+        color: $color-imprint
         background-color: $color-background-light !important
+        font-weight: 500
 
     .rs-tree-node-label-content
         border-radius: 10px
+        &:focus
+            background-color: red !important
 
     .rs-tree-children 
         margin-left: 20px
@@ -23,8 +41,10 @@
         .rs-tree-node 
             padding-left: unset !important
 
+            &:not(.rs-tree-node-disabled) > .rs-tree-node-label:focus > .rs-tree-node-label-content
+                background-color: rgba($color-background-light, 0.6)
             .rs-tree-node-label
-                padding-left: 5px
+                padding-left: 16px
 
 .saved-papers-sidebar
     padding-left: 5px
