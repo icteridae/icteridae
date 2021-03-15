@@ -13,13 +13,14 @@ import './styles/Navbar.sass';
  */
 export const NavBar: React.FC = () => {
     const [paperSearchInput, setPaperSearchInput] = useState<string>('');
-    const [authorSearchInput, setAuthorSearchInput] = useState<string>('')
-    let matchPaper = useRouteMatch('/results/:query')
-    let matchAuthor = useRouteMatch('/authorsearch/:query')
+    const [authorSearchInput, setAuthorSearchInput] = useState<string>('');
+    let matchPaper = useRouteMatch('/results/:query');
+    let matchAuthor = useRouteMatch('/authorsearch/:query');
     // This hooks fills NavbarSearch with the correct query if the user managed to get to the results page without using the NavbarSearch itself
     useEffect(() => {
         (paperSearchInput === '') && (matchPaper && setPaperSearchInput((matchPaper.params as {query: string}).query));
         (authorSearchInput === '') && (matchAuthor && setAuthorSearchInput((matchAuthor.params as {query: string}).query));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const resetInput = () => {

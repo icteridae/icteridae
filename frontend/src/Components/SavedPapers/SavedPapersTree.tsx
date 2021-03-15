@@ -7,14 +7,14 @@ import * as TreeTypes from './TreeTypes';
 import * as PaperFunctions from './PageSavedPapersFunctions';
 import * as GeneralTypes from '../../Utils/GeneralTypes';
 
-import './SavedPapers.sass'
+import './SavedPapers.sass';
 
 
 export const SavedPapersTree: React.FC<{setSelectedPaper: Function}> = (props) => {
     const [selectedTreeNode, setSelectedTreeNode] = useState<TreeTypes.PaperOrDirectoryNode>();
     const [isRenaming, setIsRenaming] = useState<boolean>(false);
-    const [loadedPapers, setLoadedPapers] = useState<{ [id: string] : GeneralTypes.Paper}>({})
-    const [directoryNames, setDirectoryNames] = useState<{ [id: string] : string}>({})
+    const [loadedPapers, setLoadedPapers] = useState<{ [id: string] : GeneralTypes.Paper}>({});
+    const [directoryNames, setDirectoryNames] = useState<{ [id: string] : string}>({});
     const [showModal, setShowModal] = useState<boolean>(false);
     const renameInputRef = useRef(null);
     const [treeData, setTreeData] = useState<TreeTypes.PaperOrDirectoryNode[]>(
@@ -51,14 +51,14 @@ export const SavedPapersTree: React.FC<{setSelectedPaper: Function}> = (props) =
         );
 
     function addFolder(name: string): void {
-        let newTreeData: TreeTypes.PaperOrDirectoryNode[] = PaperFunctions.createDirectory(treeData, name)
-        setTreeData(newTreeData)
-        setDirectoryNames(PaperFunctions.deepReduce(newTreeData, (ac, val) => TreeTypes.isDirectoryNode(val) ? {...ac, [val.value]: val.directoryName}: ac, {}))
+        let newTreeData: TreeTypes.PaperOrDirectoryNode[] = PaperFunctions.createDirectory(treeData, name);
+        setTreeData(newTreeData);
+        setDirectoryNames(PaperFunctions.deepReduce(newTreeData, (ac, val) => TreeTypes.isDirectoryNode(val) ? {...ac, [val.value]: val.directoryName}: ac, {}));
     }
 
     useEffect(() => {
-        PaperFunctions.loadPapers(treeData, setLoadedPapers)
-        setDirectoryNames(PaperFunctions.deepReduce(treeData, (ac, val) => TreeTypes.isDirectoryNode(val) ? {...ac, [val.value]: val.directoryName}: ac, {}))
+        PaperFunctions.loadPapers(treeData, setLoadedPapers);
+        setDirectoryNames(PaperFunctions.deepReduce(treeData, (ac, val) => TreeTypes.isDirectoryNode(val) ? {...ac, [val.value]: val.directoryName}: ac, {}));
     // do not update on treeData change as this would create an infinite loop
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -86,7 +86,7 @@ export const SavedPapersTree: React.FC<{setSelectedPaper: Function}> = (props) =
                     ),
                         } 
                 : node
-                )))
+                )));
     }, [loadedPapers, selectedTreeNode])
 
     useEffect(() => {
@@ -139,7 +139,12 @@ export const SavedPapersTree: React.FC<{setSelectedPaper: Function}> = (props) =
     }, [directoryNames, selectedTreeNode, isRenaming])
 
     useEffect(() => {
-        localStorage.setItem('savedpapers', JSON.stringify(PaperFunctions.deepMap(PaperFunctions.stripTree(treeData), (node) => (TreeTypes.isStrippedDirectoryNode(node) ? {...node, directoryName: directoryNames[node.value]} : node))))
+        localStorage.setItem('savedpapers',
+            JSON.stringify(PaperFunctions.deepMap(
+                PaperFunctions.stripTree(treeData),
+                (node) => (TreeTypes.isStrippedDirectoryNode(node)
+                            ? {...node, directoryName: directoryNames[node.value]}
+                            : node))));
     }, [treeData, directoryNames])
 
 
@@ -168,7 +173,7 @@ export const SavedPapersTree: React.FC<{setSelectedPaper: Function}> = (props) =
                         Clearing storage will irreversibly delete all your saved papers. Are you sure?
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button onClick={() => {setShowModal(false);localStorage.setItem('savedpapers', JSON.stringify([]));setTreeData([])}} appearance="primary">
+                        <Button onClick={() => {setShowModal(false);localStorage.setItem('savedpapers', JSON.stringify([]));setTreeData([]);}} appearance="primary">
                             Yes
                         </Button>
                         <Button onClick={() => setShowModal(false)} appearance="subtle">
@@ -184,7 +189,7 @@ export const SavedPapersTree: React.FC<{setSelectedPaper: Function}> = (props) =
                     (Object.keys(loadedPapers).length > 0 || PaperFunctions.getSubtreePaperIds(treeData).length === 0) && isRenaming === false} 
                 defaultExpandAll
                 onDrop={({ createUpdateDataFunction }: DropData) => setTreeData(PaperFunctions.flattenPapers(createUpdateDataFunction(treeData)))}
-                onSelect={(active) => {setSelectedTreeNode(active);props.setSelectedPaper(loadedPapers[active.paperId])}}
+                onSelect={(active) => {setSelectedTreeNode(active);props.setSelectedPaper(loadedPapers[active.paperId]);}}
             />
         </div>
     );

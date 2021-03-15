@@ -6,7 +6,7 @@ import { SearchResultCard } from "./SearchResultCard";
 import { Paper } from '../../../Utils/GeneralTypes';
 
 import './styles/SearchResultList.sass';
-import '../../General/style/Pagination.sass'
+import '../../General/style/Pagination.sass';
 
 interface ResultListProps {
     activePage: number,

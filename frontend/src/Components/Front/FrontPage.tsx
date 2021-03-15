@@ -10,9 +10,9 @@ import Config from '../../Utils/Config'
 import { Alert, Button, Divider, Footer } from 'rsuite';
 import { PulseLoader } from 'react-spinners';
 
-import './FrontPage.sass'
+import './FrontPage.sass';
 
-import logo from '../../icon.png'
+import logo from '../../icon.png';
 
 /**
  * Frontpage is shown when the user the Web-Application. If exists it shows the recently opened papers
@@ -46,7 +46,7 @@ export const FrontPage: React.FC = () => {
                 setRecentlyOpenedPapers(res);
             }).catch(() => {
                 console.log("Papers couldn't be loaded");
-                setRecentlyOpenedPapers(null)
+                setRecentlyOpenedPapers(null);
             })
 
     // dependencies have to be non-exhaustive here

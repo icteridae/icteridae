@@ -28,7 +28,7 @@ export function isDirectoryNode(node: TreeNode | undefined): node is DirectoryNo
 }
 
 export function hasChildren(node: BaseTreeNode | undefined) {
-    return node !== undefined && node.children !== undefined
+    return node !== undefined && node.children !== undefined;
 }
 
 export interface StrippedPaperNode extends BaseTreeNode{

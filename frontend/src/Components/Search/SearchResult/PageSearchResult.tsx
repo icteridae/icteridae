@@ -3,10 +3,10 @@ import React, {useEffect, useState} from 'react';
 import { useParams } from 'react-router-dom';
 import PulseLoader from "react-spinners/PulseLoader";
 
-import { AbstractView } from '../../General/AbstractView'
+import { AbstractView } from '../../General/AbstractView';
 import { SearchResultList } from './SearchResultList';
-import Config from '../../../Utils/Config'
-import { Paper } from '../../../Utils/GeneralTypes'
+import Config from '../../../Utils/Config';
+import { Paper } from '../../../Utils/GeneralTypes';
 import { Sorry } from '../../General/Sorry';
 
 import './styles/PageSearchResult.sass';
