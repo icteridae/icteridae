@@ -7,9 +7,9 @@ import { AbstractView } from '../../General/AbstractView'
 import { SearchResultList } from './SearchResultList';
 import Config from '../../../Utils/Config'
 import { Paper } from '../../../Utils/GeneralTypes'
+import { Sorry } from '../../General/Sorry';
 
 import './styles/PageSearchResult.sass';
-import { Sorry } from '../../General/Sorry';
 
 
 export const PageSearchResult : React.FC = () => {
@@ -41,17 +41,17 @@ export const PageSearchResult : React.FC = () => {
                         <Sorry
                             message="No search results found"
                             description="Make sure you entered the correct query." 
-                            /> :
-                    (
-                        <div className='wrapper' id='search-result-wrapper'>            
-                            <div id='query-title'>
-                                <h2>Showing {(PAGESIZE <= searchResults.count) ? PAGESIZE: searchResults.count} of {searchResults.count} results</h2>
-                            <div className='line'>
-                        </div>
-                        </div>
-                            <SearchResultList results={searchResults} activePage={activePage} raiseStateSelected={setSelected} raiseStateActivePage={setActivePage}/>
-                        </div>
-                    ) 
+                        /> 
+                        :
+                        (
+                            <div className='wrapper' id='search-result-wrapper'>            
+                                <div id='query-title'>
+                                    <h2>Showing {(PAGESIZE <= searchResults.count) ? PAGESIZE: searchResults.count} of {searchResults.count} results</h2>
+                                    <div className='line'/>
+                                </div>
+                                <SearchResultList results={searchResults} activePage={activePage} raiseStateSelected={setSelected} raiseStateActivePage={setActivePage}/>
+                            </div>
+                        ) 
                 
             }
             {(selected != null) && <AbstractView selected={selected}/>}
