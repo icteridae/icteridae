@@ -12,8 +12,6 @@ import { Description } from '../Description/Description';
 import { AuthorSearchResult } from "../Author/AuthorSearchResult";
 import { AuthorSearch } from "../Author/AuthorSearch";
 
-import './App.scss';
-
  export const App: React.FC = () => (
     <BrowserRouter>
       <Helmet>
