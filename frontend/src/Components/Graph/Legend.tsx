@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { PapersAndSimilarities } from './GraphTypes'
 import { hexToRGB, hash } from './GraphHelperfunctions'
 

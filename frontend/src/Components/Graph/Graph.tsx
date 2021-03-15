@@ -1,18 +1,17 @@
 import React from 'react';
-import { Link, useHistory } from 'react-router-dom';
 
-import { Button, Drawer, Slider, InputNumber, Loader, Icon, Popover, Whisper, ButtonGroup, Divider, SelectPicker, FlexboxGrid } from 'rsuite';
+import { Loader } from 'rsuite';
 import ForceGraph2D from 'react-force-graph-2d';
 import { Helmet } from 'react-helmet';
-import Linkify from 'react-linkify';
 import sizeMe from 'react-sizeme'
 
 import { getMinAndMaxFromMatrix, normalize, choosingSliderValues, changeSlider, hash, hexToRGB } from './GraphHelperfunctions';
 import { PaperNode, PapersAndSimilarities, PaperGraphData, SimilarityLinkObject } from './GraphTypes';
-import { addSavedPaper, setSavedSliders } from '../../Utils/Webstorage';
-import { Bookmark } from '../General/Bookmark';
+import { GraphControllerDrawer } from './GraphControllerDrawer';
+import { GraphDisplayDrawer } from './GraphDisplayDrawer';
+import { setSavedSliders } from '../../Utils/Webstorage';
 import { pallettes } from './Colors';
-import { Legend } from './Legend'
+import { Legend } from './Legend';
 
 import './Graph.sass'
 
@@ -110,7 +109,7 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
     const fgRef = React.useRef();
 
     // slider values
-    const [sliders, setSliders] = React.useState(Array(sliderCount).fill(totalSliderValue / sliderCount))
+    const [sliders, setSliders] = React.useState<number[]>(Array(sliderCount).fill(totalSliderValue / sliderCount))
     
     // set whether the drawer is shown or hidden
     const [paperDrawer, setPaperDrawer] = React.useState(false);
@@ -140,15 +139,13 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
     const [mostCitations, setMostCitations] = React.useState<number>(0);
 
     // boolean to decide wheter the title or the author and year should be displayed on the nodes
-    const [showTitle, setShowTitle] = React.useState<Boolean>(false);
+    const [showTitle, setShowTitle] = React.useState<boolean>(false);
 
     // boolean to decide wheter the legend should be displayed or not
     const [showLegend, setShowLegend] = React.useState<boolean>(true);
 
     // boolean to decide wheter the nodes will be colored by their field of study or their year
     const [nodeColoring, setNodeColoring] = React.useState<boolean>(false);
-
-    let history = useHistory()
 
     // EffectHook for inital values of all sliders
     React.useEffect(() => {
@@ -203,7 +200,14 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                 {/**
                   * Legend
                   */}
-                {showLegend && <Legend data={props.data} defaultFieldOfStudy={defaultFieldOfStudy} pallette={pallette} leastCitations={leastCitations} mostCitations={mostCitations} paperOppacityYearRange={paperOppacityYearRange}/>}
+                {showLegend && <Legend 
+                                    data={props.data} 
+                                    defaultFieldOfStudy={defaultFieldOfStudy} 
+                                    pallette={pallette} 
+                                    leastCitations={leastCitations} 
+                                    mostCitations={mostCitations} 
+                                    paperOppacityYearRange={paperOppacityYearRange}
+                                    />}
                 {/**
                  * Render the graph and both drawers only if data exists (Successful fetch)
                  */}
@@ -212,241 +216,139 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                         {/**
                          * Drawer displays the sliders
                         */}
-                        <Drawer
-                            className='rs-drawer'
-                            show={controllerDrawer}
-                            placement='left'
-                            backdrop={false}
-                            onMouseLeave={() => setControllerDrawer(false)}
-                            onHide={() => setControllerDrawer(false)}
-                        >
-                            <Drawer.Header>
-                                <Drawer.Title>
-                                    Graph Controller
-                                </Drawer.Title>
-                            </Drawer.Header>
-                            <Drawer.Body>
-                                <div className='slider-popup'>
-                                    <span className='graph-settings-title'>Similarites</span>
-                                    {sliders.map((sliderVal : number, index) => (
-                                        <div className='slider'>
-                                            <div>{props.data.similarities[index].name + ':  '}
-                                                <Whisper placement="right" trigger="hover" speaker={<Popover title={props.data.similarities[index].name}>
-                                                        <Linkify><p>{props.data.similarities[index].description}</p></Linkify>
-                                                    </Popover>} enterable>
-                                                    <Icon icon="info"/>
-                                                </Whisper></div>
-                                            <div className='slider-with-input-number' key={index}>
-                                                    <Slider
-                                                        step= {0.1}
-                                                        progress
-                                                        style={{ marginTop: 16, marginRight: 10 }}
-                                                        handleStyle={{ paddingTop: 7 }}
-                                                        value={Number(Number(sliderVal).toFixed(2))}
-                                                        onChange={value => {
-                                                            const newSliders = changeSlider(index, value, sliders, totalSliderValue);
-                                                            setSliders(newSliders);
-                                                            setSavedSliders(newSliders);
-                                                        }}
-                                                        />
-                                                    <InputNumber
-                                                        min={0}
-                                                        max={totalSliderValue}
-                                                        value={Number(Number(sliderVal).toFixed(1))}
-                                                        onChange={value => {
-                                                            if (0 <= value && 100 >= value){
-                                                                let newSliders = changeSlider(index, (value as number), sliders, totalSliderValue);
-                                                                setSliders(newSliders);
-                                                                setSavedSliders(newSliders);
-                                                            }
-                                                        }}
-                                                    />
-                                                </div>
-                                        </div>)
-                                    )}
-                                    <Divider />
-                                    <div className='graph-settings'>
-                                        <span className='graph-settings-title'>Settings</span>
-                                        <span className='graph-settings-subtitle-first'>Node Label</span>
-                                        <ButtonGroup>
-                                            <Button className='switch-button-2' appearance={showTitle ? 'ghost' : 'primary'} onClick={() => setShowTitle(false)}>Author, Year</Button>
-                                            <Button className='switch-button-2' appearance={showTitle ? 'primary' : 'ghost'} onClick={() => setShowTitle(true)}>Title</Button>
-                                        </ButtonGroup>
-                                        <span className='graph-settings-subtitle'>Legend</span>
-                                        <ButtonGroup>
-                                            <Button className='switch-button-2' appearance={showLegend ? 'primary' : 'ghost'} onClick={() => setShowLegend(true)}>On</Button>
-                                            <Button className='switch-button-2' appearance={showLegend ? 'ghost' : 'primary'} onClick={() => setShowLegend(false)}>Off</Button>
-                                        </ButtonGroup>
-                                        <span className='graph-settings-subtitle'>Node Coloring</span>
-                                        <ButtonGroup>
-                                            <Button className='switch-button-2' appearance={nodeColoring ? 'ghost' : 'primary'} onClick={() => setNodeColoring(false)}>Year</Button>
-                                            <Button className='switch-button-2' appearance={nodeColoring ? 'primary' : 'ghost'} onClick={() => setNodeColoring(true)}>Field of Study</Button>
-                                        </ButtonGroup>
-                                        <span className='graph-settings-subtitle'>Colorblindness Pallettes for Field Of Study</span>
-                                        <SelectPicker 
-                                            data={pallettes.map(x => ({value: x, label: x[0]}))}
-                                            searchable={false}
-                                            cleanable={false}
-                                            value={pallette}
-                                            onSelect={setPallette}/>
-                                        <span className='graph-settings-subtitle'>Weak Link Filter</span>
-                                        <Slider className='graph-settings-slider'
-                                            progress
-                                            defaultValue={0}
-                                            onChange={value => {
-                                                setweakLinkFilter(value/100);
-                                            }}
-                                        />
-                                        <span className='graph-settings-subtitle'>Node Repelling Force</span>
-                                        <Slider className='graph-settings-slider'
-                                            progress
-                                            defaultValue={0}
-                                            onChange={value => {
-                                                setNodeRepelling(value);
-                                            }}
-                                        />
-                                    </div>
-                                </div>
-                            </Drawer.Body>
-                        </Drawer>
+                        <GraphControllerDrawer
+                            data={props.data}
+                            controllerDrawer={controllerDrawer}
+                            sliders={sliders}
+                            totalSliderValue={totalSliderValue}
+                            showTitle={showTitle} 
+                            showLegend={showLegend} 
+                            nodeColoring={nodeColoring} 
+                            pallettes={pallettes} 
+                            pallette={pallette}
+                            setControllerDrawer={setControllerDrawer}
+                            setSliders={setSliders}
+                            setSavedSliders={setSavedSliders}
+                            setShowTitle={setShowTitle} 
+                            setShowLegend={setShowLegend} 
+                            setNodeColoring={setNodeColoring} 
+                            setPallette={setPallette}
+                            setweakLinkFilter={setweakLinkFilter}
+                            setNodeRepelling={setNodeRepelling}
+                            changeSlider={changeSlider}
+                        />
                         {/**
                          * Drawer displays the selected paper
                          */}
-                        <Drawer
-                            show={paperDrawer}
-                            backdrop={false}
-                            onHide={() => {setPaperDrawer(false);}}
-                        >
-                            <Drawer.Header>
-                                <Drawer.Title>
-                                    <Bookmark paper_id={selectedNode.id}/>{selectedNode.title}
-                                </Drawer.Title>
-                            </Drawer.Header>
-                            <Drawer.Body>
-                                <div style={{paddingBottom: '1em'}}>
-                                    <Button appearance='ghost' style={{marginRight: '1em'}} href={selectedNode.s2Url} target='_blank'>
-                                        Open in Semantic Scholar
-                                    </Button>
-                                    <Button appearance='ghost' style={{marginRight: '1em'}} onClick={() => {history.push(`/graph/${selectedNode.id}`)}}>
-                                        Generate Graph
-                                    </Button>
-
-                                </div>
-                                    
-                                <p style={{color:'grey'}}>{selectedNode.year + ', '}{selectedNode.authors.length <= maxAuthors + 1 ? selectedNode.authors.map<React.ReactNode>(obj => (<Link to={`/author/${obj.id}`}>{obj.name}</Link>)).reduce((prev, curr) => [prev, ', ', curr]) : <>{selectedNode.authors.slice(0, maxAuthors).map<React.ReactNode>(obj => (<Link to={`/author/${obj.id}`}>{obj.name}</Link>)).reduce((prev, curr) => [prev, ', ', curr])}, +{selectedNode.authors.length - maxAuthors} others</>}
-                                    {selectedNode.doi !== '' && (selectedNode.doiUrl !== '' ? (<><br/>Doi: <a href={selectedNode.doiUrl}>{selectedNode.doi}</a></>) : (<><br/>Doi: {selectedNode.doi}</>))}
-                                    
-                                    <br/> Citations: {selectedNode.inCitations.length}, References: {selectedNode.outCitations.length}
-                                    {selectedNode.venue !== '' && <><br/> Venue: {selectedNode.venue}</>}
-                                    <br/><p style={{color:selectedNode.color}}>Field: {selectedNode.fieldsOfStudy.map(field => field).join(', ')} </p>
-                                    
-                                    </p>
-                                <p>{selectedNode.paperAbstract}</p>
-                            </Drawer.Body>
-                        </Drawer>
+                        <GraphDisplayDrawer 
+                            paperDrawer={paperDrawer}
+                            selectedNode={selectedNode}
+                            maxAuthors={maxAuthors}
+                            setPaperDrawer={setPaperDrawer}
+                        />
                         {/**
                          * ForceGraph2D renders the actual graph
                          * For information on the attributes, pls visit: https://github.com/vasturiano/react-force-graph
                          */}
                         <ForceGraph2D 
-                                    ref = {fgRef}
-                                    graphData={graphData}
-                                    height={props.size.height}
-                                    width={props.size.width}
-                                    onNodeClick={(node, e) => {
-                                        e.preventDefault();
-                                        if (node.id === selectedNode.id) {
-                                            setPaperDrawer(!paperDrawer);
-                                        } else {
-                                            setNode((node as PaperNode));
-                                            setPaperDrawer(true);
-                                        };
-                                    }}
-                                    onNodeHover={(node, prevNode) => {
-                                        if(!(prevNode === null)){
-                                            (prevNode as PaperNode).isHovered = false;
-                                        }
-                                        if(!(node === null)){
-                                            (node as PaperNode).isHovered = true;
-                                        }
-                                    }}
-                                    onBackgroundClick={(e) => {
-                                        e.preventDefault()
-                                        setPaperDrawer(false)
-                                        setControllerDrawer(false)
-                                    }}
-                                    onLinkHover={(link, prevlink) => {
-                                        if(!(prevlink === null)){
-                                            (prevlink as SimilarityLinkObject).color = `rgba(150,150,150,${(prevlink as SimilarityLinkObject).similarity.reduce((x, y) => x + y)})`;
-                                            (prevlink as SimilarityLinkObject).isHovered = false;
-                                        }
-                                        if(!(link === null)){
-                                            (link as SimilarityLinkObject).color = 'rgba(150,150,150,1)';
-                                            (link as SimilarityLinkObject).isHovered = true;
-                                        }
-                                    }}
-                                    // Here we draw our own Nodes to apply custom designs. Remove nodeCanvasObject to get normal circular nodes
-                                    nodeCanvasObject={(node, ctx, globalScale) => {
-                                        let paperName = (node as PaperNode).title;
-                                        let authorName = (node as PaperNode).authors[0].name.split(' ');
-                                        const label = showTitle ? (paperName.length > 25 ? paperName.substring(0, 20).trim() + '...' : paperName) : authorName[authorName.length-1] + ', ' + (node as PaperNode).year;
-                                        const fontSize = 12/globalScale;
-                                        ctx.font = `${fontSize}px Sans-Serif`;
-                                        
-                                        // show Node Color for Field of Study or Oppacity for year
-                                        if(nodeColoring){
-                                            // Node Color
-                                            if((node as PaperNode).fieldsOfStudy.toString() === defaultFieldOfStudy){
-                                                ctx.fillStyle = 'rgba(231, 156, 69, 0.85)';  
-                                            }else{
-                                                // Hash the names of FieldsOfStudy and use the result as index for choosing the color. For unique results we have to sort the fields first. Before that we have to copy the array using .slice since .sort doesnt return an array.
-                                                ctx.fillStyle = hexToRGB(pallette[1][hash((node as PaperNode).fieldsOfStudy.slice().sort().join(', ')) % pallette[1].length], '0.85');
-                                            }
-                                        }else{
-                                            // Node Oppacity
-                                            ctx.fillStyle = `rgba(231, 156, 69, ${(((node as PaperNode).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as PaperNode).year - new Date().getFullYear()) + 1))})`;  
-                                        }
-                                        ctx.beginPath();
-                                        // The radius of our nodes is determined in the same way as the React-Force-Graph-2d does internally to get overlapping nodes. The *4 is needed since they use a nodeRelSize variable that we could use while creating the graph. Its standard value is 4.
-                                        let size = Math.sqrt(Math.max(0, (node as PaperNode).val || 1)) * 4;
-                                        if((node as PaperNode).isHovered){
-                                            // Circle Edge Color when the Node is hovered
-                                            ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
-                                            ctx.lineWidth = 2;
-                                        }else{
-                                            // Circle Edge Color. The color doesnt matter since Alpha is 0 und thus the Edge is transparent
-                                            ctx.strokeStyle = 'rgba(255, 255, 255, 0)';
-                                            ctx.lineWidth = 0.5;
-                                        }
-                                        // Node shape (arc creates a cirle at coordinate (node.x, node.y). Last 2 Parameters are needed to draw a full circle)
-                                        ctx.arc(node.x!, node.y!, size, 0 , 2 * Math.PI);
-                                        ctx.stroke();
-                                        ctx.fill();
-                                        // Add more arcs to the origion Node to make it stand out
-                                        if((node as PaperNode).id === props.data.paper[0].id){
-                                            ctx.moveTo(node.x! + size + 1, node.y!)
-                                            ctx.arc(node.x!, node.y!, size + 1, 0 , 2 * Math.PI);
-                                            ctx.moveTo(node.x! + size + 2, node.y!)
-                                            ctx.arc(node.x!, node.y!, size + 2, 0 , 2 * Math.PI);
-                                            ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
-                                            ctx.stroke();
-                                        }
-                                        ctx.textAlign = 'center';
-                                        ctx.textBaseline = 'middle';
-                                        ctx.fillStyle = 'rgba(230, 230, 230, 0.8)';
-                                        ctx.fillText(label as string, node.x!, node.y!);
-                                    }}
-                                    nodeLabel='title'
-                                    linkLabel={(link) => (link as SimilarityLinkObject).label}
-                                    linkWidth={(link) => (link as SimilarityLinkObject).isHovered ? linkOnHoverWidth 
-                                        : ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y)*3)}
-                                    linkVisibility={(link) => 
-                                        ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y) !== 0) &&
-                                        ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y)) > weakLinkFilter/3}
-                                    d3VelocityDecay={0.95}
-                                    cooldownTicks={100}
-                                    //onEngineStop={() => (fgRef.current as any).zoomToFit(400, 100)}
-                                    />
+                            ref = {fgRef}
+                            graphData={graphData}
+                            height={props.size.height}
+                            width={props.size.width}
+                            onNodeClick={(node, e) => {
+                                e.preventDefault();
+                                if (node.id === selectedNode.id) {
+                                    setPaperDrawer(!paperDrawer);
+                                } else {
+                                    setNode((node as PaperNode));
+                                    setPaperDrawer(true);
+                                };
+                            }}
+                            onNodeHover={(node, prevNode) => {
+                                if(!(prevNode === null)){
+                                    (prevNode as PaperNode).isHovered = false;
+                                }
+                                if(!(node === null)){
+                                    (node as PaperNode).isHovered = true;
+                                }
+                            }}
+                            onBackgroundClick={(e) => {
+                                e.preventDefault()
+                                setPaperDrawer(false)
+                                setControllerDrawer(false)
+                            }}
+                            onLinkHover={(link, prevlink) => {
+                                if(!(prevlink === null)){
+                                    (prevlink as SimilarityLinkObject).color = `rgba(150,150,150,${(prevlink as SimilarityLinkObject).similarity.reduce((x, y) => x + y)})`;
+                                    (prevlink as SimilarityLinkObject).isHovered = false;
+                                }
+                                if(!(link === null)){
+                                    (link as SimilarityLinkObject).color = 'rgba(150,150,150,1)';
+                                    (link as SimilarityLinkObject).isHovered = true;
+                                }
+                            }}
+                            // Here we draw our own Nodes to apply custom designs. Remove nodeCanvasObject to get normal circular nodes
+                            nodeCanvasObject={(node, ctx, globalScale) => {
+                                let paperName = (node as PaperNode).title;
+                                let authorName = (node as PaperNode).authors[0].name.split(' ');
+                                const label = showTitle ? (paperName.length > 25 ? paperName.substring(0, 20).trim() + '...' : paperName) : authorName[authorName.length-1] + ', ' + (node as PaperNode).year;
+                                const fontSize = 12/globalScale;
+                                ctx.font = `${fontSize}px Sans-Serif`;
+                                
+                                // show Node Color for Field of Study or Oppacity for year
+                                if(nodeColoring){
+                                    // Node Color
+                                    if((node as PaperNode).fieldsOfStudy.toString() === defaultFieldOfStudy){
+                                        ctx.fillStyle = 'rgba(231, 156, 69, 0.85)';
+                                    }else{
+                                        // Hash the names of FieldsOfStudy and use the result as index for choosing the color. For unique results we have to sort the fields first. Before that we have to copy the array using .slice since .sort doesnt return an array.
+                                        ctx.fillStyle = hexToRGB(pallette[1][hash((node as PaperNode).fieldsOfStudy.slice().sort().join(', ')) % pallette[1].length], '0.85');
+                                    }
+                                }else{
+                                    // Node Oppacity
+                                    ctx.fillStyle = `rgba(231, 156, 69, ${(((node as PaperNode).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as PaperNode).year - new Date().getFullYear()) + 1))})`;  
+                                }
+                                ctx.beginPath();
+                                // The radius of our nodes is determined in the same way as the React-Force-Graph-2d does internally to get overlapping nodes. The *4 is needed since they use a nodeRelSize variable that we could use while creating the graph. Its standard value is 4.
+                                let size = Math.sqrt(Math.max(0, (node as PaperNode).val || 1)) * 4;
+                                if((node as PaperNode).isHovered){
+                                    // Circle Edge Color when the Node is hovered
+                                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+                                    ctx.lineWidth = 2;
+                                }else{
+                                    // Circle Edge Color. The color doesnt matter since Alpha is 0 und thus the Edge is transparent
+                                    ctx.strokeStyle = 'rgba(255, 255, 255, 0)';
+                                    ctx.lineWidth = 0.5;
+                                }
+                                // Node shape (arc creates a cirle at coordinate (node.x, node.y). Last 2 Parameters are needed to draw a full circle)
+                                ctx.arc(node.x!, node.y!, size, 0 , 2 * Math.PI);
+                                ctx.stroke();
+                                ctx.fill();
+                                // Add more arcs to the origion Node to make it stand out
+                                if((node as PaperNode).id === props.data.paper[0].id){
+                                    ctx.moveTo(node.x! + size + 1, node.y!)
+                                    ctx.arc(node.x!, node.y!, size + 1, 0 , 2 * Math.PI);
+                                    ctx.moveTo(node.x! + size + 2, node.y!)
+                                    ctx.arc(node.x!, node.y!, size + 2, 0 , 2 * Math.PI);
+                                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+                                    ctx.stroke();
+                                }
+                                ctx.textAlign = 'center';
+                                ctx.textBaseline = 'middle';
+                                ctx.fillStyle = 'rgba(230, 230, 230, 0.8)';
+                                ctx.fillText(label as string, node.x!, node.y!);
+                            }}
+                            nodeLabel='title'
+                            linkLabel={(link) => (link as SimilarityLinkObject).label}
+                            linkWidth={(link) => (link as SimilarityLinkObject).isHovered ? linkOnHoverWidth 
+                                : ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y)*3)}
+                            linkVisibility={(link) => 
+                                ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y) !== 0) &&
+                                ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y)) > weakLinkFilter/3}
+                            d3VelocityDecay={0.95}
+                            cooldownTicks={100}
+                            //onEngineStop={() => (fgRef.current as any).zoomToFit(400, 100)}
+                            />
                     </>
                 : <Loader 
                     className='loader' 
