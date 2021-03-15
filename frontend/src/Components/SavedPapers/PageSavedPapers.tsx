@@ -12,20 +12,11 @@ import { AbstractView } from '../General/AbstractView';
 export const PageSavedPapers: React.FC = () => {
     const [selectedPaper, setSelectedPaper] = useState<Paper>();
 
-    useEffect(() => {
-        console.log(selectedPaper);
-    }, [selectedPaper])
     return(
-        <Grid>
-            <Row>
-                <Col lg={13}>
-                    <SavedPapersTree setSelectedPaper={setSelectedPaper}/>
-                </Col>
-                <Col lg={11}>
-                    {selectedPaper && <AbstractView selected={selectedPaper}/>}
-                </Col>
-            </Row>
-        </Grid>  
+        <div className="page-saved-papers">
+            <SavedPapersTree setSelectedPaper={setSelectedPaper}/>
+            {selectedPaper && <AbstractView selected={selectedPaper}/>}
+        </div>  
     );
 }
       
