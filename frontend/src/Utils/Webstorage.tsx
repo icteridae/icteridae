@@ -6,8 +6,12 @@ import { isDirectoryNode, PaperOrDirectoryNode } from "../Components/SavedPapers
  * @returns the stored recent papers
  */
 export function getRecentPapers(){
-    const storedPapers : Array<string> = localStorage && JSON.parse(localStorage.getItem("papers") as string);
-    return storedPapers;
+    try {
+        const storedPapers : Array<string> = localStorage && JSON.parse(localStorage.getItem("papers") as string);
+        return storedPapers;
+    } catch {
+        return []
+    }
 }
 
 /**
@@ -15,26 +19,39 @@ export function getRecentPapers(){
  * @param papers is the array of papers
  */
 export function setRecentPapers(papers: Array<string>){
-    if (localStorage) {
+    try {
         if(typeof(papers) !== "undefined") {
             localStorage.removeItem("papers");
             localStorage.setItem("papers", JSON.stringify(papers));
         }
-    }
+    } catch {}
 }
 
 /**
  * returns the savedPaperTree from the webstorage
  */
 export function getSavedPapers() {
-    if (localStorage) {
+    
+    try {
+        let x = localStorage  
+        // you might ask yourself why this line exists. Yeah, so did I. Sit down because you're about to learn something.
+        // so imagine you're using a browser of your choice. Firefox? You're good. Chrome? Think again.
+        // someone, somewhere, sometime decided that inactive localstorage on firefox just evaluated to null. 
+        // That's smart, right? no localstorage, no value, no problem, null
+        // not so with chrome. they're not even letting you check whether localstorage exists, chrome just straight up says no
+        // now you've got about 12 hours left till your deadline and just realized all of the above because well who in his right mind 
+        // could assume browsers handling localstorage differently, right?
+        // alright so it's almost midnight and you're replacing every occurence of localstorage with a horrible try-catch and just hope being done.
+        // yeah as if. so somehow the following line breaks chrome EVEN IF IT'S IN A TRY-CATCH BLOCK. 
+        // that's my story of 'let x = localStorage'. Thank you for listening.
         const savedPaperTree = JSON.parse(localStorage.getItem("savedpapers") as string);
         if (!savedPaperTree)
             return [];
-        return savedPaperTree;
+        return savedPaperTree;  
+    } catch {
+        return [];
     }
-    return [];
-
+    
 }
 
 /**
@@ -43,10 +60,11 @@ export function getSavedPapers() {
  */
 export function setSavedPapers(savedPapers: Array<PaperOrDirectoryNode>)
 {
-    if(typeof(savedPapers) !== "undefined") {
-        localStorage.setItem("savedpapers", JSON.stringify(savedPapers));
-    }
-    return;
+    try {
+        if(typeof(savedPapers) !== "undefined") {
+            localStorage.setItem("savedpapers", JSON.stringify(savedPapers));
+        }
+    } catch {}
 }
 
 /**
@@ -82,18 +100,17 @@ export function addRecentPaper(id: string): void {
   }
 
 export function getSavedSliders(): number[] {
-    if (localStorage) {
+    try {
         return JSON.parse(localStorage.getItem("slider") as string) as Array<number>;
-    }
-    return []
-    
+    } catch {
+        return []
+    }    
 }
 
 export function setSavedSliders(slider: Array<number>) {
-    if (localStorage) {
+    try {
         if(typeof(slider) !== "undefined") {
             localStorage.setItem("slider", JSON.stringify(slider));
         }
-    }
-
+    } catch {}
 }
