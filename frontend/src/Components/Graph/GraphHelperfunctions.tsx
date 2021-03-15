@@ -183,8 +183,12 @@ export const GraphFetch: React.FC = () => {
 
         fetch(requestURL)
             .then(res => res.json())
-            .then(res => {
-              setGraph(res);
+            .then((res: PapersAndSimilarities) => {
+              if (res.paper.length > 0 && res.paper[0].id !== id) {
+                setGraph({tensor: [], paper: [], similarities: []})
+              } else {
+                setGraph(res);
+              }
             }).catch(() => console.log("Couldn't load graph"));
     }, [id]);
 
