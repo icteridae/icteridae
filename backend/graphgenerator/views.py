@@ -60,7 +60,7 @@ def search(request):
             },
             safe=False)
 
-    max_pages = min((count - 1) // pagesize + 1, SEARCH_CAP // pagesize)
+    max_pages = min((count - 1) // pagesize + 1, (SEARCH_CAP - 1) // pagesize + 1)
     count = min(count, SEARCH_CAP)
 
     page = request.query_params.get('page', '1')
