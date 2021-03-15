@@ -1,6 +1,17 @@
 import { deepFilter, getSubtreePaperIds } from "../Components/SavedPapers/PageSavedPapersFunctions";
 import { isDirectoryNode, PaperOrDirectoryNode } from "../Components/SavedPapers/TreeTypes";
 
+
+export function checkLocalStorage(): boolean {
+    try {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        let x = localStorage
+        return !(!localStorage)
+    } catch {
+        return false
+    }
+}
+
 /**
  * Loads the recent papers from the web-storage
  * @returns the stored recent papers
