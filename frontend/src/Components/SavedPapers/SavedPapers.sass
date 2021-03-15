@@ -1,8 +1,7 @@
 @import '../../Utils/_colors'
 
 
-.saved-papers-tree  
-
+.saved-papers-tree
     .rs-tree 
         max-height: unset // As rsuite somehow sets a maximum height on trees. I don't know why :(
         background-color: unset
@@ -33,3 +32,33 @@
     border-left: 2px solid $color-search-border
     border-top-left-radius: 10px
     border-bottom-left-radius: 10px
+
+
+.page-saved-papers
+    display: grid
+    grid-template-columns: repeat(auto-fit,minmax(400px, 1fr))
+    height: 85vh
+
+    .saved-papers-tree
+        display: flex
+        flex-direction: column
+        height: 85vh
+        margin-top: 2em
+
+    .abstract-view
+        min-height: 85vh
+        //min-width: 25em
+        margin-top: 2em
+
+    .tree-node
+        display: flex
+
+        .delete-button
+            margin-left: 10px
+            background: #0000
+            &:focus
+                border: none
+                outline: none
+            &:active
+                opacity: 0.4
+
