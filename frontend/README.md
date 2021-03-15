@@ -5,7 +5,7 @@
 ## File Structure
 *only important files are included*
 ```
-fronend
+frontend
 │   README.md
 │   package.json
 │   yarn.lock
