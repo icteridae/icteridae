@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 import { NavBar } from '../Navbar/Navbar';
 import { FrontPage } from '../Front/FrontPage';
-import { PageImprint } from '../Privacy/PageImprint';
+import { PageImprint } from '../Description/Privacy/PageImprint';
 import { GraphFetch } from '../Graph/GraphHelperfunctions';
 import { PageSearchResult } from '../Search/SearchResult/PageSearchResult';
 import { SavedPapers } from '../SavedPapers/PageSavedPapersLocalstorage';
@@ -23,7 +23,7 @@ import './App.scss';
       <Switch>
           <Route exact path='/' component={FrontPage}/>
           <Route exact path='/results/:query' component={PageSearchResult}/>
-          <Route exact path='/privacy' component={PageImprint}/>
+          {/* <Route exact path='/privacy' component={PageImprint}/> */}
           <Route exact path='/papers' component={SavedPapers}/>
           <Route exact path='/description' component={Description}/>
           <Route exact path='/graph/:id' component={GraphFetch}/>

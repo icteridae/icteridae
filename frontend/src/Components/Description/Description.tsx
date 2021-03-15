@@ -1,7 +1,12 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Container, Content, Divider, Header } from 'rsuite';
 
 import './Description.sass';
+import { PageImprint } from './Privacy/PageImprint';
+
+const SHOW_IMPRINT = false;
+
 
 /**
  * Frontpage is shown when the user the Web-Application. If exists it shows the recently opened papers
@@ -26,6 +31,11 @@ export const Description: React.FC = () => (
                     To find relevant research, use the search function and find a source to start reserach exploration. Select it to generate a graph based on similar papers. 
                 </p>
 
+                <h4>I found an interesting paper. Can I save it?</h4>
+                <p>
+                    Saving a paper can be done by clicking the bookmark icon next to its title. You can manage your saved papers in the <Link to='/papers'>My Papers</Link> tab.
+                </p>
+
                 <h4>How are similar papers determined?</h4>
                 <p>
                     To allow you to use any similarity metric you deem interesting, switching similarity metrics is as easy as varying sliders. 
@@ -45,8 +55,15 @@ export const Description: React.FC = () => (
                     Just as with similarities, relevance metrics can be exchanged using a simple Python interface.
                 </p>
 
-
             </Content>
+
+            {SHOW_IMPRINT && 
+            <>
+            <Divider/>
+            <PageImprint/>
+            </>}
+
+
         </Container>
     </div>
 );
