@@ -1,21 +1,20 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
-import ForceGraph2D from 'react-force-graph-2d';
 import { Button, Drawer, Slider, InputNumber, Loader, Icon, Popover, Whisper, ButtonGroup, Divider, SelectPicker, FlexboxGrid } from 'rsuite';
-import sizeMe from 'react-sizeme'
+import ForceGraph2D from 'react-force-graph-2d';
+import { Helmet } from 'react-helmet';
 import Linkify from 'react-linkify';
+import sizeMe from 'react-sizeme'
 
-import { PaperNode, PapersAndSimilarities, PaperGraphData, SimilarityLinkObject } from './GraphTypes';
 import { getMinAndMaxFromMatrix, normalize, choosingSliderValues, changeSlider, hash, hexToRGB } from './GraphHelperfunctions';
+import { PaperNode, PapersAndSimilarities, PaperGraphData, SimilarityLinkObject } from './GraphTypes';
+import { addSavedPaper, setSavedSliders } from '../../Utils/Webstorage';
+import { Bookmark } from '../General/Bookmark';
+import { pallettes } from './Colors';
 import { Legend } from './Legend'
 
 import './Graph.sass'
-import { addSavedPaper, setSavedSliders } from '../../Utils/Webstorage';
-import { useHistory } from 'react-router-dom';
-import { Bookmark } from '../General/Bookmark';
-import { pallettes } from './Colors';
-import { Helmet } from 'react-helmet';
 
 // Node Parameters
 // Added inside log(citations) to shift the logarithm. Can not be less than 1!
@@ -324,14 +323,11 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                 </Drawer.Title>
                             </Drawer.Header>
                             <Drawer.Body>
-                                <FlexboxGrid justify='space-between'>
-                                    <Button appearance='ghost' href={selectedNode.s2Url} target='_blank'>
+                                <FlexboxGrid style={{ paddingBottom: '1vh' }} justify='space-between'>
+                                    <Button style={{width: '49%'}} appearance='ghost' href={selectedNode.s2Url} target='_blank'>
                                         Open in Semantic Scholar
                                     </Button>
-                                    <Button appearance='ghost' onClick={() => addSavedPaper(selectedNode.id)}>
-                                        Save Paper
-                                    </Button>
-                                    <Button appearance='ghost' onClick={() => {history.push(`/graph/${selectedNode.id}`)}}>
+                                    <Button style={{width: '49%'}} appearance='ghost' onClick={() => {history.push(`/graph/${selectedNode.id}`)}}>
                                         Generate Graph
                                     </Button>
                                 </FlexboxGrid>
@@ -407,11 +403,6 @@ const Graph: React.FC<{'data' : PapersAndSimilarities, 'size' : {'width' : numbe
                                         ctx.beginPath();
                                         // The radius of our nodes is determined in the same way as the React-Force-Graph-2d does internally to get overlapping nodes. The *4 is needed since they use a nodeRelSize variable that we could use while creating the graph. Its standard value is 4.
                                         let size = Math.sqrt(Math.max(0, (node as PaperNode).val || 1)) * 4;
-                                        /*ctx.moveTo (node.x! +  size * Math.cos(0), node.y! +  size *  Math.sin(0));
-                                        for (var i = 1; i <= numberOfSides; i += 1){
-                                            ctx.lineTo (node.x! + size * Math.cos(i * 2 * Math.PI / numberOfSides), node.y! + size * Math.sin(i * 2 * Math.PI / numberOfSides));
-                                        }
-                                        ctx.stroke();*/
                                         if((node as PaperNode).isHovered){
                                             // Circle Edge Color when the Node is hovered
                                             ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
