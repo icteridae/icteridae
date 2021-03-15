@@ -8,22 +8,28 @@ export const Bookmark: React.FC<{paper_id: string, savedPapers?: string[], size?
 
     const [isSaved, setIsSaved] = useState<boolean>(props.savedPapers !== undefined ? props.savedPapers.includes(props.paper_id) : getSavedPapersList().includes(props.paper_id))
 
+    const [popOverMessage, setPopOverMessage] = useState<String>('Paper has been saved');
+
     useEffect(() => {
         setIsSaved(props.savedPapers !== undefined ? props.savedPapers.includes(props.paper_id) : getSavedPapersList().includes(props.paper_id))
     }, [props.paper_id, props.savedPapers])
+
+    useEffect(() =>{
+        let localStorageAvailable = false;
+        try {
+            let x = localStorage;
+            localStorageAvailable = true;
+        } catch {
+            localStorageAvailable = false;
+        }
+        isSaved ? (localStorageAvailable ? setPopOverMessage('Paper has been saved') : setPopOverMessage("Paper couldn't be saved")) : setPopOverMessage('Removed Bookmark');
+    }, [isSaved])
 
     return (
         <Whisper
             trigger='click'
             placement='top'
-            speaker={() => {
-                try {
-                    let x = localStorage;
-                } catch {
-                    return <Popover title="Paper couldn't saved" />
-                }
-                return isSaved ? <Popover title='Paper has been saved' /> : <></>}
-            }
+            speaker={<Popover title={popOverMessage}></Popover>}
             style={{ 'zIndex': 2 }}
         >
             <IconButton
