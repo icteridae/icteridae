@@ -52,7 +52,3 @@ If you only wish to customize the graph, the only two relevant files are `graphg
 **Similarity** - Given a list of papers, calculate their pairwise similarities.
 
 Details on how to implement custom relevance/similarity-functions can be found in the respective files.
-
-## Structure Guidelines
-
-Every page has its own directory in `src/Components`. TSX Components which are page-specific should also be in this directory. If there are at least two .sass files in a page directory, they need to be placed in a separate `style`-directory inside the page-directory. TSX Components which are used more than once should be in `General`. 
