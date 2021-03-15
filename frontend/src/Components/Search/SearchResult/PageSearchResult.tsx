@@ -1,85 +1,61 @@
-import React, {useState} from 'react';
-import './styles/PageSearchResult.css'
-import SearchResultList from "./SearchResultList";
+import React, {useEffect, useState} from 'react';
 
-const query:string = "Dies ist eins query";
-const data = [
-    {
-        key: 1,
-        title: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr",
-        authors: ["autor1", "autor2", "autor3"],
-        date: "1999",
-        citations: 200,
-        preview: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
-    },
-    {
-        key: 2,
-        title: "Sed diam nonumy eirmod tempor invidunt ut labore",
-        authors: ["Author 1", "Author 2", "Author 3", "Author 4"],
-        date: "2000",
-        citations: 2000,
-        preview: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
-    },
-    {
-        key: 3,
-        title: "Sed diam nonumy eirmod tempor invidunt ut labore",
-        authors: ["Author 1", "Author 2", "Author 3", "Author 4"],
-        date: "2000",
-        citations: 2000,
-        preview: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
-    },
-    {
-        key: 4,
-        title: "Sed diam nonumy eirmod tempor invidunt ut labore",
-        authors: ["Author 1", "Author 2", "Author 3", "Author 4"],
-        date: "2000",
-        citations: 2000,
-        preview: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
-    },
-    {
-        key: 5,
-        title: "Sed diam nonumy eirmod tempor invidunt ut labore",
-        authors: ["Author 1", "Author 2", "Author 3", "Author 4"],
-        date: "2000",
-        citations: 2000,
-        preview: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
-    },
-    {
-        key: 6,
-        title: "Sed diam nonumy eirmod tempor invidunt ut labore",
-        authors: ["Author 1", "Author 2", "Author 3", "Author 4"],
-        date: "2000",
-        citations: 2000,
-        preview: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
-    }
-]
+import { useParams } from 'react-router-dom';
+import PulseLoader from "react-spinners/PulseLoader";
 
-const initialState = {
-    key: 1,
-    title: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr",
-    authors: ["autor1", "autor2", "autor3"],
-    date: "1999",
-    citations: 200,
-    preview: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
-}
+import { AbstractView } from '../../General/AbstractView';
+import { SearchResultList } from './SearchResultList';
+import Config from '../../../Utils/Config';
+import { Paper } from '../../../Utils/GeneralTypes';
+import { Sorry } from '../../General/Sorry';
 
-function PageSearchResult () {
-    const [selected, setSelected] = useState(initialState);
+import './styles/PageSearchResult.sass';
+
+
+export const PageSearchResult : React.FC = () => {
+    let {query} = useParams<{query: string}>();
+    const [activePage, setActivePage] = useState<number>(1);
+    const [selected, setSelected] = useState<Paper>();
+    const [searchResults, setSearchResults] = useState<{data: Paper[], pages: number, count: number}>();
+    const PAGESIZE = 10;
+
+    useEffect(() => {
+        let requestURL = Config.base_url + '/api/search/?query=' + query + '&page=' + activePage + '&pagesize=' + PAGESIZE;
+
+        fetch(requestURL)
+            .then(res => res.json())
+            .then(result => {
+                setSearchResults({data: result.data, pages: result.max_pages, count: result.count});
+            }).catch(() => console.log("Can't access " + requestURL));
+
+        // selected needs to be reset so that AbstractView doesn't stay when query changes
+        return () => {setSelected(undefined)}
+    }, [query, activePage]);
+
 
     return (
-        <div className="pageSearchResult">
-            <div id="queryTitle">
-                <h2>Showing search results for <b>"{query}"</b>:</h2>
-            </div>
-            <div className="wrapper">
-                <SearchResultList query={query} data={data} func={setSelected}/>
-                <div className="abstractView">
-                    <h1>{selected.title}</h1>
-                    {selected.preview}
-                </div>
-            </div>
+        <div className='page-search-result'>
+            {
+                (searchResults == null) ? <div className="spinner"><PulseLoader/></div> :
+                    (searchResults.data.length === 0) ? 
+                        <Sorry
+                            message="No search results found"
+                            description="Make sure you entered the correct query." 
+                        /> 
+                        :
+                        (
+                            <div className='wrapper' id='search-result-wrapper'>            
+                                <div id='query-title'>
+                                    <h2>Showing {(PAGESIZE <= searchResults.count) ? PAGESIZE: searchResults.count} of {searchResults.count} results</h2>
+                                    <div className='line'/>
+                                </div>
+                                <SearchResultList results={searchResults} activePage={activePage} raiseStateSelected={setSelected} raiseStateActivePage={setActivePage}/>
+                            </div>
+                        ) 
+                
+            }
+            {(selected != null) && <AbstractView selected={selected}/>}
         </div>
     );
 }
 
-export default PageSearchResult;

@@ -1,0 +1,285 @@
+@import '../../Utils/colors'
+
+html
+    scrollbar-width: none
+
+
+.rs-drawer-content 
+    background-color: $color-background-light
+ 
+
+.rs-drawer-right.rs-drawer-sm, .rs-drawer-left.rs-drawer-sm 
+    width: 25%
+
+
+.rs-drawer
+    top: auto
+    bottom: 0
+    height: calc(100% - #{$navbar-height})
+
+    &-right
+        @extend .rs-drawer
+        right: 0
+
+
+.rs-loader-has-content 
+    height: 100%
+
+
+.loader 
+    display: flex
+    flex-direction: column
+    align-items: center
+    justify-content: center
+    height: calc(100vh - #{$navbar-height})
+
+
+.graph-container 
+    overflow: hidden
+    height: calc(100vh - #{$navbar-height})
+    min-width: 100%
+
+
+.show-slider-icon 
+    display: flex
+    flex-direction: column
+    justify-content: center
+    position: absolute
+    width: 2.5vw
+    height: 100%
+    z-index: 2
+
+
+.show-slider-text 
+    display: flex
+    flex-direction: row
+    align-items: center
+    font-size: 1.5em
+    font-weight: lighter
+    background-color: $color-background
+    padding-top: 20vh
+    padding-bottom: 20vh
+    writing-mode: vertical-rl
+    transform: rotate(180deg)
+    border-left: 0.2vw outset $color-primary-dark
+    border-radius: 20px
+    color: $color-primary-dark
+
+
+.legend 
+    display: flex
+    flex-direction: column
+    position: absolute
+    bottom: 0vh
+    right: 2vw
+    width: 20vw
+    z-index: 2
+    margin-bottom: 2vh
+
+
+.legend-fieldsofstudy
+    border-radius: 6px
+    padding-left: 2% 
+    
+
+
+.legend-link-width-container
+    display: flex
+    height: 4px
+
+
+.legend-link-width    
+    position: absolute
+    display: block
+    width: 100%
+    height: 4px
+    background: linear-gradient(90deg,rgba($color-primary, .40),$color-primary)
+    -webkit-clip-path: polygon(100% 0, 100% 100%, 0 50%)
+    clip-path: polygon(100% 0, 100% 100%, 0 50%)
+
+    
+.legend-circles 
+    display: flex
+    flex-direction: row
+    justify-content: space-between
+    align-items: center
+
+
+.circle 
+    background-color: $color-primary
+    border-radius: 50%
+
+    &--1 
+        @extend .circle
+        width: 10px
+        height: 10px
+    
+    
+    &--2 
+        @extend .circle
+        width: 15px
+        height: 15px
+    
+
+    &--3 
+        @extend .circle
+        width: 20px
+        height: 20px
+    
+
+    &--4 
+        @extend .circle
+        width: 25px
+        height: 25px
+    
+
+    &--5 
+        @extend .circle
+        width: 30px
+        height: 30px
+    
+
+    &--6 
+        @extend .circle
+        width: 35px
+        height: 35px  
+
+
+.legend-color-bar 
+    height: 2vh
+    background: linear-gradient(90deg,rgba($color-primary, .40),$color-primary)
+
+
+.legend-description
+    position: relative
+    height: 2vh
+    margin-top: 2vh
+
+
+.legend-description-child
+    position: absolute
+
+    &1
+        @extend .legend-description-child
+        left: 0
+
+    &2
+        @extend .legend-description-child
+        left: 50%
+        transform: translatex(-50%)
+
+    &3
+        @extend .legend-description-child
+        right: 0
+
+
+.force-graph-container 
+    z-index: 1
+
+
+.rs-drawer-header .rs-drawer-title 
+    color: $color-title-font
+    white-space: initial
+
+
+.rs-drawer-body 
+    margin: 0px 0px
+    padding: 30px 20px
+    scrollbar-width: none
+
+
+.slider-popup 
+    display: flex
+    flex-direction: column
+    padding-bottom: 1vh
+
+
+.slider 
+    color: $color-slider
+
+
+.slider-with-input-number 
+    display: flex
+    flex-direction: row
+    justify-content: space-between
+    padding-top: 3px
+    padding-bottom: 3px
+    margin-left: 6px
+
+
+.rs-slider 
+    width: calc(100% - 80px)
+
+
+.rs-slider-bar 
+    background-color: $color-primary-monochrome !important
+
+
+.rs-slider-progress-bar 
+    background-color: $color-primary !important
+
+
+.rs-input-number 
+    width: 70px
+    border-color: $color-primary !important
+
+
+.rs-slider-handle::before 
+    border: 2px solid $color-primary
+
+
+.graph-settings 
+    display: flex
+    flex-direction: column
+
+
+.graph-settings-title 
+    font-size: 1.5em
+    color: $color-title-font
+    margin-bottom: 1vh
+
+
+.graph-settings-subtitle 
+    font-size: 1em
+    color: $color-title-font
+    margin-top: 1.5vh    
+    margin-bottom: 0.5vh
+
+
+.graph-settings-subtitle-first 
+    font-size: 1em
+    color: $color-title-font
+    margin-bottom: 0.5vh
+
+
+.switch-button-2
+    background-color: $color-background-light
+    width: 50%
+
+
+.rs-btn-primary, .rs-btn-primary:not(.rs-btn-disabled):hover, .rs-btn-primary:focus, .rs-btn-primary:active, .rs-btn-primary:active:focus
+    background-color: $color-primary
+
+
+.rs-btn-ghost
+    color: $color-primary
+    border: 1px solid $color-primary
+
+
+.rs-btn-ghost:hover, .rs-btn-ghost:active, .rs-btn-ghost:focus, .rs-btn-ghost:active:hover, .rs-btn-ghost:active:focus, .rs-picker-default:not(.rs-picker-disabled) .rs-picker-toggle:hover, .rs-picker-default:not(.rs-picker-disabled) .rs-picker-toggle.active
+    color: $color-primary
+    border: 1px solid $color-primary-light
+
+
+.graph-settings-slider 
+    margin-left: 6px
+    width: calc(100% - 6px)
+
+
+.rs-picker-toggle-value
+    color: $color-primary !important
+
+
+.rs-picker-select-menu-item.rs-picker-select-menu-item-active, .rs-picker-select-menu-item.rs-picker-select-menu-item-active:hover
+    color: $color-primary
+    background-color: rgba($color-primary, .2)

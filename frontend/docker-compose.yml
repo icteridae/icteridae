@@ -1,0 +1,14 @@
+version: "3.9"
+
+services: 
+
+  web:
+    container_name: icteridae-react
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/app
+      - /app/node_modules/
+    ports: 
+      - "3000:3000"

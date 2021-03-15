@@ -1,18 +1,32 @@
 import React from 'react';
-import {NavBarInstance} from '../Navbar/Navbar';
-import {FrontPage} from '../Front/FrontPage';
-import {Privacy} from '../Privacy/Privacy';
-import {Graph} from '../Graph/Graph';
-import { HashRouter, Route, Switch } from 'react-router-dom';
+
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { Helmet } from "react-helmet";
+
+import { NavBar } from '../Navbar/Navbar';
+import { FrontPage } from '../Front/FrontPage';
+import { GraphFetch } from '../Graph/GraphHelperfunctions';
+import { PageSearchResult } from '../Search/SearchResult/PageSearchResult';
+import { SavedPapers } from '../SavedPapers/PageSavedPapersLocalstorage';
+import { Description } from '../Description/Description';
+import { AuthorSearchResult } from "../Author/AuthorSearchResult";
+import { AuthorSearch } from "../Author/AuthorSearch";
 
  export const App: React.FC = () => (
-    <HashRouter>
-      <NavBarInstance appearance="subtle"/>
+    <BrowserRouter>
+      <Helmet>
+        <title>Icteridae</title>
+      </Helmet>
+      <NavBar/>
       <Switch>
           <Route exact path='/' component={FrontPage}/>
-          <Route exact path='/privacy' component={Privacy}/>
-          <Route exact path='/Graph' component={Graph}/>
-          {/* TODO: insert other routes. See paths in Navbar.tsx */}
+          <Route exact path='/results/:query' component={PageSearchResult}/>
+          <Route exact path='/papers' component={SavedPapers}/>
+          <Route exact path='/description' component={Description}/>
+          <Route exact path='/graph/:id' component={GraphFetch}/>
+          <Route exact path='/results/paper/:id' component={FrontPage}/>
+          <Route exact path='/author/:id' component={AuthorSearchResult}/>
+          <Route exact path='/authorsearch/:query' component={AuthorSearch}/>
       </Switch>
-    </HashRouter>
+    </BrowserRouter>
   );

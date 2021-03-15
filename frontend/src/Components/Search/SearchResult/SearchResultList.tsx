@@ -1,54 +1,52 @@
-import React, {useEffect} from 'react';
-import './styles/SearchResultList.css';
-import SearchResultCard from "./SearchResultCard";
+import React, { useState } from 'react';
 
-type data = {
-    key: number;
-    title: string,
-    authors: string[],
-    date: string,
-    citations: number,
-    preview: string
+import { Pagination } from 'rsuite';
+
+import { SearchResultCard } from "./SearchResultCard";
+import { Paper } from '../../../Utils/GeneralTypes';
+
+import './styles/SearchResultList.sass';
+import '../../General/style/Pagination.sass';
+
+interface ResultListProps {
+    activePage: number,
+    results: {data: Paper[], pages: number},
+    
+    /**function used to raise state, takes Paper as argument */
+    raiseStateSelected: React.Dispatch<React.SetStateAction<Paper | undefined>>,
+    raiseStateActivePage: React.Dispatch<React.SetStateAction<number>>
 }
 
-type ResultListProps = {
-    query: string,
-    func: Function,
-    data: Array<data>
-}
+export const SearchResultList : React.FC<ResultListProps> = (props) => {
+    const [lastHighlighted, setLastHighlighted] = useState<string>();
 
-const SearchResultList : React.FC<ResultListProps> = (props) => {
-    // Effect hook for dynamically changing the height of the resultList and thus getting a scrollbar BECAUSE SCROLLBARS
-    useEffect(() => {
-        function setListToRemainingHeight() {
-            let windowHeight = window.innerHeight;
-            // @ts-ignore
-            let navbarHeight = document.getElementById("navbar").offsetHeight;
-            // @ts-ignore
-            let queryTitleHeight = document.getElementById("queryTitle").offsetHeight;
-            let list = document.getElementById("list");
-
-            // @ts-ignore
-            list.style.height = (windowHeight - navbarHeight - queryTitleHeight) + "px";
-        }
-
-        setListToRemainingHeight();
-        window.addEventListener('resize', setListToRemainingHeight);
-
-        // Cleanup: Remove EventListener when component will unmount
-        return () => {
-            window.removeEventListener('resize', setListToRemainingHeight);
-        }
-    }, []);
-
+    /**
+     * Highlight a card with the given key and unhighlight the card that was last highlighted
+     * @param {number} key The data-key value of the card to be highlighted
+     */
+    function highlightCard(key: string) {
+        document.querySelector(`[data-key="${lastHighlighted}"]`)?.classList.remove("card-selected");
+        document.querySelector(`[data-key="${key}"]`)?.classList.add("card-selected");
+        setLastHighlighted(key);
+    }
+    
     return (
-        <div id="list" className="resultList">
-            {props.data.map((entry) => {
-                return <SearchResultCard func={props.func} key={entry.key} data={entry}/>
-            })
-            }
+        <div id="search-result-list" className="result-list">
+            {props.results.data.map((entry: Paper, index: number) => {
+                return <SearchResultCard highlightCard={highlightCard} raiseStateSelected={props.raiseStateSelected} key={entry.id} dataKey={index.toString()} data={entry}/>
+            })}
+
+            <Pagination 
+                size='md' id='pagination' 
+                activePage={props.activePage} 
+                pages={props.results.pages} 
+                maxButtons={3} 
+                ellipsis 
+                boundaryLinks 
+                onSelect={(eventKey) => {
+                    props.raiseStateActivePage(eventKey);
+                    document.getElementById('search-result-list')?.scrollTo(0, 0)}
+                }/>
         </div>
     );
 }
-
-export default SearchResultList;

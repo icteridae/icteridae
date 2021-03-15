@@ -1,0 +1,89 @@
+@import '../../Utils/colors'
+
+::-webkit-scrollbar 
+    display: none
+
+
+.frontpage 
+    
+    padding: auto
+
+    background-color: $color-background
+
+    .rs-divider .rs-divider-horizontal
+
+        color: #fff
+
+    .frontpage-content 
+
+        margin: auto
+        padding-bottom: 5vh
+        width: 60em
+        font-family: "Segoe UI",Arial,sans-serif
+
+
+        .full-view
+            height: 86vh
+            text-align: center
+
+            #search-bar-group
+                margin: auto
+
+            .line 
+                margin: auto
+                border-bottom: 2px $color-primary-dark solid
+                width: 80%
+                height: 10px
+                margin-bottom: 8vh
+
+            h1 
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+                font-weight: normal
+                font-size: 5em
+                color: $color-primary
+                padding-top: 23vh
+                padding-bottom: 2vh
+
+
+        #recent-papers-superscript
+            text-align: center
+            color: gray
+
+        .rs-divider-horizontal
+            margin-top: 12px
+
+        .spinner 
+            margin: auto
+            margin-top: 5vh
+            width: 0%
+
+            span > span
+                background-color: $color-primary
+
+    .recent-papers 
+        margin-top: 10vh
+        //width: 50vw
+        .search-result-card
+            border: none
+
+    .recent-papers > h3 
+        font-weight: lighter
+        margin-bottom: 2vh
+
+    .frontpage-footer 
+        background-color: $color-background-light
+        height: 10vh
+        min-width: 100%
+        padding: 2vh
+
+    .frontpage-footer img 
+        height: 6vh
+
+    .sync-loader
+        margin: auto
+        width: 0%
+        margin-top: 10vh
+
+    span > span // Colors the loader without using javascript. Need to be this way as the loaders somehow used obfucated classes
+        background-color: $color-primary
+

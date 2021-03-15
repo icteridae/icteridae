@@ -34,12 +34,21 @@
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
+    "@types/react-helmet": "^6.1.0",
+    "@types/react-linkify": "^1.0.0",
     "@types/react-router-dom": "^5.1.6",
+    "colorkind": "^0.4.0",
+    "d3-force-3d": "^2.2.0",
+    "node-sass": "4.14.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-force-graph-2d": "^1.18.1",
+    "react-helmet": "^6.1.0",
+    "react-linkify": "^1.0.0-alpha",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
+    "react-sizeme": "^2.6.12",
+    "react-spinners": "^0.10.4",
     "rsuite": "^4.8.6",
     "typescript": "^4.0.3",
     "web-vitals": "^0.2.4"
@@ -69,6 +78,5 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }

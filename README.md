@@ -1,45 +1,80 @@
 
-# Getting Started for development
+
+# Icteridae
+
+Icteridae is an open-source Webapp for interactive research exploration, where users can dynamically visualize similarities between large amounts of research.
+
+## Table of Contents
+
+ - [Setup](#setup)
+	 - [Requirements](#requirements)
+	 - [Direct Dependencies](#install-dependencies)
+ - [Running](#running)
+	 - [Start Backend](#start-backend)
+	 - [Start Frontend](#start-frontend)
+ - [Import Papers](#import-papers)
+ - [References](#references)
+
+## Documentation
+
+Docs are split into [Backend Docs](backend/README.md) and [Frontend Docs](frontend/README.md)
+
 
 ## Setup
 
-Make sure you have a recent version of yarn.
-
-Clone the project using 
-
+Clone the project using
 
     git clone git@github.com:icteridae/icteridae.git
 
+### Requirements
 
-Change into the now downloaded directory with
+*Icteridae* requires having both [Docker](https://www.docker.com/get-started), [Docker Compose](https://docs.docker.com/compose/) and a recent version of [yarn](https://yarnpkg.com/) installed and runnable.
 
-    cd icteridae
 
-Install the needed dependencies using
+#### Install dependencies
+  
+Navigate into the `frontend` directory and install the needed dependencies using
 
     yarn
 
-## Running 
 
-Run just the React project using
+## Running
 
-    yarn react-start
+### Start Backend
+If not used locally, enter the web address of your backend in `backend/backend/settings.py` under `ALLOWED_HOSTS`.
 
-Alternatively you can run the React project in an Electron environment using
+Navigate into the `backend/` directory and run
+
+    docker-compose up
+
+### Start Frontend
+
+Enter the web address of your backend in `frontend/src/Utils/Config.tsx`
+
+Navigate into the `frontend/` directory and run
 
     yarn start
 
-## Building
+## Import Papers
 
-You can build the project for your local system using 
+Papers are structured as defined in the SemanticScholar Open Research Corpus. When inputting files, each line should represent a single paper as a json object. Place any files in the `backend/data/` directory. Then in the `backend`directory run
 
-    yarn build
+Connect to your container (usually named `icteridae_django`, use `docker ps` to list container names) using
 
-You'll the executable files in `icteridae/dist/`.
+    docker exec -it [web container name] bash
 
-## Structure guidelines
+Start importing papers using 
 
-Every page has its own directory in src. JSX Components which are page-specific should also be in this directory. If there are at least 
-two .css files in a page directory, they need to be placed in a separate "style"-directory inside the page-directory.
-JSX Components which are used more than once should be in "Common". 
-Static files like Images and other media should be in the "static"-directory.
+    ./manage.py populate [parameters]
+
+Additional parameters can be seen with 
+
+    ./manage.py help populate
+
+You should first try with a smaller dataset as the process can take a very long time.
+
+## References
+
+_Waleed Ammar et al. 2018. Construction of the Literature Graph in Semantic Scholar. NAACL_  
+[https://www.semanticscholar.org/paper/09e3cf5704bcb16e6657f6ceed70e93373a54618](https://www.semanticscholar.org/paper/09e3cf5704bcb16e6657f6ceed70e93373a54618).
+

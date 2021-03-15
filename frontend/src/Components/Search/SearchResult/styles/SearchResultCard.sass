@@ -1,0 +1,37 @@
+@import '../../../../Utils/colors'
+
+.search-result-card 
+    background-color: $color-background
+    transition: 0.5s
+    border-radius: 6px
+    border-left: 0.4vw outset rgba($color-primary-dark, 0.3);
+    padding: 20px
+    width: 100%
+
+    &.card-selected 
+        border-left: 0.4vw outset $color-primary-dark
+        border-radius: 20px
+
+    .content 
+        display: flex
+        flex-direction: column
+
+        .title 
+            font-family: "Segoe UI",Arial,sans-serif
+            font-size: 1.46vw
+            font-weight: lighter
+
+            line-height: 2.1vw
+
+        span 
+            color: darkgray
+            font-size: 0.9vw
+
+        .date 
+            margin-bottom: 10px
+
+    a 
+        color: $color-primary
+
+        &:hover 
+            color: $color-primary

@@ -1,0 +1,92 @@
+@import '../../../Utils/colors'
+
+.author-search-result
+
+    .wrapper 
+        display: flex
+        flex-direction: column
+        justify-content: flex-start
+
+        width: 100%
+    
+
+    .author-search-result 
+        display: flex
+    
+
+    .author-details 
+        display: flex
+        flex-shrink: 0
+        flex-direction: column
+        width: 35%
+
+        margin-left: 5vh
+        margin-top: 5vh
+        max-height: calc(95vh - #{$navbar-height})
+        overflow: scroll
+        scrollbar-width: none
+
+        .author-pub, .author-rel-title
+            font-family: "Segoe UI",Arial,sans-serif
+            font-size: 1.46vw
+            font-weight: lighter
+
+        color: lightgray
+
+        .author-sub
+            padding-bottom: 1em
+            border-bottom-left-radius: 15px
+            border-top-left-radius: 3px
+
+            .line 
+                border-bottom: 2px $color-primary-dark solid
+                width: 80%
+                height: 10px
+                margin: 2vh auto 3vh auto
+
+            .author-related
+
+                display: flex
+                flex-direction: column
+                align-items: center
+                padding: 1em
+
+                .author-rel-title
+                    padding-bottom: 1em
+                    margin: auto
+                
+                .author-rel-cards
+
+                    display: flex
+                    align-items: center
+                    flex-wrap: wrap
+                    justify-content: center
+
+    .author-name 
+        font-size: 3.5vw
+        line-height: 9vh
+        color: $color-primary
+        text-align: center
+    
+
+    .paper-list 
+        margin-top: 6vh
+        margin-right: 10em
+    
+
+    .paper-list .publications 
+        font-family: "Segoe UI",Arial,sans-serif
+        font-size: 1.46vw
+        font-weight: lighter
+        margin-left: 1.46vw
+        line-height: 4.7vh
+
+    .author-papers-result-list
+
+        $author-papers-result-list-distance: 50px
+
+        margin-top: $author-papers-result-list-distance
+        margin-right: 50px
+        display: flex
+        max-height: calc(100vh - calc(#{$author-papers-result-list-distance} + #{$navbar-height}))
+    
