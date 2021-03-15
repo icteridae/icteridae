@@ -19,10 +19,10 @@ export const getMinAndMaxFromMatrix = (matrix : number[][]) => {
     for (let i = 0; i < matrix.length; i++){
         for (let j = 0; j < i; j++){
             if (matrix[i][j] < min){
-                min = matrix[i][j];
+                    min = matrix[i][j];
             }
             if (matrix[i][j] > max){
-                max = matrix[i][j];
+                    max = matrix[i][j];
             }
         }
     }
@@ -41,63 +41,16 @@ export const normalize = (matrix : number[][], min : number, max : number) => {
 }
 
 /**
- * Returns true if the provided threshold for Link Generation results in a fully connected Graph. In other Words, that no node ends up without a link
- * @param matrix contains the Link-value for each Pair of Nodes
- * @param threshold is the threshold to determine if the link will be included in the graph or not
- */
-export const checkConnections = (matrix : number[][], threshold : number) => {
-    let matrix_c = JSON.parse(JSON.stringify(matrix));
-    matrix_c = matrix_c.map((x : number[]) => x.map(z => z>threshold ? z : -1));
-    let x : Set<number> = new Set();
-    x.add(0);
-    for (let i = 0; i<matrix_c.length; i++) {
-      for (let val of [...Array.from(x)]) {
-        for (let k = 0; k < matrix_c.length; k++) {
-          if (matrix_c[val][k] > -1) {
-            x.add(k);
-            if (x.size === matrix_c.length) {
-              return true;
-            }
-          }
-        }
-      }
-    }
-    return false;
- };
- 
- /**
-  * Function to determine the smallest threshhold for Link Generation so that every Node ist still connected.
-  */
-export const findBoundary = (matrix : number[][]) => {
-   let matrixC2 = JSON.parse(JSON.stringify(matrix));
-   const maxOfMatrix = Math.max(...matrixC2.map((x : number[]) => Math.max(...x)));
- 
-   let upperBound = maxOfMatrix;
-   let lowerBound = 0;
- 
-   for (let i = 0; i < 10; i++) {
-     let mid = (upperBound + lowerBound) / 2;
-     let bo = checkConnections(matrix, mid);
-     if (bo) {
-        lowerBound = mid;
-     } else {
-        upperBound = mid;
-     }
-   }
-   return lowerBound;
-}
-
-/**
  * Generates an Array with sliderCount many elements. The values are set to totalSliderCount/slidercount if there are no values saved in the localStorage
  * @param sliderCount Number of sliders
  * @param totalSliderValue highest number a slider can have
  * @returns the values for all sliders
  */
 export const choosingSliderValues = (sliderCount : number, totalSliderValue : number) => {
-  const SavedSliders = getSavedSliders();
-  if(SavedSliders?.length !== sliderCount)
-      return Array(sliderCount).fill(totalSliderValue / sliderCount);
-  return SavedSliders;
+	const SavedSliders = getSavedSliders();
+	if(SavedSliders?.length !== sliderCount)
+			return Array(sliderCount).fill(totalSliderValue / sliderCount);
+	return SavedSliders;
 }
 
 /**
@@ -108,10 +61,10 @@ export const choosingSliderValues = (sliderCount : number, totalSliderValue : nu
  * @param totalSliderValues maximum number that a slider can be
  */
  export const changeSlider = (index : number, val : number, oldValues : number[], totalSliderValue : number) => {
-  if (oldValues.filter((x, i) => x === 0 || i === index).length === oldValues.length ) {
-      return oldValues.map((x,i) => i === index ? val : (totalSliderValue-val)/(oldValues.length-1));
-  }
-  return oldValues.map((x, i) => i === index ? val : oldValues[index] === totalSliderValue ? 0 : (totalSliderValue - val) * x / (totalSliderValue - oldValues[index]));
+	if (oldValues.filter((x, i) => x === 0 || i === index).length === oldValues.length ) {
+		return oldValues.map((x,i) => i === index ? val : (totalSliderValue-val)/(oldValues.length-1));
+	}
+	return oldValues.map((x, i) => i === index ? val : oldValues[index] === totalSliderValue ? 0 : (totalSliderValue - val) * x / (totalSliderValue - oldValues[index]));
 }
 
 /**
@@ -120,20 +73,20 @@ export const choosingSliderValues = (sliderCount : number, totalSliderValue : nu
  * @returns the hash Value of s
  */
 export const hash = (s : string) : number => {
-  /* Simple hash function. */
-  var a = 1, c = 0, h, o;
-  if (s) {
-      a = 0;
-      for (h = s.length - 1; h >= 0; h--) {
-          o = s.charCodeAt(h);
-          // eslint-disable-next-line no-mixed-operators
-          a = (a<<6&268435455) + o + (o<<14);
-          c = a & 266338304;
-          // eslint-disable-next-line no-mixed-operators
-          a = c!==0?a^c>>21:a;
-      }
-  }
-  return a;
+	/* Simple hash function. */
+	var a = 1, c = 0, h, o;
+	if (s) {
+        a = 0;
+        for (h = s.length - 1; h >= 0; h--) {
+            o = s.charCodeAt(h);
+            // eslint-disable-next-line no-mixed-operators
+            a = (a<<6&268435455) + o + (o<<14);
+            c = a & 266338304;
+            // eslint-disable-next-line no-mixed-operators
+            a = c!==0?a^c>>21:a;
+        }
+	}
+	return a;
 };
 
 /**
@@ -143,15 +96,15 @@ export const hash = (s : string) : number => {
  * @returns a string in rgb format
  */
 export const hexToRGB = (hex : string, alpha : string) : string => {
-  var red = parseInt(hex.slice(1, 3), 16),
-      green = parseInt(hex.slice(3, 5), 16),
-      blue = parseInt(hex.slice(5, 7), 16);
+	var red = parseInt(hex.slice(1, 3), 16),
+    green = parseInt(hex.slice(3, 5), 16),
+    blue = parseInt(hex.slice(5, 7), 16);
 
-  if (alpha) {
-      return "rgba(" + red + ", " + green + ", " + blue + ", " + alpha + ")";
-  } else {
-      return "rgb(" + red + ", " + green + ", " + blue + ")";
-  }
+	if (alpha) {
+			return "rgba(" + red + ", " + green + ", " + blue + ", " + alpha + ")";
+	} else {
+			return "rgb(" + red + ", " + green + ", " + blue + ")";
+	}
 }
 
 /**
@@ -170,7 +123,7 @@ export const GraphFetch: React.FC = () => {
     ** EffectHook for the initial Load of the graph
     */
     React.useEffect(() => {
-      
+        
         // This may seem useless, but below a check on graph===undefined is made to determine graph load state. When only id changes, this would lead to incorrect 
         // visual representations. graph is therefore set to undefined to reset the GraphFetcher to a clean state.
         setGraph(undefined)
@@ -182,19 +135,19 @@ export const GraphFetch: React.FC = () => {
         fetch(requestURL)
             .then(res => res.json())
             .then((res: ApiGraphResult) => {
-              if (res.paper.length > 0 && res.paper[0].id !== id) {
-                setGraph({tensor: [], paper: [], similarities: []})
-              } else {
-                setGraph(res);
-              }
+                if (res.paper.length > 0 && res.paper[0].id !== id) {
+                    setGraph({tensor: [], paper: [], similarities: []})
+                } else {
+                    setGraph(res);
+                }
             }).catch(() => console.log("Couldn't load graph"));
     }, [id]);
 
     return (
         !graph ? <Loader 
-          className='loader' 
-          content='Loading...'
-          size='md'
+            className='loader' 
+            content='Loading...'
+            size='md'
         />
         : graph.paper.length === 0 ? <NoGraph/> 
         : <Graph data={graph}/> 

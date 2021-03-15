@@ -8,18 +8,18 @@ const folderIcon = <Icon icon='folder'></Icon>
 export function loadPapers(treeData: TreeTypes.PaperOrDirectoryNode[], setLoadedPapers: React.Dispatch<React.SetStateAction<{
     [id: string]: GeneralTypes.Paper;
 }>>) {
-        let paper_ids : string[] = getSubtreePaperIds(treeData);
-        fetch(Config.base_url + '/api/paper_bulk/', 
-            {
-                method: 'POST',
-                body: JSON.stringify({paper_ids: paper_ids}),
-            })
-            .then(result => result.json())
-            .then(result => result
-                .reduce(
-                    (accumulator: { [id: string] : string}, current: GeneralTypes.Paper) => ({...accumulator, [current.id]: current}), 
-                    {}))
-            .then(setLoadedPapers)
+    let paper_ids : string[] = getSubtreePaperIds(treeData);
+    fetch(Config.base_url + '/api/paper_bulk/', 
+        {
+            method: 'POST',
+            body: JSON.stringify({paper_ids: paper_ids}),
+        })
+        .then(result => result.json())
+        .then(result => result
+            .reduce(
+                (accumulator: { [id: string] : string}, current: GeneralTypes.Paper) => ({...accumulator, [current.id]: current}), 
+                {}))
+        .then(setLoadedPapers);
 }
 
 export function getSubtreePaperIds(node: TreeTypes.PaperOrDirectoryNode[]): string[] {
@@ -28,7 +28,7 @@ export function getSubtreePaperIds(node: TreeTypes.PaperOrDirectoryNode[]): stri
         node => TreeTypes.isPaperNode(node) ? node.paperId
                 : TreeTypes.hasChildren(node) ? getSubtreePaperIds(node.children) 
                 : []
-    ).flat()
+    ).flat();
     
 }
 
@@ -56,7 +56,7 @@ export function stripTree(nodes: TreeTypes.PaperOrDirectoryNode[]): TreeTypes.St
                                 value: node.value,
                                 directoryName: node.directoryName
                             } as TreeTypes.StrippedDirectoryNode )
-    )
+        );
 }
 
 export function getLoadPaperPromises(nodes: TreeTypes.PaperOrDirectoryNode[], promises: any[]) {
@@ -73,7 +73,7 @@ export function generateNewDirectoryValue(): string {
 export function renameDirectory(value: string, newName: string, treeData: TreeTypes.PaperOrDirectoryNode[], setTreeData: React.Dispatch<React.SetStateAction<TreeTypes.PaperOrDirectoryNode[]>>) {
     
     function renameDirectoryRecursively (nodes: TreeTypes.PaperOrDirectoryNode[], value: string, newName: string) : TreeTypes.PaperOrDirectoryNode[] {
-        let r = nodes
+        return nodes
             .map(node =>
                 TreeTypes.isDirectoryNode(node) && node.value === value
                     ? {
@@ -91,7 +91,7 @@ export function renameDirectory(value: string, newName: string, treeData: TreeTy
                     }
                     : node
             );
-        return r;
+
     }
         
     let temp = [...treeData];
@@ -101,7 +101,7 @@ export function renameDirectory(value: string, newName: string, treeData: TreeTy
 
 export function deleteTreeNode(value: string, treeData: TreeTypes.PaperOrDirectoryNode[]) {
     function filterNodeRecursively(nodes: TreeTypes.PaperOrDirectoryNode[], value: string) : TreeTypes.PaperOrDirectoryNode[] {
-        let r = nodes
+        return nodes
             .filter(node => node.value !== value)
             .map(node =>
                 TreeTypes.isDirectoryNode(node) && node.children
@@ -111,7 +111,6 @@ export function deleteTreeNode(value: string, treeData: TreeTypes.PaperOrDirecto
                       }
                     : node
             );
-        return r;
     }
 
     return filterNodeRecursively(treeData, value);
@@ -129,25 +128,25 @@ export function flattenPapers(tree: TreeTypes.PaperOrDirectoryNode[]): TreeTypes
             : [node] 
     }
 
-    let rootTree: TreeTypes.DirectoryNode = {label: <div/>, value: '', directoryName: '', children: tree}
+    const rootTree: TreeTypes.DirectoryNode = {label: <div/>, value: '', directoryName: '', children: tree};
 
-    let flattenedTree: TreeTypes.PaperOrDirectoryNode[] = flattenPapersRec(rootTree)
+    const flattenedTree: TreeTypes.PaperOrDirectoryNode[] = flattenPapersRec(rootTree);
 
-    return flattenedTree[0].children!
+    return flattenedTree[0].children!;
 
 }
 
 export function deepMap<T extends TreeTypes.BaseTreeNode>(tree: T[], method: (param: T) => T): T[] {
     return tree.map(node => 
         TreeTypes.hasChildren(node) ? {...method(node), children: deepMap<T>((node.children as T[])!, method)} 
-        : method(node))
+        : method(node));
 }
 
 export function deepFilter<T extends TreeTypes.BaseTreeNode>(tree: T[], method: (param: T) => boolean): T[] {
     return tree.filter(node => method(node))    
                 .map(node => 
                     TreeTypes.hasChildren(node) ? {...node, children: deepFilter<T>((node.children as T[])!, method)} 
-                    : node)
+                    : node);
 }
 
 export function deepReduce<T>(tree: TreeTypes.PaperOrDirectoryNode[], method: (accumulator: T, value: TreeTypes.PaperOrDirectoryNode) => T, base: T): T {
@@ -157,6 +156,6 @@ export function deepReduce<T>(tree: TreeTypes.PaperOrDirectoryNode[], method: (a
             TreeTypes.hasChildren(currentValue) 
                 ? deepReduce(currentValue.children!, method, method(previousValue, currentValue))
                 : method(previousValue, currentValue),
-            base)
+            base);
 
 }
