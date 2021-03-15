@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import { Link } from 'react-router-dom';
 
-import { useParams } from 'react-router-dom';
-
-import './styles/AuthorSearch.sass';
 import { FlexboxGrid, Pagination } from "rsuite";
+import { Link, useParams } from 'react-router-dom';
+import { PulseLoader } from 'react-spinners';
+
 import Config from "../../Utils/Config";
 import { Sorry } from '../General/Sorry';
-import { PulseLoader } from 'react-spinners';
 import { Author } from '../../Utils/GeneralTypes';
+
+import './styles/AuthorSearch.sass';
 
 /**
  * Page for displaying the results of searching an author

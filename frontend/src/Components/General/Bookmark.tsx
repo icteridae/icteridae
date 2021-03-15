@@ -16,7 +16,14 @@ export const Bookmark: React.FC<{paper_id: string, savedPapers?: string[], size?
         <Whisper
             trigger='click'
             placement='top'
-            speaker={isSaved ? <Popover title='Paper has been saved' /> : <></>}
+            speaker={() => {
+                try {
+                    let x = localStorage;
+                } catch {
+                    return <Popover title="Paper couldn't saved" />
+                }
+                return isSaved ? <Popover title='Paper has been saved' /> : <></>}
+            }
             style={{ 'zIndex': 2 }}
         >
             <IconButton

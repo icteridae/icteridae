@@ -29,8 +29,6 @@ const defaultFieldOfStudy: string = 'Computer Science';
 const smallestNodeSize: number = 10;
 // Size of the node with the most citations
 const largestNodeSize: number = 100;
-// Number of sides that the custom Origin Node Polygon will have
-const numberOfSides: number = 6;
 
 // Link Parameters
 // Size of link that the cursor hovers over
@@ -348,7 +346,6 @@ const Graph: React.FC<{'data' : ApiGraphResult, 'size' : {'width' : number, 'hei
                                 ((link as SimilarityLinkObject).similarity.map((element, index) => element * sliders[index] / totalSliderValue).reduce((x,y) => x+y)) > weakLinkFilter/3}
                             d3VelocityDecay={0.95}
                             cooldownTicks={100}
-                            //onEngineStop={() => (fgRef.current as any).zoomToFit(400, 100)}
                             />
                     </>
                 : <Loader 

@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import './FrontPage.sass'
-import logo from '../../icon.png'
 
 import { getRecentPapers} from "../../Utils/Webstorage";
 import { SearchBar } from "../Search/SearchBar/SearchBar";
 import { SearchResultCard } from '../Search/SearchResult/SearchResultCard';
+import { Paper } from '../../Utils/GeneralTypes';
 import Config from '../../Utils/Config'
 
-import { Paper } from '../../Utils/GeneralTypes';
 
 import { Alert, Button, Divider, Footer } from 'rsuite';
 import { PulseLoader } from 'react-spinners';
 
+import './FrontPage.sass'
+
+import logo from '../../icon.png'
 
 /**
  * Frontpage is shown when the user the Web-Application. If exists it shows the recently opened papers
