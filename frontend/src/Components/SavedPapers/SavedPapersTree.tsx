@@ -96,6 +96,17 @@ export const SavedPapersTree: React.FC<{setSelectedPaper: Function}> = (props) =
 
     return (
         <div className="saved-papers-tree">
+            <div className="my-papers-actions">
+                <Button onClick={() => addFolder('New Directory')}>
+                    <Icon icon='folder-open'/>
+                    Create Directory
+                </Button>
+                <Button onClick={() => localStorage.setItem('savedpapers', JSON.stringify([]))}>
+                    <Icon icon='eraser'/>
+                    Reset localStorage
+                </Button>
+            </div>
+            <div className='line'/>
             <Tree
                 data={treeData}
                 draggable={// Used to prevent dragging before tree has loaded. Decreases chance of some weird bug occuring where localstorage is emptied is minimized
@@ -104,17 +115,6 @@ export const SavedPapersTree: React.FC<{setSelectedPaper: Function}> = (props) =
                 onDrop={({ createUpdateDataFunction }: DropData) => setTreeData(PaperFunctions.flattenPapers(createUpdateDataFunction(treeData)))}
                 onSelect={(active) => {setSelectedTreeNode(active);props.setSelectedPaper(loadedPapers[active.paperId])}}
             />
-            <div className="my-papers-actions">
-                <Button onClick={() => addFolder('New Directory')}>
-                    Create Directory
-                </Button>
-                <Button onClick={() => localStorage.setItem('savedpapers', JSON.stringify([]))}>
-                    Reset localStorage
-                </Button>
-                {TreeTypes.isPaperNode(selectedTreeNode) && (
-                    <Link to={`/graph/${selectedTreeNode.paperId}`}>Load Graph</Link>
-                )}
-            </div>
         </div>
     );
 };
