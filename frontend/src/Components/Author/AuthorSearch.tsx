@@ -24,12 +24,13 @@ export const AuthorSearch: React.FC = () => {
     // Maximum number of possible pages
     const [maxPages, setMaxPages] = useState<number>();
     // Maximum number of results
-    const [count, setCount] = useState<number>();
-
+    const [count, setCount] = useState<number>(0);
+    
+    const PAGESIZE = 40;
 
     const updateContent = (query: string, activePage: number): void => {
         if (query===undefined) {return;}
-        const requestURL = Config.base_url + '/api/author/search/?query=' + query + '&page=' + activePage;
+        const requestURL = Config.base_url + '/api/author/search/?query=' + query + '&page=' + activePage + '&pagesize=' + PAGESIZE;
 
         fetch(requestURL)
             .then(res => res.json())
@@ -37,6 +38,7 @@ export const AuthorSearch: React.FC = () => {
                 setAuthorList(result.data);
                 setMaxPages(result.max_pages);
                 setCount(result.count);
+                console.log(result)
             }).catch(() => console.log("Can't access " + requestURL));
     }
 
@@ -61,8 +63,8 @@ export const AuthorSearch: React.FC = () => {
     if (query != null && authorList !== undefined) {
         resultList =
             <div className='wrapper' id='author-list-wrapper'>
-                <div id='query-title'>
-                    <h2>Showing search results for <b>"{query}"</b>:</h2>
+                <div className='query-title'>
+                    <h2>Showing {(PAGESIZE <= count) ? PAGESIZE : count} of {count} results</h2>
                     <div className='line'></div>
                 </div>
                 <div id="author-result-list">
