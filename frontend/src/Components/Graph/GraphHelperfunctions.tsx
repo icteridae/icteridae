@@ -88,7 +88,6 @@ export const findBoundary = (matrix : number[][]) => {
 }
 
 /**
- * Generiert ein sliderCount langes Array mit Werten totalSliderCount/sliderCount sofern keine Werte im localStorage gespeichert sind
  * Generates an Array with sliderCount many elements. The values are set to totalSliderCount/slidercount if there are no values saved in the localStorage
  * @param sliderCount Number of sliders
  * @param totalSliderValue highest number a slider can have
