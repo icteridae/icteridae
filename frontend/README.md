@@ -27,7 +27,8 @@ frontend
     |   └───Author  # author search/papers/relations
     |   └───Description  # faq, imprint 
     |   └───Front  # frontpage, recently opened papers
-    |   └───Genral  # globally used components
+    |   └───General  # globally used components
+    |   └───Graph  # generate and display the graph
     |   └───Navbar  # navigation bar on each site
     |   └───SavedPapers  # MyPapers tab, localstorage tree structures
     |   └───Search  # paper search
