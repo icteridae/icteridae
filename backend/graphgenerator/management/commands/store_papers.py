@@ -11,6 +11,8 @@ import os
 
 from tqdm import tqdm
 import itertools
+from django.contrib.postgres.search import SearchVector
+
 
 # responsible for loading data into database
 
@@ -23,13 +25,14 @@ def batchify(iterable, n):
     args = [iter(iterable)] * n
     return itertools.zip_longest(*args)
 
+
 def load_papers(files, limit, batch, verbosity=1):
     """
     loads all papers and fields of study into database
     """
 
     if verbosity > 1: print('Deleting stored papers...')
-    
+
     cursor = connection.cursor()
     cursor.execute("""
         TRUNCATE graphgenerator_fieldofstudy CASCADE;
@@ -46,32 +49,31 @@ def load_papers(files, limit, batch, verbosity=1):
         with open(path, 'r') as file:
             object_gen = itertools.islice((json.loads(line) for line in file), limit)
             paper_gen = tqdm((Paper(
-                    id=data['id'],
-                    title=data['title'],
-                    paperAbstract=data['paperAbstract'],
-                    year=data['year'],
-                    s2Url=data['s2Url'],
-                    doiUrl=data['doiUrl'],
-                    venue=data['venue'],
-                    journalName=data['journalName'],
-                    journalVolume=data['journalVolume'],
-                    journalPages=data['journalPages'].strip(), 
-                    doi=data['doi'],
-                    magId=data['magId'],
-                    fieldsOfStudy=data['fieldsOfStudy'],
-                    pdfUrls=data['pdfUrls'],
+                id=data['id'],
+                title=data['title'],
+                paperAbstract=data['paperAbstract'],
+                year=data['year'],
+                s2Url=data['s2Url'],
+                doiUrl=data['doiUrl'],
+                venue=data['venue'],
+                journalName=data['journalName'],
+                journalVolume=data['journalVolume'],
+                journalPages=data['journalPages'].strip(),
+                doi=data['doi'],
+                magId=data['magId'],
+                fieldsOfStudy=data['fieldsOfStudy'],
+                pdfUrls=data['pdfUrls'],
 
-                    citations=len(data['inCitations']),
-                    references=len(data['outCitations'])
-                ) for data in object_gen), total=limit)
+                citations=len(data['inCitations']),
+                references=len(data['outCitations'])
+            ) for data in object_gen), total=limit)
 
             for papers in batchify(paper_gen, batch):
-                nxt = list(filter(lambda x:x!=None, papers))
+                nxt = list(filter(lambda x: x != None, papers))
                 Paper.objects.bulk_create(nxt)
                 db.reset_queries()
 
         del file, object_gen, paper_gen, papers, nxt
-        
 
     if verbosity > 1: print('Rebuilding indexes...')
 
@@ -90,7 +92,8 @@ def load_papers(files, limit, batch, verbosity=1):
                             
                         ALTER TABLE graphgenerator_paper ENABLE TRIGGER ALL;""")
 
-    #tr.print_diff()
+    # tr.print_diff()
+
 
 def load_authors(files, limit, batch, verbosity=1):
     """
@@ -111,18 +114,18 @@ def load_authors(files, limit, batch, verbosity=1):
 
             object_gen = itertools.islice((json.loads(line) for line in file), limit)
             author_gen = tqdm((Author(
-                    name=author['name'],
-                    id=author['ids'][0] if len(author['ids']) > 0 else data['id']
-                ) for data in object_gen for author in data['authors']))
-
+                name=author['name'],
+                id=author['ids'][0] if len(author['ids']) > 0 else data['id']
+            ) for data in object_gen for author in data['authors']))
 
             for authors in batchify(author_gen, batch):
-                Author.objects.bulk_create(filter(lambda x:x!=None, authors), ignore_conflicts=True)
+                Author.objects.bulk_create(filter(lambda x: x != None, authors), ignore_conflicts=True)
                 db.reset_queries()
 
     cursor.execute("""
         ALTER TABLE graphgenerator_author ENABLE TRIGGER ALL;
     """)
+
 
 def connect_authors(files, limit, batch, verbosity=1):
     """
@@ -130,7 +133,7 @@ def connect_authors(files, limit, batch, verbosity=1):
     """
     if verbosity > 1: print('Reading authors (connecting)...')
 
-    ThroughModel = Paper.authors.through # AuthorPaper #Paper.authors.through
+    ThroughModel = Paper.authors.through  # AuthorPaper #Paper.authors.through
 
     cursor = connection.cursor()
     cursor.execute("""
@@ -141,19 +144,18 @@ def connect_authors(files, limit, batch, verbosity=1):
         ALTER TABLE public.graphgenerator_authorpaper DISABLE TRIGGER ALL;
         """)
 
-
     for path in files:
         with open(path) as file:
-            
+
             object_gen = itertools.islice((json.loads(line) for line in file), limit)
             author_through_gen = tqdm((ThroughModel(
-                    paper_id=data['id'],
-                    author_id=author['ids'][0] if len(author['ids']) > 0 else data['id'],
-                    order=idx
-                ) for data in object_gen for idx, author in enumerate(data['authors'])))
+                paper_id=data['id'],
+                author_id=author['ids'][0] if len(author['ids']) > 0 else data['id'],
+                order=idx
+            ) for data in object_gen for idx, author in enumerate(data['authors'])))
 
             for through in batchify(author_through_gen, batch):
-                ThroughModel.objects.bulk_create(filter(lambda x:x!=None, through), ignore_conflicts=True)
+                ThroughModel.objects.bulk_create(filter(lambda x: x != None, through), ignore_conflicts=True)
                 db.reset_queries()
 
     cursor.execute("""
@@ -179,6 +181,7 @@ def connect_authors(files, limit, batch, verbosity=1):
         
         ALTER TABLE public.graphgenerator_authorpaper ENABLE TRIGGER ALL;""")
 
+
 def connect_citations(files, limit, batch, verbosity=1):
     """
     add citation relation to all papers in the dataset
@@ -201,15 +204,15 @@ def connect_citations(files, limit, batch, verbosity=1):
 
     for path in files:
         with open(path) as file:
-            
+
             object_gen = itertools.islice((json.loads(line) for line in file), limit)
             citation_gen = tqdm((ThroughModel(
                 from_paper_id=data['id'],
                 to_paper_id=inCitation
-                ) for data in object_gen for inCitation in data['inCitations']))
+            ) for data in object_gen for inCitation in data['inCitations']))
 
             for through in batchify(citation_gen, batch):
-                ThroughModel.objects.bulk_create(filter(lambda x:x!=None, through), ignore_conflicts=True)
+                ThroughModel.objects.bulk_create(filter(lambda x: x != None, through), ignore_conflicts=True)
                 db.reset_queries()
 
     cursor.execute("""
@@ -236,23 +239,24 @@ def connect_citations(files, limit, batch, verbosity=1):
         ALTER TABLE public."graphgenerator_paper_inCitations" ENABLE TRIGGER ALL;
     """)
 
+
 def create_search_index(files, limit, batch, verbosity=1):
     if verbosity > 1: print('Creating vectors for search index...')
     Paper.objects.update(
-        search_vector=SearchVector('title', 'year')) #+ SearchVector('paperAbstract', weight='B'))
+        search_vector=SearchVector('title', 'year'))  # + SearchVector('paperAbstract', weight='B'))
 
 
 def load(limit, batch, verbosity, files):
-    if files == None: files = []
+    if files is None: files = []
     file_path = os.path.dirname(os.path.abspath(__file__))
     base_path = os.path.join(file_path, '..', '..', '..', 'data')
-    paths = [os.path.join(base_path, file) for file in os.listdir(base_path) if file!='.gitignore' and (file in files or not files)]
+    paths = [os.path.join(base_path, file) for file in os.listdir(base_path) if
+             file != '.gitignore' and (file in files or not files)]
 
-    start = time.time() 
+    start = time.time()
 
     for step in [load_papers, connect_citations, load_authors, connect_authors]:
         if verbosity > 0: print('Performing step:', step.__name__)
         step(paths, limit, batch, verbosity)
         if verbosity > 0: print('Finished', step.__name__, 'in', time.time() - start, '(s)')
         start = time.time()
-

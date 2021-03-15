@@ -10,8 +10,7 @@ from django.db import models
 
 from django.contrib.postgres.search import SearchVectorField
 from django.contrib.postgres.indexes import GinIndex
-from django.contrib.postgres.fields import ArrayField, JSONField
-
+from django.contrib.postgres.fields import ArrayField
 
 
 # Create your models here.
@@ -24,7 +23,7 @@ class Paper(models.Model):  # Independent
 
     id = models.CharField(max_length=40, primary_key=True)
 
-    title = models.TextField(blank=True) 
+    title = models.TextField(blank=True)
     paperAbstract = models.TextField(blank=True)
     authors = models.ManyToManyField('Author', through='AuthorPaper', related_name='papers')
 
@@ -52,12 +51,13 @@ class Paper(models.Model):  # Independent
     def get_citations(self):
         """Function for citation rank_feature in elasticsearch backend. Used to boost search results with high citation counts
         """
-        return self.citations + 1 # +1 needed as rank_features have to be strictly positive (>0)
+        return self.citations + 1  # +1 needed as rank_features have to be strictly positive (>0)
 
     class Meta(object):
         # indexes for faster search and similarity metrics
         indexes = [GinIndex(fields=['search_vector']),
                    GinIndex(name='graph_paper_ln_gin_idx', fields=['title'], opclasses=['gin_trgm_ops'])]
+
 
 class Author(models.Model):  # Independent
     name = models.CharField(max_length=200)
@@ -65,6 +65,7 @@ class Author(models.Model):  # Independent
 
     def __str__(self):
         return self.name
+
 
 class AuthorPaper(models.Model):
     """
@@ -76,7 +77,8 @@ class AuthorPaper(models.Model):
     order = models.IntegerField()
 
     class Meta:
-        ordering = ['order',]
+        ordering = ['order', ]
+
 
 class FieldOfStudy(models.Model):  # Independent
     # This class is probably not needed anymore

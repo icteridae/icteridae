@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import include, path
 
 from . import views
 
@@ -15,15 +15,8 @@ urlpatterns = [
     # Find paper information given a bulk of paper ids
     path('paper_bulk/', views.get_paper_bulk), 
 
-    # Search authors using a query
-    path('author/search/', views.search_author),  
+    # All author related queries
+    path('author/', include('graphgenerator.authors.urls')),
 
-    # Get author information using author id
-    path('author/name/', views.get_author),  
-
-    # Get papers written by a specific author
-    path('author/papers/', views.get_authorpapers),
-
-    # Get related authors from an author
-    path('author/related/', views.get_author_details)
 ]
+

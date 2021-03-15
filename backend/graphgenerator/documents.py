@@ -4,12 +4,14 @@ from django_elasticsearch_dsl.registries import registry
 from elasticsearch_dsl import field
 from .models import Paper, Author
 
+
 class CitaionsRankField(fields.DEDField, field.RankFeature):
     """
     Implements a RankFeature for django-elasticsearch-dsl as the current version does not support RankFeatures
     This class just needs to extend DEDField and RankFeature
     """
     pass
+
 
 @registry.register_document
 class PaperDocument(Document):
@@ -18,10 +20,9 @@ class PaperDocument(Document):
     """
 
     # Citation field for boosting popular papers
-    citations = CitaionsRankField(attr = 'get_citations') # RankFeature for citation field
+    citations = CitaionsRankField(attr='get_citations')  # RankFeature for citation field
 
     class Index:
-
         name = 'papers'
 
         # Elasticsearch settings
@@ -31,7 +32,6 @@ class PaperDocument(Document):
         }
 
     class Django:
-
         model = Paper
 
         # Fields to index additionally to citations and authors defined above
@@ -40,11 +40,10 @@ class PaperDocument(Document):
             'year',
         ]
 
+
 @registry.register_document
 class AuthorDocument(Document):
-
     class Index:
-
         name = 'authors'
 
         # Elasticsearch settings
@@ -54,11 +53,8 @@ class AuthorDocument(Document):
         }
 
     class Django:
-
         model = Author
 
         fields = [
             'name',
         ]
-
-        
