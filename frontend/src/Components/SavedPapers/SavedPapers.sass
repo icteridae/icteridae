@@ -1,44 +1,39 @@
 @import '../../Utils/_colors'
 
-
+// rsuite overrides
 .saved-papers-tree
     .rs-tree-drag-node-mover
     .rs-tree 
         max-height: unset // As rsuite somehow sets a maximum height on trees. I don't know why :(
         background-color: unset
 
-        .rs-tree-node-expand-icon-wrapper
-                vertical-align: baseline
-
         .rs-tree-node-dragging
-            outline-color: $color-imprint
+            outline-color: $color-accent
 
         .rs-tree-node-drag-over-top.rs-tree-node-label-content
-            border-top-color: $color-imprint !important
+            border-top-color: $color-accent !important
+
             &::after
-                border-left-color: $color-imprint
+                border-left-color: $color-accent
         .rs-tree-node-drag-over-bottom.rs-tree-node-label-content
-            border-bottom-color: $color-imprint !important
+            border-bottom-color: $color-accent !important
+
             &::after
-                border-left-color: $color-imprint
+                border-left-color: $color-accent
 
     .rs-tree-node-active .rs-tree-node-label .rs-tree-node-label-content
-        color: $color-imprint
+        color: $color-accent
         background-color: $color-background-light !important
         font-weight: 500
 
     .rs-tree-node-label-content
         border-radius: 10px
-        //font-size: 17px
         font-size: 1.2em
+
         &:focus
             background-color: red !important
 
-    .rs-tree-children-nodes
-
     .rs-tree-children
-        //margin-left: 20px
-        //padding-left: 17px
         margin-left: 1.5em
         padding-left: 1.3em
         border-left: 2px solid $color-search-border
@@ -51,7 +46,7 @@
             &:not(.rs-tree-node-disabled) > .rs-tree-node-label:focus > .rs-tree-node-label-content
                 background-color: rgba($color-background-light, 0.6)
 
-
+// own styling
 .page-saved-papers
     display: grid
     grid-template-columns: repeat(auto-fit,minmax(500px, 1fr))
@@ -70,8 +65,8 @@
                 color: $color-accent
                 background: $color-background-light
                 margin-bottom: 1em
+                
                 &:last-child
-                    //margin-left: 20px
                     margin-left: 1.5em
                 i
                     margin-right: 0.5em
@@ -89,12 +84,18 @@
     .tree-node
         display: flex
 
-        .delete-button
-            margin-left: 0.7em
+        .folder
+            input
+                border-color: $color-accent
+
+        button
             background: #0000
+
             &:focus
                 border: none
                 outline: none
             &:active
                 opacity: 0.4
 
+        .delete-button
+            margin-left: 0.9em

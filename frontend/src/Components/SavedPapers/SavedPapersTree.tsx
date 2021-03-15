@@ -1,28 +1,50 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
-import { Button, Loader, Tree, Icon} from 'rsuite';
+import { Button, Loader, Tree, Icon, Input } from 'rsuite';
 import { DropData } from 'rsuite/lib/TreePicker';
-import { Link } from 'react-router-dom';
 
 import * as TreeTypes from './TreeTypes';
 import * as PaperFunctions from './PageSavedPapersFunctions';
 import * as GeneralTypes from '../../Utils/GeneralTypes';
-import { RenamableDirectory } from './RenameableDirectory';
 
 import './SavedPapers.sass'
 
 
 export const SavedPapersTree: React.FC<{setSelectedPaper: Function}> = (props) => {
     const [selectedTreeNode, setSelectedTreeNode] = useState<TreeTypes.PaperOrDirectoryNode>();
+    const [isRenaming, setIsRenaming] = useState<boolean>(false);
     const [loadedPapers, setLoadedPapers] = useState<{ [id: string] : GeneralTypes.Paper}>({})
     const [directoryNames, setDirectoryNames] = useState<{ [id: string] : string}>({})
+    const renameInputRef = useRef(null);
     const [treeData, setTreeData] = useState<TreeTypes.PaperOrDirectoryNode[]>(
         PaperFunctions.deepMap(JSON.parse(localStorage.getItem('savedpapers') || '[]'),
         (node) => TreeTypes.isDirectoryNode(node) ? 
         {
             ...node, 
-            label: <RenamableDirectory name={directoryNames.hasOwnProperty(node.value) ? directoryNames[node.value] : 'Loading...'} 
-                                       setName={(val) => setDirectoryNames((directoryNames) => ({...directoryNames, [node.value]: val}))}/>//<><Icon icon='folder'/> {node.directoryName}</>
+            label: (<div className="folder">
+                        {// Render Inputfield if renaming
+                            directoryNames.hasOwnProperty(node.value) ? (
+                            isRenaming && (node.value === selectedTreeNode?.value) ? 
+                                <Input
+                                    id='tree-node-folder-rename-input'
+                                    value={directoryNames[node.value]} 
+                                    onChange={(val:string) => {setDirectoryNames((directoryNames) => ({...directoryNames, [node.value]: val}))}}
+                                    onBlur={() => setIsRenaming(false)}
+                                    onPressEnter={() => setIsRenaming(false)}
+                                    inputRef={renameInputRef}
+                                    autoFocus
+                                />
+                                :
+                                <div>
+                                    <Icon icon='folder'/> {directoryNames[node.value]}
+                                </div>
+                            )
+                            :
+                            <div>
+                                <Icon icon='folder'/> {'Loading...'}
+                            </div>
+                        }
+                    </div>)
         } : {...node, value: node.paperId, label: <Loader/>}
         )
         );
@@ -73,14 +95,39 @@ export const SavedPapersTree: React.FC<{setSelectedPaper: Function}> = (props) =
                     ...node, 
                     label: (
                         <div className="tree-node">
-                            <RenamableDirectory 
-                                name={directoryNames.hasOwnProperty(node.value) ? directoryNames[node.value] : 'Loading...'} 
-                                setName={(val) => setDirectoryNames((directoryNames) => ({...directoryNames, [node.value]: val}))}
-                            />
+                            <div className="folder">
+                                {// Render Inputfield if renaming
+                                    directoryNames.hasOwnProperty(node.value) ? (
+                                    isRenaming && (node.value === selectedTreeNode?.value) ? 
+                                        <Input
+                                            id='tree-node-folder-rename-input'
+                                            value={directoryNames[node.value]} 
+                                            onChange={(val:string) => {setDirectoryNames((directoryNames) => ({...directoryNames, [node.value]: val}))}}
+                                            onBlur={() => setIsRenaming(false)}
+                                            onPressEnter={() => setIsRenaming(false)}
+                                            inputRef={renameInputRef}
+                                            autoFocus
+                                        />
+                                        :
+                                        <div>
+                                            <Icon icon='folder'/> {directoryNames[node.value]}
+                                        </div>
+                                    )
+                                    :
+                                    <div>
+                                        <Icon icon='folder'/> {'Loading...'}
+                                    </div>
+                                }
+                            </div>
                             {(node.value === selectedTreeNode?.value) && 
-                                <button className='delete-button' onClick={() => setTreeData(PaperFunctions.deleteTreeNode(selectedTreeNode.value, treeData))}>
-                                    <Icon icon='trash'/>
-                                </button>
+                                <>
+                                    <button className='delete-button' onClick={() => setTreeData(PaperFunctions.deleteTreeNode(selectedTreeNode.value, treeData))}>
+                                        <Icon icon='trash'/>
+                                    </button>
+                                    <button className='rename-button' onClick={() => {setIsRenaming(true)}}>
+                                        <Icon icon='pencil'/>
+                                    </button>
+                                </>
                             }
                         </div>
                     ),
@@ -88,7 +135,7 @@ export const SavedPapersTree: React.FC<{setSelectedPaper: Function}> = (props) =
             } 
                 : node
             )));
-    }, [directoryNames, selectedTreeNode])
+    }, [directoryNames, selectedTreeNode, isRenaming])
 
     useEffect(() => {
         localStorage.setItem('savedpapers', JSON.stringify(PaperFunctions.deepMap(PaperFunctions.stripTree(treeData), (node) => (TreeTypes.isStrippedDirectoryNode(node) ? {...node, directoryName: directoryNames[node.value]} : node))))
@@ -101,7 +148,7 @@ export const SavedPapersTree: React.FC<{setSelectedPaper: Function}> = (props) =
                     <Icon icon='folder-open'/>
                     Create Directory
                 </Button>
-                <Button onClick={() => localStorage.setItem('savedpapers', JSON.stringify([]))}>
+                <Button onClick={() => {localStorage.setItem('savedpapers', JSON.stringify([]));setTreeData([])}}>
                     <Icon icon='eraser'/>
                     Reset localStorage
                 </Button>
@@ -110,7 +157,7 @@ export const SavedPapersTree: React.FC<{setSelectedPaper: Function}> = (props) =
             <Tree
                 data={treeData}
                 draggable={// Used to prevent dragging before tree has loaded. Decreases chance of some weird bug occuring where localstorage is emptied is minimized
-                    Object.keys(loadedPapers).length > 0 || PaperFunctions.getSubtreePaperIds(treeData).length === 0} 
+                    (Object.keys(loadedPapers).length > 0 || PaperFunctions.getSubtreePaperIds(treeData).length === 0) && isRenaming === false} 
                 defaultExpandAll
                 onDrop={({ createUpdateDataFunction }: DropData) => setTreeData(PaperFunctions.flattenPapers(createUpdateDataFunction(treeData)))}
                 onSelect={(active) => {setSelectedTreeNode(active);props.setSelectedPaper(loadedPapers[active.paperId])}}
