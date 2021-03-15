@@ -50,7 +50,7 @@ def search_author(request):
             safe=False)
 
     max_pages = min((count - 1) // pagesize + 1,
-                    SEARCH_CAP // pagesize)
+                    (SEARCH_CAP - 1) // pagesize + 1)
     count = min(count, SEARCH_CAP)
     # Limit as elasticsearch has a limit on slices. This can be extended in the future
     # Example for error:
@@ -67,7 +67,8 @@ def search_author(request):
         {
             'data': AuthorSerializer(result[pagesize * (page - 1): pagesize * page].to_queryset(),
                                      many=True).data,
-            'max_pages': max_pages
+            'max_pages': max_pages,
+            'count': count,
         },
         safe=False)
 
