@@ -38,15 +38,15 @@ export const GraphDisplayDrawer: React.FC<GraphDisplayDrawerTypes> = (props) => 
                         Generate Graph
                     </Button>
                 </div>
-                <p style={{color:'grey'}}>{props.selectedNode.year + ', '}{props.selectedNode.authors.length <= props.maxAuthors + 1 ? props.selectedNode.authors.map<React.ReactNode>((obj, index) => (<Link key={index} to={`/author/${obj.id}`}>{obj.name}</Link>)).reduce((prev, curr) => [prev, ', ', curr]) : <>{props.selectedNode.authors.slice(0, props.maxAuthors).map<React.ReactNode>((obj, index) => (<Link key={index} to={`/author/${obj.id}`}>{obj.name}</Link>)).reduce((prev, curr) => [prev, ', ', curr])}, + {props.selectedNode.authors.length - props.maxAuthors} others</>}
+                <div style={{color: 'grey'}}>{props.selectedNode.year + ', '}{props.selectedNode.authors.length <= props.maxAuthors + 1 ? props.selectedNode.authors.map<React.ReactNode>((obj, index) => (<Link key={index} to={`/author/${obj.id}`}>{obj.name}</Link>)).reduce((prev, curr) => [prev, ', ', curr]) : <>{props.selectedNode.authors.slice(0, props.maxAuthors).map<React.ReactNode>((obj, index) => (<Link key={index} to={`/author/${obj.id}`}>{obj.name}</Link>)).reduce((prev, curr) => [prev, ', ', curr])}, + {props.selectedNode.authors.length - props.maxAuthors} others</>}
                     {props.selectedNode.doi !== '' && (props.selectedNode.doiUrl !== '' ? (<><br/>Doi: <a href={props.selectedNode.doiUrl}>{props.selectedNode.doi}</a></>) : (<><br/>Doi: {props.selectedNode.doi}</>))}
                     
                     <br/> Citations: {props.selectedNode.inCitations.length}, References: {props.selectedNode.outCitations.length}
                     {props.selectedNode.venue !== '' && <><br/> Venue: {props.selectedNode.venue}</>}
                     <br/><p style={{color:props.selectedNode.color}}>Field: {props.selectedNode.fieldsOfStudy.map(field => field).join(', ')} </p>
                     
-                    </p>
-                <p>{props.selectedNode.paperAbstract}</p>
+                    </div>
+                <p style={{ paddingTop: '1vh' }}>{props.selectedNode.paperAbstract}</p>
             </Drawer.Body>
         </Drawer>
     )
