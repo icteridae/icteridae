@@ -7,7 +7,7 @@ import { Paper } from '../../Utils/GeneralTypes';
 import Config from '../../Utils/Config'
 
 
-import { Alert, Button, Divider, Footer } from 'rsuite';
+import { Divider, Footer } from 'rsuite';
 import { PulseLoader } from 'react-spinners';
 
 import './FrontPage.sass';
