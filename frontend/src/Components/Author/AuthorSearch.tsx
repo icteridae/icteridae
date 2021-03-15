@@ -38,7 +38,6 @@ export const AuthorSearch: React.FC = () => {
                 setAuthorList(result.data);
                 setMaxPages(result.max_pages);
                 setCount(result.count);
-                console.log(result)
             }).catch(() => console.log("Can't access " + requestURL));
     }
 
