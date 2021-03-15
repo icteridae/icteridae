@@ -1,12 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Content, Divider, Header } from 'rsuite';
+import Config from '../../Utils/Config';
 
 import './Description.sass';
 import { PageImprint } from './Privacy/PageImprint';
-
-const SHOW_IMPRINT = false;
-
 
 /**
  * Frontpage is shown when the user the Web-Application. If exists it shows the recently opened papers
@@ -57,11 +55,12 @@ export const Description: React.FC = () => (
 
             </Content>
 
-            {SHOW_IMPRINT && 
-            <>
-            <Divider/>
-            <PageImprint/>
-            </>}
+            {Config.show_imprint && 
+                <>
+                    <Divider/>
+                    <PageImprint/>
+                </>
+            }
 
 
         </Container>
