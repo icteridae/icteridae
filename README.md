@@ -41,7 +41,7 @@ Navigate into the `frontend` directory and install the needed dependencies using
 ## Running
 
 ### Start Backend
-If not using locally, enter the web address of your backend in `backend/backend/settings.py` under `ALLOWED_HOSTS`.
+If not used locally, enter the web address of your backend in `backend/backend/settings.py` under `ALLOWED_HOSTS`.
 
 Navigate into the `backend/` directory and run
 
