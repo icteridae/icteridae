@@ -14,19 +14,23 @@ What is a relevance metric?
 - relevance metrics are used to determine which papers to include in the graph.
 
 How is a relevance metric defined?
-- relevance metrics are defined as functions of the root node and a queryset or all nodes. They should return an iterable of relevant papers. 
+- relevance metrics are defined as functions of the root node and a queryset or all nodes. They should return an iterable of relevant papers sorted by their relevance. 
 
 Which relevance metric is used?
 - the relevance metric is defined in the USING_RELEVANCE variable at the bottom of this file. Set the variable to a reference of the chosen function.
 
 What should I consider in a relevance function?
 - the given queryset is very large. strongly consider runtime when designing a relevance metric.
+- results should be sorted by their descending relevance 
 
 How can I use multiple relevance metrics?
 - Combining multiple metrics can be done in many ways. Define a new relevance metric that combines the previous metrics.
 
 What do I return when there are now relevant papers?
-- The value "None" can be returned to signal that there are no relevant papers.
+- An empty list can be returned to signal that there are no relevant papers.
+
+My graph is not being rendered?
+- Either no relevant papers were found or your relevance function is invalid. Remember that a valid relevance function should return the source paper as the first (most relevant) entry
 
 """
 
