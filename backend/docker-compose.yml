@@ -19,8 +19,9 @@ services:
     - POSTGRES_PASSWORD=postgres
     volumes: 
       - db-data:/var/lib/postgresql/data/
-    ports:
-      - "5433:5432"
+    # Use for debugging database
+    #ports:
+    #  - "5433:5432"
 
   web:
     container_name: icteridae-django
