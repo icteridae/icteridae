@@ -169,7 +169,7 @@ export const SavedPapersTree: React.FC<{setSelectedPaper: Function}> = (props) =
                     </Modal.Body>
                     <Modal.Footer>
                         <Button onClick={() => {setShowModal(false);localStorage.setItem('savedpapers', JSON.stringify([]));setTreeData([])}} appearance="primary">
-                            Ok
+                            Yes
                         </Button>
                         <Button onClick={() => setShowModal(false)} appearance="subtle">
                             Cancel
