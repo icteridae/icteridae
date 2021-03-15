@@ -10,6 +10,10 @@ import { Sorry } from '../General/Sorry';
 import { PulseLoader } from 'react-spinners';
 import { Author } from '../../Utils/GeneralTypes';
 
+/**
+ * Page for displaying the results of searching an author
+ */
+
 export const AuthorSearch: React.FC = () => {
     const {query} = useParams<{query: string}>();
 
