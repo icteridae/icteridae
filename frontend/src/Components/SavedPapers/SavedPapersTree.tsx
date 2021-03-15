@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 
-import { Button, Loader, Tree, Icon, Input } from 'rsuite';
+import { Button, Loader, Tree, Icon, Input, Modal } from 'rsuite';
 import { DropData } from 'rsuite/lib/TreePicker';
 
 import * as TreeTypes from './TreeTypes';
@@ -15,6 +15,7 @@ export const SavedPapersTree: React.FC<{setSelectedPaper: Function}> = (props) =
     const [isRenaming, setIsRenaming] = useState<boolean>(false);
     const [loadedPapers, setLoadedPapers] = useState<{ [id: string] : GeneralTypes.Paper}>({})
     const [directoryNames, setDirectoryNames] = useState<{ [id: string] : string}>({})
+    const [showModal, setShowModal] = useState<boolean>(false);
     const renameInputRef = useRef(null);
     const [treeData, setTreeData] = useState<TreeTypes.PaperOrDirectoryNode[]>(
         PaperFunctions.deepMap(JSON.parse(localStorage.getItem('savedpapers') || '[]'),
@@ -141,6 +142,8 @@ export const SavedPapersTree: React.FC<{setSelectedPaper: Function}> = (props) =
         localStorage.setItem('savedpapers', JSON.stringify(PaperFunctions.deepMap(PaperFunctions.stripTree(treeData), (node) => (TreeTypes.isStrippedDirectoryNode(node) ? {...node, directoryName: directoryNames[node.value]} : node))))
     }, [treeData, directoryNames])
 
+
+
     return (
         <div className="saved-papers-tree">
             <div className="my-papers-actions">
@@ -148,10 +151,31 @@ export const SavedPapersTree: React.FC<{setSelectedPaper: Function}> = (props) =
                     <Icon icon='folder-open'/>
                     Create Directory
                 </Button>
-                <Button onClick={() => {localStorage.setItem('savedpapers', JSON.stringify([]));setTreeData([])}}>
+                <Button onClick={() => setShowModal(true)}>
                     <Icon icon='eraser'/>
-                    Reset localStorage
+                    Reset Storage
                 </Button>
+                <Modal backdrop="static" show={showModal} onHide={() => setShowModal(false)} size="xs">
+                    <Modal.Body>
+                        <Icon
+                            icon="remind"
+                            style={{
+                                color: '#ffb300',
+                                fontSize: 24
+                            }}
+                        />
+                        {'  '}
+                        Clearing storage will irreversibly delete all your saved papers. Are you sure?
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button onClick={() => {setShowModal(false);localStorage.setItem('savedpapers', JSON.stringify([]));setTreeData([])}} appearance="primary">
+                            Yes
+                        </Button>
+                        <Button onClick={() => setShowModal(false)} appearance="subtle">
+                            Cancel
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
             </div>
             <div className='line'/>
             <Tree
