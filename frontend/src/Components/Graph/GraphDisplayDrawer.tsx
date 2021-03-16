@@ -34,7 +34,7 @@ export const GraphDisplayDrawer: React.FC<GraphDisplayDrawerTypes> = (props) => 
                     <Button appearance='ghost' style={{marginRight: '1em'}} href={props.selectedNode.s2Url} target='_blank'>
                         Open in Semantic Scholar
                     </Button>
-                    <Button appearance='ghost' style={{marginRight: '1em'}} onClick={() => {history.push(`/graph/${props.selectedNode.id}`)}}>
+                    <Button appearance='ghost' style={{marginRight: '1em'}} href={`/graph/${props.selectedNode.id}`} onClick={() => {history.push(`/graph/${props.selectedNode.id}`)}}>
                         Generate Graph
                     </Button>
                 </div>
