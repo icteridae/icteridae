@@ -57,7 +57,7 @@ Navigate into the `frontend/` directory and run
 
 ## Import Papers
 
-Papers are structured as defined in the SemanticScholar Open Research Corpus. When inputting files, each line should represent a single paper as a json object. Place any files in the `backend/data/` directory. Then in the `backend`directory run
+Papers are structured as defined in the SemanticScholar Open Research Corpus. When inputting files, each line should represent a single paper as a json object. Place any files in the `backend/data/` directory. Make sure the backend is running.
 
 Connect to your container (usually named `icteridae_django`, use `docker ps` to list container names) using
 
