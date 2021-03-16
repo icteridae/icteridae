@@ -51,10 +51,10 @@ export const GraphControllerDrawer: React.FC<GraphControllerDrawerTypes> = (prop
                     {props.sliders.map((sliderVal : number, index) => (
                         <div className='slider' key={index}>
                             <div className='similarities-names' >{props.data.similarities[index].name + ':  '}
-                                <Whisper placement="right" trigger="hover" speaker={<Popover title={props.data.similarities[index].name}>
+                                <Whisper placement='right' trigger='hover' speaker={<Popover title={props.data.similarities[index].name}>
                                         <Linkify><p>{props.data.similarities[index].description}</p></Linkify>
                                     </Popover>} enterable>
-                                    <Icon icon="info"/>
+                                    <Icon icon='info'/>
                                 </Whisper></div>
                             <div className='slider-with-input-number'>
                                     <Slider
