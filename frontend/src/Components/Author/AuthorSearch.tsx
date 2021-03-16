@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 
-import { FlexboxGrid, Pagination } from "rsuite";
+import { FlexboxGrid, Pagination } from 'rsuite';
 import { Link, useParams } from 'react-router-dom';
 import { PulseLoader } from 'react-spinners';
 
-import Config from "../../Utils/Config";
+import Config from '../../Utils/Config';
 import { Sorry } from '../General/Sorry';
 import { Author } from '../../Utils/GeneralTypes';
 
@@ -66,7 +66,7 @@ export const AuthorSearch: React.FC = () => {
                     <h2>Showing {(PAGESIZE <= count) ? PAGESIZE : count} of {count} results</h2>
                     <div className='line'></div>
                 </div>
-                <div id="author-result-list">
+                <div id='author-result-list'>
                     <FlexboxGrid justify='center'>
                         {authorList?.map((author) => (
                                 <AuthorCard author={author} key={author.id}/>
@@ -96,9 +96,9 @@ export const AuthorSearch: React.FC = () => {
     return (
         <div className='author-search-page'>
             
-            {authorList===undefined ? <div className="spinner"><PulseLoader/></div> 
+            {authorList===undefined ? <div className='spinner'><PulseLoader/></div> 
             : authorList.length === 0 ? <Sorry
-                message="No matching authors found"
+                message='No matching authors found'
                 description="Are you sure you've entered the right name?"
                 />
             : resultList}

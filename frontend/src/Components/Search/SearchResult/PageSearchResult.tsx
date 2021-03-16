@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 
 import { useParams } from 'react-router-dom';
-import PulseLoader from "react-spinners/PulseLoader";
+import PulseLoader from 'react-spinners/PulseLoader';
 
 import { AbstractView } from '../../General/AbstractView';
 import { SearchResultList } from './SearchResultList';
@@ -39,11 +39,11 @@ export const PageSearchResult : React.FC = () => {
     return (
         <div className='page-search-result'>
             {
-                (searchResults == null) ? <div className="spinner"><PulseLoader/></div> :
+                (searchResults == null) ? <div className='spinner'><PulseLoader/></div> :
                     (searchResults.data.length === 0) ? 
                         <Sorry
-                            message="No search results found"
-                            description="Make sure you entered the correct query." 
+                            message='No search results found'
+                            description='Make sure you entered the correct query.' 
                         /> 
                         :
                         (

@@ -10,7 +10,7 @@ export const PageSavedPapers: React.FC = () => {
     const [selectedPaper, setSelectedPaper] = useState<Paper>();
 
     return(
-        <div className="page-saved-papers">
+        <div className='page-saved-papers'>
             <SavedPapersTree setSelectedPaper={setSelectedPaper}/>
             {selectedPaper && <AbstractView selected={selectedPaper}/>}
         </div>  

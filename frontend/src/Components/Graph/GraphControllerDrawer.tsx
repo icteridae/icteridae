@@ -15,7 +15,7 @@ interface GraphControllerDrawerTypes {
     totalSliderValue : number,
     showTitle : boolean, 
     showLegend : boolean, 
-    nodeColoring : boolean, 
+    nodeColoring : number, 
     pallettes : [string, string[]][], 
     pallette : [string, string[]], 
     setControllerDrawer : (value: React.SetStateAction<boolean>) => void,
@@ -23,7 +23,7 @@ interface GraphControllerDrawerTypes {
     setSavedSliders : (slider: number[]) => void,
     setShowTitle : React.Dispatch<React.SetStateAction<boolean>>, 
     setShowLegend : React.Dispatch<React.SetStateAction<boolean>>, 
-    setNodeColoring : React.Dispatch<React.SetStateAction<boolean>>, 
+    setNodeColoring : React.Dispatch<React.SetStateAction<number>>, 
     setPallette : React.Dispatch<React.SetStateAction<[string, string[]]>>, 
     setweakLinkFilter : React.Dispatch<React.SetStateAction<number>>, 
     setNodeRepelling : React.Dispatch<React.SetStateAction<number>>
@@ -51,10 +51,10 @@ export const GraphControllerDrawer: React.FC<GraphControllerDrawerTypes> = (prop
                     {props.sliders.map((sliderVal : number, index) => (
                         <div className='slider' key={index}>
                             <div className='similarities-names' >{props.data.similarities[index].name + ':  '}
-                                <Whisper placement="right" trigger="hover" speaker={<Popover title={props.data.similarities[index].name}>
+                                <Whisper placement='right' trigger='hover' speaker={<Popover title={props.data.similarities[index].name}>
                                         <Linkify><p>{props.data.similarities[index].description}</p></Linkify>
                                     </Popover>} enterable>
-                                    <Icon icon="info"/>
+                                    <Icon icon='info'/>
                                 </Whisper></div>
                             <div className='slider-with-input-number'>
                                     <Slider

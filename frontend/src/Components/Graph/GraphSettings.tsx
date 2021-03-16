@@ -7,12 +7,12 @@ import './Graph.sass';
 interface GraphSettingsTypes {
     showTitle : boolean, 
     showLegend : boolean, 
-    nodeColoring : boolean, 
+    nodeColoring : number, 
     pallette : [string, string[]], 
     pallettes : [string, string[]][], 
     setShowTitle : React.Dispatch<React.SetStateAction<boolean>>, 
     setShowLegend : React.Dispatch<React.SetStateAction<boolean>>, 
-    setNodeColoring : React.Dispatch<React.SetStateAction<boolean>>, 
+    setNodeColoring : React.Dispatch<React.SetStateAction<number>>, 
     setPallette : React.Dispatch<React.SetStateAction<[string, string[]]>>, 
     setweakLinkFilter : React.Dispatch<React.SetStateAction<number>>, 
     setNodeRepelling : React.Dispatch<React.SetStateAction<number>>
@@ -34,8 +34,9 @@ export const GraphSettings: React.FC<GraphSettingsTypes> = (props) => {
             </ButtonGroup>
             <span className='graph-settings-subtitle'>Node Coloring</span>
             <ButtonGroup>
-                <Button className='switch-button-2' appearance={props.nodeColoring ? 'ghost' : 'primary'} onClick={() => props.setNodeColoring(false)}>Year</Button>
-                <Button className='switch-button-2' appearance={props.nodeColoring ? 'primary' : 'ghost'} onClick={() => props.setNodeColoring(true)}>Field of Study</Button>
+                <Button className='switch-button-3' appearance={props.nodeColoring === 0 ? 'primary' : 'ghost'} onClick={() => props.setNodeColoring(0)}>Year</Button>
+                <Button className='switch-button-3' appearance={props.nodeColoring === 1 ? 'primary' : 'ghost'} onClick={() => props.setNodeColoring(1)}>Field of Study</Button>
+                <Button className='switch-button-3' appearance={props.nodeColoring === 2 ? 'primary' : 'ghost'} onClick={() => props.setNodeColoring(2)}>Saved Papers</Button>
             </ButtonGroup>
             <span className='graph-settings-subtitle'>Colorblindness Pallettes for Field Of Study</span>
             <SelectPicker 
