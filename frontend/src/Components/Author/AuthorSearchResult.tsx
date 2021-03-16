@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState} from 'react';
 
-import { useParams} from "react-router-dom";
+import { useParams} from 'react-router-dom';
 
-import Config from "../../Utils/Config";
-import {ApiAuthorPapersResult, ApiAuthorRelevantResult, ApiAuthorResult, Author, Paper} from "../../Utils/GeneralTypes";
+import Config from '../../Utils/Config';
+import {ApiAuthorPapersResult, ApiAuthorRelevantResult, ApiAuthorResult, Author, Paper} from '../../Utils/GeneralTypes';
 import { AuthorCard } from './AuthorSearch';
 import { SearchResultList } from '../Search/SearchResult/SearchResultList';
 
@@ -60,15 +60,15 @@ export const AuthorSearchResult: React.FC = () => {
 
 
     return (
-        <div className="author-search-result">
+        <div className='author-search-result'>
             
             {selectedAuthor !== undefined && 
-                <div className="author-search-result">
-                    <div className="author-details">
-                        <div className="author-name">{selectedAuthor.name}</div>
-                        <div className="author-sub">
-                            <div className="author-related">
-                                <div className="author-pub">
+                <div className='author-search-result'>
+                    <div className='author-details'>
+                        <div className='author-name'>{selectedAuthor.name}</div>
+                        <div className='author-sub'>
+                            <div className='author-related'>
+                                <div className='author-pub'>
                                     {publications} publications</div>
                                 <div className='line'/>
                                 <div className='author-rel-title'>Related authors</div>

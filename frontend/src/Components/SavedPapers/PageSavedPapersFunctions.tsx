@@ -1,4 +1,4 @@
-import Config from "../../Utils/Config";
+import Config from '../../Utils/Config';
 import { Icon } from 'rsuite';
 import * as TreeTypes from './TreeTypes';
 import * as GeneralTypes from '../../Utils/GeneralTypes'

@@ -43,7 +43,7 @@ export const Description: React.FC = () => (
                 <h4>Can I use other similarity metrics?</h4>
                 <p>
                     Visualizing different aspects of research releations can be interesing in a large number of use cases. <i>Icteridae</i> is built with this goal in mind.
-                    The source contains an easy Python interface, allowing anyone to extend similarity metrics. Feel free to fork the <a href="https://github.com/icteridae/icteridae">project</a>.
+                    The source contains an easy Python interface, allowing anyone to extend similarity metrics. Feel free to fork the <a href='https://github.com/icteridae/icteridae'>project</a>.
                 </p>
 
                 <h4>How are the displayed papers chosen?</h4>
