@@ -1,6 +1,6 @@
 import {Icon, Input, InputGroup} from 'rsuite';
 
-import './SearchBar.scss'
+import './SearchBar.sass'
 import {useState} from 'react';
 import { useHistory } from 'react-router-dom';
 
