@@ -1,0 +1,13 @@
+@import '../../../Utils/colors';
+
+.imprint {
+    padding: 20px 50px;
+}
+
+.imprint a {
+    color: $color-primary;
+}
+
+.imprint strong {
+    font-size: large;
+}

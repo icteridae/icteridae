@@ -1,0 +1,30 @@
+@import '../../../../Utils/_colors'
+
+.result-list 
+    display: flex
+    flex-direction: column
+    text-align: left
+    margin-left: 5vh
+    overflow: scroll
+    scrollbar-width: none     //remove scrollbar in Firefox
+    padding-bottom: 10em
+
+    &::-webkit-scrollbar 
+        display: none
+
+    > div 
+        margin-bottom: 20px
+
+    #pagination 
+        align-self: center
+        border-bottom: 3px solid $color-primary
+        margin-bottom: 20px
+
+
+        .rs-pagination-btn-active > a 
+            color: $color-primary
+
+
+
+
+

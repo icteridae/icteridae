@@ -1,0 +1,70 @@
+@import '../../../Utils/colors'
+
+
+#search-bar-group
+    margin: 40px auto 0 auto
+
+
+#author-list-wrapper
+
+    width: 80%
+    margin: auto
+
+    #author-result-list 
+        font-family: "Segoe UI",Arial,sans-serif
+        
+        font-weight: lighter
+
+        margin: 2em auto
+
+        display: flex
+        flex-direction: column
+        scrollbar-width: none     /*remove scrollbar in Firefox*/
+
+    #author-result-list::-webkit-scrollbar 
+        display: none
+
+.author-card
+    margin: 5px
+    width: 200px
+    min-height: 60px
+    border: 1px groove $color-primary-dark
+    border-radius: 15px
+    text-align: center
+    font-size: 1.3em
+    
+    display: flex
+    align-items: center
+    justify-content: center
+    flex-direction: column
+
+    .author-full-name
+        color: darkgray
+        font-size: 0.7em
+    
+
+.author-search-page
+    
+    .spinner 
+        margin: auto
+        margin-top: 45vh
+        width: 0%
+
+        span > span
+            background-color: $color-primary
+
+    .query-title 
+        h2 
+            font-weight: unset
+            font-size: 1.9vw
+            line-height: 5.2vh
+            color: $color-title-font
+            margin: 20px 0 0 20px
+
+        .line 
+            border-bottom: 2px $color-primary-dark solid
+            width: 40%
+            height: 10px
+            margin-left: 20px
+            margin-bottom: 2vh
+
