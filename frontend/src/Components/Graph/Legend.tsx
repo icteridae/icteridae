@@ -12,8 +12,17 @@ export const Legend: React.FC<{'data' : ApiGraphResult, 'defaultFieldOfStudy' : 
                 <span className='legend-description-child2'>Fields of Study</span>
             </div>
             {Array.from(new Set(props.data.paper.map((paper) => paper.fieldsOfStudy.slice().sort().join(', ')))).map((field, index) =>(
-                <div key={index} className='legend-fieldsofstudy' style={{color: 'black', backgroundColor: (field === props.defaultFieldOfStudy) ? ('rgba(231, 156, 69, 0.7)') : (hexToRGB(props.pallette[1][hash(field) % props.pallette[1].length], '0.7'))}}>{field}</div>
+                <div key={index} className='legend-fieldsofstudy' style={{color: 'lightgray', backgroundColor: (field === props.defaultFieldOfStudy) ? ('rgba(231, 156, 69, 0.6)') : (hexToRGB(props.pallette[1][hash(field) % props.pallette[1].length], '0.6'))}}>{field}</div>
             ))}
+            <div className='legend-description'>
+                <span className='legend-description-child1'>Unsaved</span>
+                <span className='legend-description-child2'>Paper</span>
+                <span className='legend-description-child3'>Saved</span>
+            </div>
+            <div className='legend-saved-paper-container'>
+                <div className='legend-saved-paper-color-bar'></div>
+                <div className='legend-unsaved-paper-color-bar'></div>
+            </div>
             <div className='legend-description'>
                 <span className='legend-description-child1'>Low</span>
                 <span className='legend-description-child2'>Link Similarity</span>
@@ -39,7 +48,7 @@ export const Legend: React.FC<{'data' : ApiGraphResult, 'defaultFieldOfStudy' : 
                 <span className='legend-description-child2'>Year</span>
                 <span className='legend-description-child3'>{new Date().getFullYear()}</span>
             </div>
-            <div className='legend-color-bar'></div>
+            <div className='legend-year-color-bar'></div>
         </div>
     )
 }

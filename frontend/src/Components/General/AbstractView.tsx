@@ -19,7 +19,7 @@ export const AbstractView : React.FC<{selected: Paper}> = (props) => {
                 <span className='year'>{props.selected.year}</span>
                 <span className='citations'>{'Citations: ' + props.selected.inCitations.length + ', References: ' + props.selected.outCitations.length}</span>
                 {
-                    (props.selected.paperAbstract === "") ? 'no Abstract available' : 
+                    (props.selected.paperAbstract === '') ? 'no Abstract available' : 
                         (<div className='paper-abstract'>
                             <h3>
                                 Abstract:

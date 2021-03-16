@@ -101,9 +101,9 @@ export const hexToRGB = (hex : string, alpha : string) : string => {
     blue = parseInt(hex.slice(5, 7), 16);
 
 	if (alpha) {
-			return "rgba(" + red + ", " + green + ", " + blue + ", " + alpha + ")";
+			return 'rgba(' + red + ', ' + green + ', ' + blue + ', ' + alpha + ')';
 	} else {
-			return "rgb(" + red + ", " + green + ", " + blue + ")";
+			return 'rgb(' + red + ', ' + green + ', ' + blue + ')';
 	}
 }
 

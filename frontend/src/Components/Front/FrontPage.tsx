@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
-import { getRecentPapers} from "../../Utils/Webstorage";
-import { SearchBar } from "../Search/SearchBar/SearchBar";
+import { getRecentPapers} from '../../Utils/Webstorage';
+import { SearchBar } from '../Search/SearchBar/SearchBar';
 import { SearchResultCard } from '../Search/SearchResult/SearchResultCard';
 import { Paper } from '../../Utils/GeneralTypes';
 import Config from '../../Utils/Config'
@@ -54,8 +54,8 @@ export const FrontPage: React.FC = () => {
     }, []);
 
     return (
-        <div className="frontpage">
-            <div className="frontpage-content">
+        <div className='frontpage'>
+            <div className='frontpage-content'>
                 <div className='full-view'>
                     <h1>
                         Icteridae
@@ -68,10 +68,10 @@ export const FrontPage: React.FC = () => {
                 <div>  
                     {recentlyOpenedPapers !== null && 
                         (recentlyOpenedPapers.length === 0 ? 
-                            <div className="spinner"><PulseLoader/></div> 
+                            <div className='spinner'><PulseLoader/></div> 
                         : 
                             (<>
-                                <div className="recent-papers">
+                                <div className='recent-papers'>
                                     <h3>Recently opened papers:</h3>
                                     {
                                     recentlyOpenedPapers.map(
@@ -89,7 +89,7 @@ export const FrontPage: React.FC = () => {
                 </div>
             </div>
             <Footer className='frontpage-footer'>
-                <img src={logo} alt="Logo"/> &copy; {new Date().getFullYear()} Icteridae
+                <img src={logo} alt='Logo'/> &copy; {new Date().getFullYear()} Icteridae
             </Footer>
         </div>
     );

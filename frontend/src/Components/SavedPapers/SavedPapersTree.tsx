@@ -22,7 +22,7 @@ export const SavedPapersTree: React.FC<{setSelectedPaper: Function}> = (props) =
         (node) => TreeTypes.isDirectoryNode(node) ? 
         {
             ...node, 
-            label: (<div className="folder">
+            label: (<div className='folder'>
                         {// Render Inputfield if renaming
                             directoryNames.hasOwnProperty(node.value) ? (
                             isRenaming && (node.value === selectedTreeNode?.value) ? 
@@ -69,7 +69,7 @@ export const SavedPapersTree: React.FC<{setSelectedPaper: Function}> = (props) =
                 TreeTypes.isPaperNode(node) && loadedPapers.hasOwnProperty(node.paperId) ? 
                     {...node, 
                     label: (
-                        <div className="tree-node">
+                        <div className='tree-node'>
                             {loadedPapers[node.paperId].title 
                                 + ' (' 
                                 + loadedPapers[node.paperId].authors[0].name.split(' ').slice(-1)[0] 
@@ -95,8 +95,8 @@ export const SavedPapersTree: React.FC<{setSelectedPaper: Function}> = (props) =
                 TreeTypes.isDirectoryNode(node) && directoryNames.hasOwnProperty(node.value) ? {
                     ...node, 
                     label: (
-                        <div className="tree-node">
-                            <div className="folder">
+                        <div className='tree-node'>
+                            <div className='folder'>
                                 {// Render Inputfield if renaming
                                     directoryNames.hasOwnProperty(node.value) ? (
                                     isRenaming && (node.value === selectedTreeNode?.value) ? 
@@ -150,8 +150,8 @@ export const SavedPapersTree: React.FC<{setSelectedPaper: Function}> = (props) =
 
 
     return (
-        <div className="saved-papers-tree">
-            <div className="my-papers-actions">
+        <div className='saved-papers-tree'>
+            <div className='my-papers-actions'>
                 <Button onClick={() => addFolder('New Directory')}>
                     <Icon icon='folder-open'/>
                     Create Directory
@@ -160,10 +160,10 @@ export const SavedPapersTree: React.FC<{setSelectedPaper: Function}> = (props) =
                     <Icon icon='eraser'/>
                     Reset Storage
                 </Button>
-                <Modal backdrop="static" show={showModal} onHide={() => setShowModal(false)} size="xs">
+                <Modal backdrop='static' show={showModal} onHide={() => setShowModal(false)} size='xs'>
                     <Modal.Body>
                         <Icon
-                            icon="remind"
+                            icon='remind'
                             style={{
                                 color: '#ffb300',
                                 fontSize: 24
@@ -173,10 +173,10 @@ export const SavedPapersTree: React.FC<{setSelectedPaper: Function}> = (props) =
                         Clearing storage will irreversibly delete all your saved papers. Are you sure?
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button onClick={() => {setShowModal(false);localStorage.setItem('savedpapers', JSON.stringify([]));setTreeData([]);}} appearance="primary">
+                        <Button onClick={() => {setShowModal(false);localStorage.setItem('savedpapers', JSON.stringify([]));setTreeData([]);}} appearance='primary'>
                             Yes
                         </Button>
-                        <Button onClick={() => setShowModal(false)} appearance="subtle">
+                        <Button onClick={() => setShowModal(false)} appearance='subtle'>
                             Cancel
                         </Button>
                     </Modal.Footer>
