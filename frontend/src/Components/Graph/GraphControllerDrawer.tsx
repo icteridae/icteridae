@@ -15,7 +15,7 @@ interface GraphControllerDrawerTypes {
     totalSliderValue : number,
     showTitle : boolean, 
     showLegend : boolean, 
-    nodeColoring : boolean, 
+    nodeColoring : number, 
     pallettes : [string, string[]][], 
     pallette : [string, string[]], 
     setControllerDrawer : (value: React.SetStateAction<boolean>) => void,
@@ -23,7 +23,7 @@ interface GraphControllerDrawerTypes {
     setSavedSliders : (slider: number[]) => void,
     setShowTitle : React.Dispatch<React.SetStateAction<boolean>>, 
     setShowLegend : React.Dispatch<React.SetStateAction<boolean>>, 
-    setNodeColoring : React.Dispatch<React.SetStateAction<boolean>>, 
+    setNodeColoring : React.Dispatch<React.SetStateAction<number>>, 
     setPallette : React.Dispatch<React.SetStateAction<[string, string[]]>>, 
     setweakLinkFilter : React.Dispatch<React.SetStateAction<number>>, 
     setNodeRepelling : React.Dispatch<React.SetStateAction<number>>

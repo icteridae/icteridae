@@ -10,7 +10,7 @@ import { PaperNode, PaperGraphData, SimilarityLinkObject } from './GraphTypes';
 import { ApiGraphResult } from '../../Utils/GeneralTypes'
 import { GraphControllerDrawer } from './GraphControllerDrawer';
 import { GraphDisplayDrawer } from './GraphDisplayDrawer';
-import { setSavedSliders } from '../../Utils/Webstorage';
+import { getSavedPapersList, setSavedSliders } from '../../Utils/Webstorage';
 import { pallettes } from './Colors';
 import { Legend } from './Legend';
 
@@ -144,7 +144,7 @@ const Graph: React.FC<{'data' : ApiGraphResult, 'size' : {'width' : number, 'hei
     const [showLegend, setShowLegend] = React.useState<boolean>(true);
 
     // boolean to decide wheter the nodes will be colored by their field of study or their year
-    const [nodeColoring, setNodeColoring] = React.useState<boolean>(false);
+    const [nodeColoring, setNodeColoring] = React.useState<number>(0);
 
     // EffectHook for inital values of all sliders
     React.useEffect(() => {
@@ -295,7 +295,10 @@ const Graph: React.FC<{'data' : ApiGraphResult, 'size' : {'width' : number, 'hei
                                 ctx.font = `${fontSize}px Sans-Serif`;
                                 
                                 // show Node Color for Field of Study or Oppacity for year
-                                if(nodeColoring){
+                                if(nodeColoring === 0){
+                                    // Node Oppacity
+                                    ctx.fillStyle = `rgba(231, 156, 69, ${(((node as PaperNode).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as PaperNode).year - new Date().getFullYear()) + 1))})`;  
+                                }else if(nodeColoring === 1){
                                     // Node Color
                                     if((node as PaperNode).fieldsOfStudy.toString() === defaultFieldOfStudy){
                                         ctx.fillStyle = 'rgba(231, 156, 69, 0.85)';
@@ -304,8 +307,12 @@ const Graph: React.FC<{'data' : ApiGraphResult, 'size' : {'width' : number, 'hei
                                         ctx.fillStyle = hexToRGB(pallette[1][hash((node as PaperNode).fieldsOfStudy.slice().sort().join(', ')) % pallette[1].length], '0.85');
                                     }
                                 }else{
-                                    // Node Oppacity
-                                    ctx.fillStyle = `rgba(231, 156, 69, ${(((node as PaperNode).year - (new Date().getFullYear() - paperOppacityYearRange) < 0 ? lowerBoundForNodeOppacity : (1-lowerBoundForNodeOppacity)/paperOppacityYearRange * ((node as PaperNode).year - new Date().getFullYear()) + 1))})`;  
+                                    // Color saved Papers Violet and unsaved Papers Orange
+                                    if(getSavedPapersList().includes(node.id as string)){
+                                        ctx.fillStyle = 'rgba(136, 46, 114, 0.85)';
+                                    }else {
+                                        ctx.fillStyle = 'rgba(231, 156, 69, 0.85)';
+                                    }
                                 }
                                 ctx.beginPath();
                                 // The radius of our nodes is determined in the same way as the React-Force-Graph-2d does internally to get overlapping nodes. The *4 is needed since they use a nodeRelSize variable that we could use while creating the graph. Its standard value is 4.
