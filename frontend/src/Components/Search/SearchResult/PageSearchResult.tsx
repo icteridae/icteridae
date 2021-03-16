@@ -32,6 +32,9 @@ export const PageSearchResult : React.FC = () => {
         return () => {setSelected(undefined)}
     }, [query, activePage]);
 
+    useEffect(() => {
+        setActivePage(1);
+    }, [query]);
 
     return (
         <div className='page-search-result'>
