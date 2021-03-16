@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { Pagination } from 'rsuite';
 
-import { SearchResultCard } from "./SearchResultCard";
+import { SearchResultCard } from './SearchResultCard';
 import { Paper } from '../../../Utils/GeneralTypes';
 
 import './styles/SearchResultList.sass';
@@ -25,13 +25,13 @@ export const SearchResultList : React.FC<ResultListProps> = (props) => {
      * @param {number} key The data-key value of the card to be highlighted
      */
     function highlightCard(key: string) {
-        document.querySelector(`[data-key="${lastHighlighted}"]`)?.classList.remove("card-selected");
-        document.querySelector(`[data-key="${key}"]`)?.classList.add("card-selected");
+        document.querySelector(`[data-key='${lastHighlighted}']`)?.classList.remove('card-selected');
+        document.querySelector(`[data-key='${key}']`)?.classList.add('card-selected');
         setLastHighlighted(key);
     }
     
     return (
-        <div id="search-result-list" className="result-list">
+        <div id='search-result-list' className='result-list'>
             {props.results.data.map((entry: Paper, index: number) => {
                 return <SearchResultCard highlightCard={highlightCard} raiseStateSelected={props.raiseStateSelected} key={entry.id} dataKey={index.toString()} data={entry}/>
             })}

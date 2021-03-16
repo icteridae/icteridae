@@ -1,8 +1,8 @@
-import {Icon, Input, InputGroup} from "rsuite";
+import {Icon, Input, InputGroup} from 'rsuite';
 
 import './SearchBar.scss'
-import {useState} from "react";
-import { useHistory } from "react-router-dom";
+import {useState} from 'react';
+import { useHistory } from 'react-router-dom';
 
 /**
  * Represents the properties for the Searchbar
@@ -31,10 +31,10 @@ export const SearchBar: React.FC<SearchBarProps> = (props) => {
         <div>
             {props.text? <><div className='text'>{props.text} </div> <br /></> : null}
             <form onSubmit={buttonClick}>    
-                <InputGroup id="search-bar-group">
-                    <Input id="search-bar" placeholder={props.placeholder} onChange={(e) => setInput(e)}/>
-                    <InputGroup.Button type="submit" onClick={buttonClick}>
-                        <Icon icon="search" />
+                <InputGroup id='search-bar-group'>
+                    <Input id='search-bar' placeholder={props.placeholder} onChange={(e) => setInput(e)}/>
+                    <InputGroup.Button type='submit' onClick={buttonClick}>
+                        <Icon icon='search' />
                     </InputGroup.Button>
                 </InputGroup>
             </form>

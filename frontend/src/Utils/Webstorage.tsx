@@ -1,5 +1,5 @@
-import { deepFilter, getSubtreePaperIds } from "../Components/SavedPapers/PageSavedPapersFunctions";
-import { isDirectoryNode, PaperOrDirectoryNode } from "../Components/SavedPapers/TreeTypes";
+import { deepFilter, getSubtreePaperIds } from '../Components/SavedPapers/PageSavedPapersFunctions';
+import { isDirectoryNode, PaperOrDirectoryNode } from '../Components/SavedPapers/TreeTypes';
 
 
 export function checkLocalStorage(): boolean {
@@ -28,7 +28,7 @@ export function checkLocalStorage(): boolean {
  */
 export function getRecentPapers(): string[] {
     if (!checkLocalStorage()) return []
-    return JSON.parse(localStorage.getItem("papers") as string);
+    return JSON.parse(localStorage.getItem('papers') as string);
 }
 
 /**
@@ -37,9 +37,9 @@ export function getRecentPapers(): string[] {
  */
 export function setRecentPapers(papers: string[]){
     if (!checkLocalStorage()) return;
-    if(typeof(papers) !== "undefined") {
-        localStorage.removeItem("papers");
-        localStorage.setItem("papers", JSON.stringify(papers));
+    if(typeof(papers) !== 'undefined') {
+        localStorage.removeItem('papers');
+        localStorage.setItem('papers', JSON.stringify(papers));
     }
 }
 
@@ -49,7 +49,7 @@ export function setRecentPapers(papers: string[]){
 export function getSavedPapers() {
     
     if (!checkLocalStorage()) return [];
-    const savedPaperTree = JSON.parse(localStorage.getItem("savedpapers") as string);
+    const savedPaperTree = JSON.parse(localStorage.getItem('savedpapers') as string);
     if (!savedPaperTree) return [];
     return savedPaperTree;  
 
@@ -63,8 +63,8 @@ export function getSavedPapers() {
 export function setSavedPapers(savedPapers: PaperOrDirectoryNode[])
 {
     if (!checkLocalStorage()) return;
-    if(typeof(savedPapers) !== "undefined") {
-        localStorage.setItem("savedpapers", JSON.stringify(savedPapers));
+    if(typeof(savedPapers) !== 'undefined') {
+        localStorage.setItem('savedpapers', JSON.stringify(savedPapers));
     }
 }
 
@@ -100,10 +100,10 @@ export function addRecentPaper(id: string): void {
 
 export function getSavedSliders(): number[] {
     if (!checkLocalStorage()) return [];
-    return JSON.parse(localStorage.getItem("slider") as string) as Array<number>;
+    return JSON.parse(localStorage.getItem('slider') as string) as Array<number>;
 }
 
 export function setSavedSliders(slider: number[]) {
     if (!checkLocalStorage()) return;
-    localStorage.setItem("slider", JSON.stringify(slider));
+    localStorage.setItem('slider', JSON.stringify(slider));
 }

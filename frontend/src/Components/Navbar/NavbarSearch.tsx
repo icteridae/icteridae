@@ -14,7 +14,7 @@ export const NavbarSearch : React.FC<{label: string, value: string, raiseStateIn
             <form onSubmit={(e) => {e.preventDefault(); if (props.value !== '') {history.push(`/${props.path}/${props.value}`)}}}>
                 <Icon icon={(props.icon != null) ? props.icon : 'search'}/>
                 <input type='text' placeholder={props.label} value={props.value} className={(props.value && 'has-text')} onChange={(e) => props.raiseStateInput(e.target.value)} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}></input>
-                {(focused || props.value) && <button className="reset-search" type="reset" onClick={() => props.raiseStateInput("")}>X</button>}
+                {(focused || props.value) && <button className='reset-search' type='reset' onClick={() => props.raiseStateInput('')}>X</button>}
             </form>
         </div>
     );
