@@ -20,8 +20,8 @@ export const Legend: React.FC<{'data' : ApiGraphResult, 'defaultFieldOfStudy' : 
                 <span className='legend-description-child3'>Saved</span>
             </div>
             <div className='legend-saved-paper-container'>
-                <div className='legend-unsaved-paper-color-bar'></div>
                 <div className='legend-saved-paper-color-bar'></div>
+                <div className='legend-unsaved-paper-color-bar'></div>
             </div>
             <div className='legend-description'>
                 <span className='legend-description-child1'>Low</span>
